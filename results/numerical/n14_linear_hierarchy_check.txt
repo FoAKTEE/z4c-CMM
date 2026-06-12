@@ -1,0 +1,5 @@
+[INFO] closure system: 52 channel equations, 34 unknowns; solutions: 0
+[FAIL] A2 closure: H == du J — NO consistent solution (transcription or convention error; see channel residuals)
+[INFO] pre-gate subsystem solutions: 1
+
+OVERALL: FAIL
