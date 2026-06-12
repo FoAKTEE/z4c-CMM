@@ -1,0 +1,9 @@
+[INFO] W1 somm: peak |r psi4(2,0)| / scri formula = 0.320 (finite-radius extraction at r = 8)
+[INFO] W1 ccm: peak |r psi4(2,0)| / scri formula = 0.320 (finite-radius extraction at r = 8)
+[INFO] W1 ref: peak |r psi4(2,0)| / scri formula = 0.320 (finite-radius extraction at r = 8)
+[PASS] W1 peak amplitudes within an order of magnitude of the scri formula and identical across runs
+[PASS] W2 m=0 reality: max |Im(2,0)| / peak = 7.10e-18 < 1e-3
+[PASS] W3 boundary error vs reference: E(somm) = 9.838e-05, E(ccm) = 9.838e-05 — both < 0.05 and indistinguishable (gap 0.0%): the paper's perturbative-amplitude conclusion
+[PASS] W4 constraints bounded (ccm run): L2-H 8.37e-06 -> 6.94e-06 (< 10x initial)
+
+OVERALL: PASS

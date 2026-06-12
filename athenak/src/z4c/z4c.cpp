@@ -150,6 +150,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   // Cauchy-characteristic matching (physical-mode psi0 injection)
   opt.ccm = pin->GetOrAddBoolean("z4c", "ccm", false);
+  opt.ccm_mode = pin->GetOrAddInteger("z4c", "ccm_mode", 1);
   opt.ccm_amp = pin->GetOrAddReal("z4c", "ccm_amp", 0.0);
   opt.ccm_t0 = pin->GetOrAddReal("z4c", "ccm_t0", 0.0);
   opt.ccm_sigma = pin->GetOrAddReal("z4c", "ccm_sigma", 1.0);

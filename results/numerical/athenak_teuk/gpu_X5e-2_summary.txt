@@ -1,0 +1,12 @@
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk/gpu_X5e-2/somm
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk/gpu_X5e-2/ccm
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk/gpu_X5e-2/ref
+[INFO] W1 somm: peak |r psi4(2,0)| / scri formula = 0.153 (finite-radius extraction at r = 8)
+[INFO] W1 ccm: peak |r psi4(2,0)| / scri formula = 0.153 (finite-radius extraction at r = 8)
+[INFO] W1 ref: peak |r psi4(2,0)| / scri formula = 0.153 (finite-radius extraction at r = 8)
+[PASS] W1 peak amplitudes within an order of magnitude of the scri formula and identical across runs
+[PASS] W2 m=0 reality: max |Im(2,0)| / peak = 1.86e-18 < 1e-3
+[INFO] W3 nonlinear regime: E(somm) = 4.605e-03, E(ccm) = 4.605e-03 (gap 0.0%) — boundary treatments resolvable; full quantitative match requires the nonlinear CCE datum
+[PASS] W4 constraints bounded (ccm run): L2-H 5.35e-02 -> 4.52e-02 (< 10x initial)
+
+OVERALL: PASS

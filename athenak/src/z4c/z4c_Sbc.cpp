@@ -145,6 +145,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
 
   // CCM physical-mode injection (z4c_ccm.hpp); no-op unless <z4c> ccm = true
   const bool ccm_on = opt.ccm;
+  const int ccm_mode = opt.ccm_mode;
   const Real ccm_amp = opt.ccm_amp;
   const Real ccm_t0 = opt.ccm_t0;
   const Real ccm_sigma = opt.ccm_sigma;
@@ -169,12 +170,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, is);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, is); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, is); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, is);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, is); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, is); }
             }
           break;
         default:
@@ -186,12 +187,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, ie);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, ie); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, ie); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, ie);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, ie); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, ie); }
             }
           break;
         default:
@@ -215,12 +216,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, js, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, js, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, js, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, js, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, js, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, js, i); }
             }
           break;
         default:
@@ -232,12 +233,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, je, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, je, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, je, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, je, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, je, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, je, i); }
             }
           break;
         default:
@@ -261,12 +262,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ks, j, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ks, j, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ks, j, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ks, j, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ks, j, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ks, j, i); }
             }
           break;
         default:
@@ -278,12 +279,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ke, j, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ke, j, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ke, j, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ke, j, i);
-            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ke, j, i); }
+            if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ke, j, i); }
             }
           break;
         default:

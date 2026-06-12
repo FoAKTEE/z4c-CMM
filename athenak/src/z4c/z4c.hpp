@@ -176,6 +176,7 @@ class Z4c {
     // (TT) incoming modes at the outer boundary (z4c_ccm.hpp). With
     // ccm_amp = 0 this reduces exactly to the Sommerfeld scheme.
     bool ccm;
+    int ccm_mode;       // datum mode: 1 uniform, 2 l2m0 pulse, 3 Teukolsky self-datum
     Real ccm_amp;       // datum amplitude (analytic Gaussian provider)
     Real ccm_t0;        // datum pulse center time
     Real ccm_sigma;     // datum pulse width

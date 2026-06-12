@@ -43,16 +43,73 @@
 namespace z4c {
 
 //----------------------------------------------------------------------------------------
-//! \fn Z4cCCMDatumPsi0
-//! \brief analytic psi0 datum: Gaussian pulse in time, constant over the sphere.
-//! Returns (re, im) of the CCE-frame psi0 BEFORE the Type-II boost.
+//! \fn TeukolskyF
+//! \brief n-th derivative of the Gaussian profile F(u) = X exp(-((u-rc)/tau)^2)
+//! (arXiv:2308.10361 eq:Gaussian_pulse_F / eq:Teukolsky_wave_outgoing), via
+//! physicists' Hermite polynomials: F^(n)(u) = X (-1/tau)^n H_n(s) e^{-s^2}.
 KOKKOS_INLINE_FUNCTION
-static void Z4cCCMDatumPsi0(const Real t, const Real x1, const Real x2,
-                            const Real x3, const Real amp, const Real t0,
-                            const Real sigma, Real *re, Real *im) {
-  const Real arg = (t - t0) / sigma;
-  *re = amp * exp(-arg * arg);
-  *im = 0.0;
+static Real TeukolskyF(const int n, const Real u, const Real X,
+                       const Real rc, const Real tau) {
+  const Real sarg = (u - rc)/tau;
+  const Real s2 = sarg*sarg;
+  Real H = 1.0;
+  switch (n) {
+    case 0: H = 1.0; break;
+    case 1: H = 2.0*sarg; break;
+    case 2: H = 4.0*s2 - 2.0; break;
+    case 3: H = sarg*(8.0*s2 - 12.0); break;
+    case 4: H = (16.0*s2 - 48.0)*s2 + 12.0; break;
+    case 5: H = sarg*((32.0*s2 - 160.0)*s2 + 120.0); break;
+    case 6: H = ((64.0*s2 - 480.0)*s2 + 720.0)*s2 - 120.0; break;
+    default: H = 0.0; break;
+  }
+  Real pref = 1.0;
+  for (int q = 0; q < n; ++q) { pref *= -1.0/tau; }
+  return X*pref*H*exp(-s2);
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn Z4cCCMDatumPsi0
+//! \brief analytic psi0 datum (CCE-frame psi0 BEFORE the Type-II boost).
+//! Modes (ccm_mode):
+//!   1: uniform Gaussian pulse over the sphere (machinery test);
+//!   2: (l=2, m=0) pulse  psi0 = amp g(t) * +2Y20,  +2Y20 = (1/4)sqrt(15/2pi) sin^2(th)
+//!      — the characteristic-pulse-injection test of arXiv:2308.10361 Sec. V.C
+//!      (its eq:auto-29 prescribes a +2Y20 J-pulse on the initial null slice);
+//!   3: Teukolsky self-datum — the EXACT linear-order incoming Weyl scalar of the
+//!      outgoing Teukolsky wave (its eq:Teukolsky_bulk_psi0):
+//!        psi0(t, r, th) = -sqrt(27 pi/10) F^(2)(t - r) * +2Y20 / r^5,
+//!      with (amp, t0, sigma) = (X, r_c, tau) of the z4c_ccm_teukolsky pgen —
+//!      the self-consistent CCM datum for the flat-background Teukolsky tests
+//!      (Sec. V.A) at linear order, no external CCE required.
+KOKKOS_INLINE_FUNCTION
+static void Z4cCCMDatumPsi0(const int mode, const Real t, const Real x1,
+                            const Real x2, const Real x3, const Real amp,
+                            const Real t0, const Real sigma,
+                            Real *re, Real *im) {
+  *re = 0.0; *im = 0.0;
+  const Real r = sqrt(SQR(x1) + SQR(x2) + SQR(x3));
+  const Real s2th = (r > 1e-12) ? fmax(1.0 - SQR(x3/r), 0.0) : 0.0;
+  // +2Y20 = (1/4) sqrt(15/(2 pi)) sin^2 theta  (eq:auto-38)
+  const Real y22 = 0.25*sqrt(15.0/(2.0*M_PI))*s2th;
+  switch (mode) {
+    case 1: {
+      const Real arg = (t - t0)/sigma;
+      *re = amp*exp(-arg*arg);
+      break;
+    }
+    case 2: {
+      const Real arg = (t - t0)/sigma;
+      *re = amp*exp(-arg*arg)*y22;
+      break;
+    }
+    case 3: {
+      const Real F2 = TeukolskyF(2, t - r, amp, t0, sigma);
+      *re = -sqrt(27.0*M_PI/10.0)*F2*y22/(r*r*r*r*r);
+      break;
+    }
+    default: break;
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -62,8 +119,8 @@ static void Z4cCCMDatumPsi0(const Real t, const Real x1, const Real x2,
 KOKKOS_INLINE_FUNCTION
 static void Z4cCCMInjection(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
     const RegionIndcs &indcs, const DualArray1D<RegionSize> &size,
-    const Real tcur, const Real amp, const Real t0, const Real sigma,
-    const Real betahat, const Real chi_div_floor,
+    const int mode, const Real tcur, const Real amp, const Real t0,
+    const Real sigma, const Real betahat, const Real chi_div_floor,
     const int m, const int k, const int j, const int i) {
   // ---- boundary point coordinates and coordinate-radial direction ----------
   Real &x1min = size.d_view(m).x1min;
@@ -125,7 +182,7 @@ static void Z4cCCMInjection(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
 
   // ---- datum and boosted psi0' ---------------------------------------------
   Real p0re, p0im;
-  Z4cCCMDatumPsi0(tcur, x1v, x2v, x3v, amp, t0, sigma, &p0re, &p0im);
+  Z4cCCMDatumPsi0(mode, tcur, x1v, x2v, x3v, amp, t0, sigma, &p0re, &p0im);
   const Real A2 = Aboost*Aboost;
   const Real pre = A2*p0re;
   const Real pim = A2*p0im;
