@@ -1,0 +1,13 @@
+N14 stage B part 1 (iter 39; packages/ZccmJl/test/derive_wtmap.jl):
+[PASS] G0 psi0 IDENTICAL in the worldtube-anchored gauge (end-to-end exact
+       series check on the anchored fields — the matching datum is gauge-
+       invariant in practice, not just in principle)
+[PASS] J row LOCAL with unit coefficient: J_wt = hTT
+       (hTT = (h_thth^ - h_phph^)/(2 s^2)-scalar; exact over all channels)
+[PASS] H row LOCAL with unit coefficient: H_wt = dt hTT
+[OPEN] U/beta/W rows: the exact fit failed because the candidate
+       scalarization mixed shape sectors (the sc-sector target needs the
+       sc-projections of angular-derivative candidates, e.g.
+       d_theta(trace) -> -6 s c X, not the P-scalars). Precisely diagnosed;
+       fit correction queued (iter 40). The two admitted rows are the
+       J-Dirichlet and its rate — the evolution-critical pair.
