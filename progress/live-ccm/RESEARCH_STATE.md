@@ -89,4 +89,37 @@ N12 in progress (this iteration). N13, N14 queued.
 | N12b: AthenaK 6th-order ladder converges to the exact waveform — E = 4.99e-2 / 5.36e-3 / 2.02e-3 at h = 0.5/0.331/0.277, measured order 5.39/5.52, finest amplitude 1±2e-4, shift 0.000 | dynamical convergence vs exact truth | `scripts/test_athenak_teuk_ana.sh` + `check_athenak_teuk_ana.py` -> results/numerical/athenak_teuk_ana/gpu6_checker.txt | [SOLID] |
 | Two production bugs root-caused: pgen frame (-theta-hat, h_{r theta} sign) violating linearized vacuum at 5% of |Ricci|; waveform time label one step behind the Task_End state | error ledger | error-database rows 2026-06-12T16:16; N11 amended | [SOLID] |
 
-N12 stage table status: [SOLID]. Next: N13 (CPBC rows in z4c_Sbc.cpp).
+N12 stage table status: [SOLID].
+
+## N13 status (iteration 19): [PRELIMINARY]
+
+v1 shipped: `z4c/cpbc` runtime flag; Gamma-tilde row = stock dissipative
+advection + causal-rate constraint sink `-2 Z_a/r`,
+`Z_a = (Gamma_a - d_j gt_aj)/2`. Holds: stability, Minkowski preservation
+(2.2e-14), waveform fidelity, 6th-order convergence (p = 5.39), exact
+linear-amplitude consistency (cpbc == somm when Z ~ roundoff). NOT yet
+held: measurable absorption (late-window int L2-H ratio 0.9999 at X = 0.05
+vs gate 0.95). Failed attempts ledgered: L=1 advected row (face-stencil
+ghost reads, NaN t=19.75); L=0 metric-transparent row (non-dissipative
+face loop, NaN t=43.25).
+
+- **O-N13-1 (gating the solid claim):** characteristic-exact Z transport
+  with INWARD one-sided first-derivative face stencils (no outflow-ghost
+  reads), GKS/LF-checked (mission-2 model1d closure lesson).
+- **Config note:** X = 2 with linear ID is under-dissipated at nghost=4
+  (NaN ~ t=50 even for stock Sommerfeld; raise diss/kappa1 or solve ID —
+  N14-era X=2 batteries).
+
+## N14 next-iteration plan
+
+Physical-row datum path is independent of the Z row — N14 proceeds.
+Design: host-side axisymmetric (m = 0) Bondi-Sachs module in
+athenak/src/z4c/ccm/ — hierarchy beta/Q/U/W + dJ/du from the 2007.01339
+equation ledger; compactified radius y = 1 - 2 r_wt/r on a Chebyshev or
+high-order FD grid; Gauss-Legendre theta collocation; worldtube Bondi data
+from the live Cauchy state via the cce/ sphere-interpolation machinery
+(in-memory); psi0 at the worldtube -> Type-II boost -> Z4cCCMDatumPsi0
+mode 4 (live), lockstep du = Cauchy dt. Verifiers: standalone linear
+Teukolsky characteristic solve vs the N12 exact module; SpECTRE
+CharacteristicExtract cross-oracle on identical worldtube data; live-CCM
+battery vs the N12 analytic truth.

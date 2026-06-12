@@ -1,0 +1,16 @@
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6/flat  (6 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6/somm  (59 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6/cpbc  (59 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6/cpbc2  (242 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6/ccmcp  (58 s)
+/data/haiyangw/claude/z4c-CMM/scripts/check_athenak_cpbc.py:59: DeprecationWarning: `trapz` is deprecated. Use `trapezoid` instead, or one of the numerical integration functions in `scipy.integrate`.
+  ratH = np.trapz(hc[late, 4], hs[late, 0])/np.trapz(hs[late, 4], hs[late, 0])
+/data/haiyangw/claude/z4c-CMM/scripts/check_athenak_cpbc.py:60: DeprecationWarning: `trapz` is deprecated. Use `trapezoid` instead, or one of the numerical integration functions in `scipy.integrate`.
+  ratM = np.trapz(hc[late, 5], hs[late, 0])/np.trapz(hs[late, 5], hs[late, 0])
+[PASS] B1 Minkowski + CPBC: final LINF-dev = 2.23e-14 < 1e-12
+[PASS] B2 boundary constraint absorption (t >= 62): int L2-H ratio cpbc/somm = 1.000 < 1.0, int L2-M ratio = 1.000 < 1.0
+[PASS] B3 waveform unharmed: E(cpbc) = 4.986e-02 <= 1.2 x E(somm) = 5.984e-02
+[PASS] B4 convergence with CPBC: E(164) = 4.986e-02, E(248) = 5.361e-03, order p = 5.39 >= 3.5
+[FAIL] B5 CPBC + CCM datum: constraints bounded (L2-H 1.71e-10 -> 3.01e-08 < 10x) and E = 4.986e-02 <= 1.2 x E(cpbc)
+
+OVERALL: FAIL

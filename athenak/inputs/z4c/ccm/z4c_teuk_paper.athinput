@@ -53,6 +53,8 @@ shift_eta       = 2.0
 chi_div_floor   = 0.00001
 damp_kappa1     = 0.02
 damp_kappa2     = 0.0
+# N13 constraint-preserving Gamma-tilde row (overridden per run)
+cpbc            = false
 # CCM (overridden per run): mode 3 = Teukolsky self-datum, params = pulse params
 ccm             = false
 ccm_mode        = 3

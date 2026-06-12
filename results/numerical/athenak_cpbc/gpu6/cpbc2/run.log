@@ -1,0 +1,38 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 4
+  Rank = 0: 2 MeshBlocks, cost = 2
+  Rank = 1: 2 MeshBlocks, cost = 2
+  Rank = 2: 2 MeshBlocks, cost = 2
+  Rank = 3: 2 MeshBlocks, cost = 2
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=1.097616e+00 cycle=0 time=0.000000e+00 dt=8.266129e-02
+elapsed=2.556051e+01 cycle=100 time=8.266129e+00 dt=8.266129e-02
+elapsed=4.991789e+01 cycle=200 time=1.653226e+01 dt=8.266129e-02
+elapsed=7.427156e+01 cycle=300 time=2.479839e+01 dt=8.266129e-02
+elapsed=9.837031e+01 cycle=400 time=3.306452e+01 dt=8.266129e-02
+elapsed=1.228796e+02 cycle=500 time=4.133065e+01 dt=8.266129e-02
+elapsed=1.472426e+02 cycle=600 time=4.959677e+01 dt=8.266129e-02
+elapsed=1.715028e+02 cycle=700 time=5.786290e+01 dt=8.266129e-02
+elapsed=1.961134e+02 cycle=800 time=6.612903e+01 dt=8.266129e-02
+elapsed=2.207368e+02 cycle=900 time=7.439516e+01 dt=8.266129e-02
+
+Terminating on time limit
+time=8.000000e+01 cycle=968
+tlim=8.000000e+01 nlim=-1
+
+MeshBlock-cycles = 7744
+cpu time used  = 2.364673e+02
+zone-cycles/cpu_second = 6.243949e+07
+particle-updates/cpu_second = 0.000000e+00
