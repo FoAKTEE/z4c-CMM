@@ -1,0 +1,66 @@
+% This line is intentionally within the first four lines for arXiv compatibility.
+\pdfoutput=1
+\documentclass[aps,prd,amsmath,floats,floatfix,onecolumn,compact,superscriptaddress,nofootinbib]{revtex4-2}
+
+% Encoding and fonts
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% Math and symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\IfFileExists{bm.sty}{\usepackage{bm}}{}
+\IfFileExists{tensor.sty}{\usepackage{tensor}}{}
+
+% Figures and floats
+\usepackage{graphicx}
+
+% Colors and hyperlinks
+\usepackage[dvipsnames,usenames]{xcolor}
+\definecolor{linkcolor}{rgb}{0.0,0.3,0.5}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.55}
+\usepackage[hypertexnames=false,unicode,colorlinks=true,linkcolor=linkcolor,citecolor=linkcolor,filecolor=linkcolor,urlcolor=linkcolor,pdfusetitle]{hyperref}
+
+% Writing utilities
+\usepackage{xspace}
+\usepackage[english]{babel}
+
+\graphicspath{{figures/}}
+
+% Compact one-column layout controls.
+\setlength{\parskip}{0pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}
+\renewcommand{\baselinestretch}{0.98}
+\allowdisplaybreaks
+
+\input{macros.tex}
+
+% NEW-FORMULATION highlighting: everything original to Z4c-CCM is dark blue;
+% transcribed background equations (Refs. [1-3]) remain black.
+\newcommand{\nf}[1]{{\color{darkblue}#1}}
+\newenvironment{nfblock}{\par\begingroup\color{darkblue}}{\endgroup\par}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\title{Cauchy-characteristic matching for the Z4c evolution system:\\ method}
+
+\author{z4c-CMM verified research loop}
+\affiliation{generated from the mission-2 knowledge ledger (\texttt{knowledge-database/paper\_z4c-CCM/}); every equation and number below is traceable to a verifier output under \texttt{results/numerical/}}
+
+\date{\today}
+\maketitle
+
+% USER-DIRECTED DEVIATION from PAPER_GENERATION_CONTRACT.md: method section
+% only; descriptions suppressed except where required to define notation.
+\input{sections/method.tex}
+
+\bibliographystyle{apsrev4-2}
+\bibliography{bibliography}
+
+\end{document}

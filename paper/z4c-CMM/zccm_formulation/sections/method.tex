@@ -1,0 +1,338 @@
+\section{Method}
+\label{sec:method}
+
+Black equations are transcribed from Refs.~\cite{Ruiz:2010qj,Moxon:2020gha,Ma:2023qjn};
+\nf{dark blue} equations constitute the new Z4c-CCM formulation. Verification
+labels [V$n$] refer to Table~\ref{tab:static}; dynamical evidence is in
+Table~\ref{tab:dynamic}.
+
+\subsection{Boundary frame and Z4c variables}
+\label{sec:frame}
+
+\begin{equation}
+ds^2 = -\alpha^2\,dt^2 + \gamma_{ij}\,(dx^i+\beta^i dt)(dx^j+\beta^j dt),
+\qquad
+n^\mu = \alpha^{-1}\,(1,\,-\beta^i),
+\label{eq:adm}
+\end{equation}
+\begin{equation}
+s_i = \frac{\partial_i r}{\sqrt{\gamma^{rr}}},\qquad
+s^i = \frac{\gamma^{ir}}{\sqrt{\gamma^{rr}}},\qquad
+m^A = \tfrac{1}{\sqrt{2}}\big(e_2 + i\,e_3\big)^A,
+\label{eq:normal}
+\end{equation}
+\begin{equation}
+\mathring{l}^\mu = \tfrac{1}{\sqrt{2}}\,(n^\mu + s^\mu),\qquad
+\mathring{k}^\mu = \tfrac{1}{\sqrt{2}}\,(n^\mu - s^\mu)
+\qquad\text{\cite{Ruiz:2010qj}}.
+\label{eq:nullvecs}
+\end{equation}
+Z4c variables \cite{Ruiz:2010qj}:
+\begin{equation}
+\chi = (\det\gamma)^{-1/3},\quad
+\tilde\gamma_{ij} = \chi\,\gamma_{ij},\quad
+K = \hat K + 2\Theta,\quad
+\tilde A_{ij} = \chi\Big(K_{ij}-\tfrac{1}{3}\gamma_{ij}K\Big),
+\label{eq:z4cvars}
+\end{equation}
+\begin{align}
+\partial_t \chi &= \tfrac{2}{3}\,\chi\,\big[\alpha(\hat K + 2\Theta) - D_i\beta^i\big],
+\label{eq:dtchi}\\
+\partial_t \tilde\gamma_{ij} &= -2\alpha \tilde A_{ij}
+ + \beta^k \tilde\gamma_{ij,k}
+ + 2\tilde\gamma_{k(i}\,\beta^k_{,j)}
+ - \tfrac{2}{3}\,\tilde\gamma_{ij}\,\beta^k{}_{,k}
+\qquad\text{\cite{Ruiz:2010qj}}.
+\label{eq:dtgt}
+\end{align}
+
+\subsection{Worldtube data map (node N1)}
+\label{sec:n1}
+
+\begin{equation}
+g_{00} = -\alpha^2 + \gamma_{ij}\beta^i\beta^j,\qquad
+g_{0i} = \gamma_{ij}\beta^j,\qquad
+g_{ij} = \gamma_{ij};
+\qquad
+g^{00} = -\alpha^{-2},\quad
+g^{0i} = \frac{\beta^i}{\alpha^{2}},\quad
+g^{ij} = \gamma^{ij} - \frac{\beta^i\beta^j}{\alpha^{2}}.
+\label{eq:fourmetric}
+\end{equation}
+ADM kinematics requires
+$\partial_t\gamma_{ij} = -2\alpha K_{ij} + \beta^k\partial_k\gamma_{ij}
+ + \gamma_{kj}\partial_i\beta^k + \gamma_{ik}\partial_j\beta^k$.
+From $\gamma_{ij} = \chi^{-1}\tilde\gamma_{ij}$,
+\begin{equation}
+\partial_t\gamma_{ij}
+ = \chi^{-1}\partial_t\tilde\gamma_{ij}
+ - \chi^{-2}\tilde\gamma_{ij}\,\partial_t\chi ,
+\label{eq:dtg-step1}
+\end{equation}
+and inserting \eqref{eq:dtchi}--\eqref{eq:dtgt} with
+$K_{ij} = \chi^{-1}\big(\tilde A_{ij}+\tfrac13\tilde\gamma_{ij}K\big)$,
+$\beta^k\partial_k\gamma_{ij} = \chi^{-1}\beta^k\partial_k\tilde\gamma_{ij}
+ - \gamma_{ij}\,\beta^k\partial_k\ln\chi$,
+\begin{equation}
+\big[\partial_t\gamma_{ij}\big]_{\rm Z4c}
+ - \big[\partial_t\gamma_{ij}\big]_{\rm ADM}
+ = \gamma_{ij}\Big[\tfrac{2}{3}\,D_k\beta^k
+ - \tfrac{2}{3}\,\partial_k\beta^k
+ + \beta^k\partial_k\ln\chi\Big].
+\label{eq:dtg-step2}
+\end{equation}
+\begin{nfblock}
+\begin{equation}
+\boxed{\;D_i\beta^i = \partial_k\beta^k
+ - \tfrac{3}{2}\,\beta^k\,\partial_k\ln\chi\;}
+\qquad\text{[V3: closure exact; naive }D=\partial_k\beta^k\text{ leaves
+residual }+1\cdot\gamma_{ij}\beta^k\partial_k\ln\chi\text{]}.
+\label{eq:divbeta}
+\end{equation}
+\end{nfblock}
+
+\subsection{Tetrad correspondence and Type-II boost (node N2)}
+\label{sec:n2}
+
+Outgoing null label $u$ with $u|_{\partial\Omega}=t$:
+$\partial_\mu u = (1,\,u_r,\,0,\,0)$,
+\begin{equation}
+g^{tt} + 2g^{tr}u_r + g^{rr}u_r^2 = 0
+\quad\Longrightarrow\quad
+u_r = \frac{-g^{tr}-\sqrt{(g^{tr})^2 - g^{tt}g^{rr}}}{g^{rr}},
+\qquad u_r\big|_{\rm flat} = -1 .
+\label{eq:uroot}
+\end{equation}
+Characteristic outgoing null vector \cite{Moxon:2020gha,Ma:2023qjn}:
+\begin{equation}
+\hat l^{\,\mu} = -e^{2\hat\beta}\,g^{\mu\nu}\partial_\nu u .
+\label{eq:lhat}
+\end{equation}
+\begin{nfblock}
+For arbitrary $(\alpha,\beta^i,\gamma_{ij})$,
+\begin{equation}
+\mathring{l}^{\mu}
+ = \frac{\sqrt{2}}{2}\,
+ \big(\alpha-\gamma_{ij}\beta^i s^j\big)\,e^{-2\hat\beta}\;
+ \hat l^{\,\mu}
+\qquad\text{[V1: exact at 12 rational points; GPU residual
+$9.3\times10^{-16}$]},
+\label{eq:boost-identity}
+\end{equation}
+\begin{equation}
+A = \big(\alpha-\gamma_{ij}\beta^i s^j\big)\,e^{-2\hat\beta},
+\qquad
+\psi_0' = A^2\,\psi_0 ,
+\label{eq:boost}
+\end{equation}
+i.e.\ the Choice-2 boost of Ref.~\cite{Ma:2023qjn} holds verbatim on the Z4c
+frame \eqref{eq:nullvecs}: no evolution-system variable enters
+\eqref{eq:boost-identity}.
+\end{nfblock}
+$\psi_0$ on the characteristic grid \cite{Moxon:2020gha,Ma:2023qjn}:
+\begin{equation}
+\psi_0=\Big(\frac{r\partial_{r}\beta-1}{4Kr}\Big)
+\Big[(1{+}K)\partial_{r}J-\frac{J^2\partial_{r}\bar{J}}{1{+}K}\Big]
++\frac{J(1{+}K^2)\,\partial_{r}J\,\partial_{r}\bar{J}}{8K^3}
++\frac{1}{8K}\Big[\frac{J^2\partial^2_{r}\bar{J}}{1{+}K}
+ -(1{+}K)\partial_{r}^2J\Big]
+-\frac{J\bar{J}^2(\partial_{r}J)^2+J^3(\partial_{r}\bar{J})^2}{16K^3}.
+\label{eq:psi0cce}
+\end{equation}
+
+\subsection{Physical-mode dictionary (node N3)}
+\label{sec:n3}
+
+Linear TT perturbation on the frame \eqref{eq:normal},
+$\gamma_{AB} = \delta_{AB} + h_{AB}(t,x_s)$,
+$h_{22}=-h_{33}\equiv F_1$, $h_{23}\equiv F_2$, $h_{mm} = F_1 + iF_2$;
+$\psi_0 \equiv -C_{abcd}\,l^a m^b l^c m^d$ on
+$l = \mathring l$, $m = m^A$. Direct evaluation of the linearized Riemann
+tensor gives, off shell (no field equations used),
+\begin{nfblock}
+\begin{equation}
+\psi_0 = \tfrac{1}{4}\,(\partial_t + \partial_s)^2\,h_{mm}
+\qquad\text{[V2: exact for arbitrary }F_1,F_2\text{]},
+\label{eq:psi0lin}
+\end{equation}
+\begin{equation}
+(\partial_t+\partial_s)^2\,\gamma_{AB}^{\rm TF}
+ = 4\Big(\psi_0\,\bar m_A \bar m_B + \bar\psi_0\, m_A m_B\Big),
+\qquad
+(\mathring l\!\cdot\!\partial)^2\gamma_{AB}^{\rm TF}
+ = 2\Big(\psi_0'\,\bar m_A \bar m_B + \bar\psi_0'\, m_A m_B\Big)
+\label{eq:dictionary}
+\end{equation}
+\end{nfblock}
+[V2: GPU residual $0.0$ over $4{,}194{,}304$ off-shell Fourier modes].
+$(\mathring l\!\cdot\!\partial)$ annihilates outgoing waves $f(t-x_s)$:
+\eqref{eq:dictionary} is transparent to them.
+
+\subsection{The Z4c-CCM boundary conditions (node N6)}
+\label{sec:n6}
+
+Ten incoming modes at the worldtube; $X^{\mathring{}}{}^\mu_v =
+(n^\mu + \sqrt{v}\,s^\mu)/\sqrt 2$ at sector speed $v$; $L\ge 1$:
+\begin{nfblock}
+\begin{align}
+\text{physical (2):}\qquad &
+(\mathring l\!\cdot\!\partial)^2\,\gamma^{\rm TF}_{AB}
+\;\hat=\;
+2\Big(\psi_0'\,\bar m_A\bar m_B + \bar\psi_0'\,m_A m_B\Big),
+\qquad \psi_0' = A^2\,\psi_0^{\rm CCE},
+\label{eq:bc-phys}\\
+\text{constraint (4):}\qquad &
+\big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,\Theta \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,Z_s \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,Z_A \;\hat=\; 0,
+\label{eq:bc-cpbc}\\
+\text{gauge (4):}\qquad &
+\big(r^2\,\mathring m\!\cdot\!\partial\big)^{L+1}\alpha \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring k_{\nu_s}\!\!\cdot\!\partial\big)^{L+1}\beta_s \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring j\!\cdot\!\partial\big)^{L+1}\beta_A \;\hat=\; 0 .
+\label{eq:bc-gauge}
+\end{align}
+Bj{\o}rhus form of \eqref{eq:bc-phys}, with
+$V_{AB}\equiv(\mathring l\!\cdot\!\partial)\,\gamma^{\rm TF}_{AB}$:
+\begin{equation}
+(\mathring l\!\cdot\!\partial)\,V_{AB}\big|_{\partial\Omega}
+ = 2\Big(\psi_0'\,\bar m_A\bar m_B + \bar\psi_0'\,m_A m_B\Big);
+\qquad
+\psi_0^{\rm CCE}\!\to 0 \;\Longrightarrow\; \text{CPBC scheme of
+Ref.~\cite{Ruiz:2010qj}}
+\quad\text{[V6]}.
+\label{eq:bjorhus}
+\end{equation}
+\end{nfblock}
+Equations \eqref{eq:bc-cpbc}--\eqref{eq:bc-gauge} are the order-$L$
+conditions of Ref.~\cite{Ruiz:2010qj}; \eqref{eq:bc-gauge} replaces the
+Sommerfeld gauge placeholder of Ref.~\cite{Ma:2023qjn}.
+
+\subsection{Sector orthogonality (nodes N4, N5)}
+\label{sec:n45}
+
+For arbitrary TT data $h_{AB}(t,x_s)$ [V4]:
+\begin{equation}
+\mathcal H = \partial_i\partial_j h_{ij} - \partial^2 h^k{}_k = 0,
+\qquad
+\mathcal M_i = \partial_j \dot h_{ij} - \partial_i \dot h^j{}_j = 0,
+\qquad
+\gamma^{ij}\partial_t h_{ij} = 0,
+\qquad
+\tilde\Gamma^i = -\partial_j \tilde h^{ij} = 0 ;
+\label{eq:orthogonality}
+\end{equation}
+negative controls:
+$h_{x_s y}=G(t,x_s)\Rightarrow \mathcal M_y = -\tfrac12\,\partial_{x_s}\dot G \neq 0$;
+$h_{yy}=h_{zz}=G \Rightarrow \mathcal H = -2\,\partial_{x_s}^2 G \neq 0$.
+\begin{nfblock}
+Hence the datum \eqref{eq:bc-phys} sources neither
+\eqref{eq:bc-cpbc} nor \eqref{eq:bc-gauge} at linear order: the three
+sectors of \eqref{eq:bc-phys}--\eqref{eq:bc-gauge} commute.
+\end{nfblock}
+On the boundary wave model of Ref.~\cite{Ruiz:2010qj},
+$\big[\partial_t^2 - 2\mathring\beta\,\partial_t\partial_x
+ - (1-\mathring\beta^2)\partial_x^2\big]u = 0$, plane-wave reflection [V5]:
+\begin{equation}
+R_{\rm Sommerfeld}
+ = -\frac{\mathring\beta\,(1-\mathring\beta)}
+        {(1+\mathring\beta)(2-\mathring\beta)} \neq 0,
+\qquad
+R_{(\partial_t + c_+\partial_x)} = 0
+\quad\text{(identically)} .
+\label{eq:reflection}
+\end{equation}
+
+\subsection{Frozen-coefficient boundary stability (node N7)}
+\label{sec:n7}
+
+Laplace--Fourier ansatz $u = \tilde u\,e^{st+\lambda x}$, $\Re s>0$ [V7]:
+\begin{equation}
+\lambda_+ = \frac{s}{1+\mathring\beta}\;(\text{admissible}),
+\qquad
+\lambda_- = -\frac{s}{1-\mathring\beta},
+\qquad
+D_L(s) = \Big(s + (1+\mathring\beta)\,\lambda_+\Big)^{L+1} = (2s)^{L+1},
+\qquad
+\frac{|D_L(s)|}{|s|^{L+1}} = 2^{L+1} .
+\label{eq:kreiss}
+\end{equation}
+\begin{nfblock}
+$D_L$ contains no datum symbol: the injection \eqref{eq:bc-phys} modifies
+only the inhomogeneity, so the boundary-stability results of
+Ref.~\cite{Ruiz:2010qj} (constraint sector: all $L$; gauge+metric sector:
+spherical reduction, asymptotically harmonic shift) transfer verbatim with
+$\|u\| \le C\,\|\psi_0'\text{-datum}\|$.
+\end{nfblock}
+
+\subsection{Numerical evidence}
+\label{sec:numerics}
+
+All runs: JAX float64, $4\times$ NVIDIA A100-80GB
+(\texttt{CUDA\_VISIBLE\_DEVICES=0,1,2,3}), wall clock $\le 23$\,s each
+(budget 600\,s); outputs under \texttt{results/numerical/}.
+
+\begin{table}[htbp]
+\centering
+\caption{Symbolic and sampling verification of
+\eqref{eq:divbeta}--\eqref{eq:kreiss}. ``Exact'' = sympy identity on
+arbitrary functions or exact rationals (zero float error).
+Files: \texttt{n2\_boost\_check.txt}, \texttt{n3\_dictionary\_check.txt},
+\texttt{n1\_varmap\_check.txt}, \texttt{n4\_cpbc\_compat\_check.txt},
+\texttt{n5\_gauge\_check.txt}, \texttt{n6\_composite\_check.txt},
+\texttt{n7\_lf\_sketch\_check.txt}.}
+\label{tab:static}
+\footnotesize
+\begin{tabular}{llll}
+\hline\hline
+ & verified statement & exact part & GPU sweep (4 devices) \\
+\hline
+V1 & boost identity \eqref{eq:boost-identity}, factor $\sqrt2/2$ &
+ 12/12 rational points & $9.34\times10^{-16}$ over $4{,}194{,}304$ samples \\
+V2 & dictionary \eqref{eq:psi0lin}--\eqref{eq:dictionary},
+ $c=\tfrac14$, $K=4$ & arbitrary $F_1,F_2$, off shell &
+ $0.0$ over $4{,}194{,}304$ off-shell modes \\
+V3 & maps \eqref{eq:fourmetric}, closure \eqref{eq:divbeta} &
+ full-symbol identities & round trip $4.10{\times}10^{-16}$, $gg^{-1}$ $8.88{\times}10^{-16}$ \\
+V4 & orthogonality \eqref{eq:orthogonality} + controls &
+ identities and non-vanishing controls & TT residual $0.0$ vs control
+ $12.3$ \\
+V5 & reflection \eqref{eq:reflection} &
+ exact $R$ algebra & $|R_{\rm Som}|\ge0.023$ on
+ $\mathring\beta\in[0.05,0.6]$; $R=0$ exact \\
+V6 & 10-mode count, $\psi_0\to0$ reduction, wire-through &
+ structural & reduction $0.0$; chain residual $2.92{\times}10^{-16}$ \\
+V7 & Kreiss condition \eqref{eq:kreiss}, $L=0..3$ &
+ $D_L=(2s)^{L+1}$ exact & ratio deviation $3.2\times10^{-14}$
+ ($4{,}194{,}304$ samples) \\
+\hline\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Dynamical model evolution (FD2+RK4, shift $\mathring\beta=0.3$,
+outgoing Gaussian pulse onto the boundary; one configuration per GPU;
+\texttt{n8\_model1d\_test.txt}). The orientation of the discrete model gives
+the $\mathring\beta\to-\mathring\beta$ mirror of \eqref{eq:reflection}; the
+exact characteristic ratio at the boundary is
+$q_{\rm in}/q_{\rm out}=\mathring\beta/(2+\mathring\beta)$.}
+\label{tab:dynamic}
+\footnotesize
+\begin{tabular}{llll}
+\hline\hline
+boundary condition & measured & exact & deviation \\
+\hline
+Sommerfeld, $q$-ratio & $0.1305$ & $0.1304$ & $0.03\%$ \\
+Sommerfeld, $R_u$ & $0.2423$ & $0.2422$ & $0.04\%$ \\
+$(\partial_t + c_+\partial_x)$ [P1/CCM op., $N{=}4097$] &
+ $R = 3.24\times10^{-15}$ & $0$ & machine precision \\
+\nf{CCM injection \eqref{eq:bjorhus}, rel.\ $L_2$ vs exact pulse} &
+ \nf{$1.09\times10^{-4}$} & \nf{$0$} & \nf{two-way transparent} \\
+\hline\hline
+\end{tabular}
+\end{table}
