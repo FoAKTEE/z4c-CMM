@@ -1,0 +1,10 @@
+[INFO] W1 somm: peak |r psi4(2,0)| / scri formula = 0.091 (extraction r = 36, tau/r = 0.056)
+[INFO] W1 ccm: peak |r psi4(2,0)| / scri formula = 0.091 (extraction r = 36, tau/r = 0.056)
+[INFO] W1 ref: peak |r psi4(2,0)| / scri formula = 0.092 (extraction r = 36, tau/r = 0.056)
+[INFO] W1 gate skipped: the linear scri formula does not apply at X = 2 (paper compares against a nonlinear reference)
+[PASS] W2 m=0 reality: max |Im(2,0)| / peak = 1.87e-14 < 1e-3
+[INFO] W3 nonlinear regime: E(somm) = 8.870e-02, E(ccm) = 8.870e-02 (gap 0.0%)
+[INFO] numerical-error estimates: ccm |164-132| = 6.930e-01, somm |164-132| = 6.930e-01
+[PASS] W4 constraints bounded (ccm run): L2-H 3.54e-03 -> 5.42e-03 (< 10x initial)
+
+OVERALL: PASS

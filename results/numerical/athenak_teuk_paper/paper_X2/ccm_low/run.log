@@ -1,0 +1,33 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 4
+  Rank = 0: 2 MeshBlocks, cost = 2
+  Rank = 1: 2 MeshBlocks, cost = 2
+  Rank = 2: 2 MeshBlocks, cost = 2
+  Rank = 3: 2 MeshBlocks, cost = 2
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=9.316701e-01 cycle=0 time=0.000000e+00 dt=1.971154e-01
+elapsed=3.307986e+00 cycle=100 time=1.971154e+01 dt=1.971154e-01
+elapsed=5.616513e+00 cycle=200 time=3.942308e+01 dt=1.971154e-01
+elapsed=7.919109e+00 cycle=300 time=5.913462e+01 dt=1.971154e-01
+elapsed=1.022806e+01 cycle=400 time=7.884615e+01 dt=1.971154e-01
+
+Terminating on time limit
+time=8.000000e+01 cycle=406
+tlim=8.000000e+01 nlim=-1
+
+MeshBlock-cycles = 3248
+cpu time used  = 9.434392e+00
+zone-cycles/cpu_second = 4.840744e+07
+particle-updates/cpu_second = 0.000000e+00

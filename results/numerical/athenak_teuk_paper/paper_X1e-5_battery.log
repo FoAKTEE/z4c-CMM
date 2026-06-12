@@ -1,0 +1,11 @@
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_paper/paper_X1e-5/somm  (34 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_paper/paper_X1e-5/somm_mid  (20 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_paper/paper_X1e-5/ccm  (33 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_paper/paper_X1e-5/ccm_mid  (20 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_paper/paper_X1e-5/ccm_low  (14 s)
+RUN FAILED: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_paper/paper_X1e-5/ref
+elapsed=9.166629e+01 cycle=100 time=1.250000e+01 dt=1.250000e-01
+--------------------------------------------------------------------------
+prterun noticed that process rank 0 with PID 4039057 on node perseus exited on
+signal 15 (Terminated).
+--------------------------------------------------------------------------

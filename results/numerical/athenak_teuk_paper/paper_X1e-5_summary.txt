@@ -1,0 +1,11 @@
+[INFO] W1 somm: peak |r psi4(2,0)| / scri formula = 0.612 (extraction r = 36, tau/r = 0.056)
+[INFO] W1 ccm: peak |r psi4(2,0)| / scri formula = 0.612 (extraction r = 36, tau/r = 0.056)
+[INFO] W1 ref: peak |r psi4(2,0)| / scri formula = 0.612 (extraction r = 36, tau/r = 0.056)
+[PASS] W1 peak amplitudes within an order of magnitude of the scri formula
+[PASS] W2 m=0 reality: max |Im(2,0)| / peak = 2.20e-09 < 1e-3
+[PASS] W3 boundary error vs reference: E(somm) = 2.732e-04, E(ccm) = 2.732e-04 — both < 0.05, gap 0.0% < 10% (perturbative indistinguishability)
+[INFO] numerical-error estimates: ccm |164-132| = 7.022e-01, somm |164-132| = 7.022e-01
+[PASS] W5 boundary error below numerical error: E(ccm) = 2.732e-04 < |ccm164 - ccm132| = 7.022e-01
+[PASS] W4 constraints bounded (ccm run): L2-H 7.03e-09 -> 2.12e-08 (< 10x initial)
+
+OVERALL: PASS
