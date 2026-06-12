@@ -1,0 +1,11 @@
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_ana/gpu6/L1  (45 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_ana/gpu6/L2  (183 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_teuk_ana/gpu6/L3  (368 s)
+[INFO] L1 (h = 0.5000): E = 4.9864e-02, peak ratio vs exact = 0.9986
+[INFO] L2 (h = 0.3306): E = 3.5711e-02, peak ratio vs exact = 0.9538
+[INFO] L3 (h = 0.2770): E = 2.4748e-02, peak ratio vs exact = 0.9708
+[FAIL] A1 exact match at h = 1/4: E(L3) = 2.475e-02 < 0.02
+[FAIL] A2 measured convergence order: p(L1,L2) = 0.81, p(L2,L3) = 2.07, both >= 3.5
+[FAIL] A3 Richardson(L2,L3; p = 2.07) vs analytic: E = 4.740e-02 <= E(L3)/5 = 4.950e-03
+
+OVERALL: FAIL

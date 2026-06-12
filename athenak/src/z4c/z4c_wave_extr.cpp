@@ -197,9 +197,14 @@ void Z4c::WaveExtr(MeshBlockPack *pmbp) {
       outFile.open(filename, std::ios::out | std::ios::app);
       outFile2.open(filename2, std::ios::out | std::ios::app);
 
-      // first append time
-      outFile << pmbp->pmesh->time << "\t";
-      outFile2 << pmbp->pmesh->time << "\t";
+      // first append time. The waveform tasks are Task_End tasks: the state
+      // has completed the final RK stage (t + dt) while pmesh->time is
+      // advanced only after the cycle — label with the STATE time. (The
+      // pre-correction label lagged the data by exactly one step: measured
+      // best-fit shifts 0.105/0.080/0.070 ~ dt at h = 0.5/0.331/0.277,
+      // ledger N12.)
+      outFile << pmbp->pmesh->time + pmbp->pmesh->dt << "\t";
+      outFile2 << pmbp->pmesh->time + pmbp->pmesh->dt << "\t";
 
       // append waveform
       for (int l = 2; l < lmax+1; ++l) {

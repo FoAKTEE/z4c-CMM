@@ -49,6 +49,44 @@ reference); N13 gates N14 (live datum lands on the full boundary operator).
 
 N12 in progress (this iteration). N13, N14 queued.
 
+## N12 findings (iteration 18)
+
+1. **Teukolsky pgen frame bug (root cause).** The pgen's
+   `eth = rh x eph = -theta-hat` flipped the h_{r theta} cross term: the
+   evolved "Teukolsky wave" violated the linearized vacuum equations at 5%
+   of |Ricci| (FD residual 1.8e-4 vs 3.9e-3 at 30-digit precision; 1.9e-34
+   after the flip). Invisible to constraint monitors (O(X^2)+truncation
+   floor) and to run-vs-reference protocols (consistent on both sides) —
+   caught only by the exact-analytic-reference program. Error-db row
+   2026-06-12T16:16. Fix: `eth = eph x rh` (pgen) + `eph x s` (injection
+   dyad, Im psi0 channel only).
+2. **Exact finite-radius waveform (N12a, OVERALL PASS).** In the AthenaK
+   extraction convention: rpsi4(2,0) = sqrt(6pi/5)[F6 + 2F5/r + 3F4/r^2
+   + 3F3/r^3 + (3/2)F2/r^4](t-r) - sqrt(6pi/5)(3/2)F2(t+r)/r^4. Gates:
+   traceless, linearized vacuum coefficient-exact, sin^2-factorization,
+   peeling (k+j=6), scri limit, independent FD cross-check (1.4e-40).
+   Convention map: rpsi4_AthenaK = (-1) x the paper formula
+   -sqrt(6pi/5)F6.
+3. **psi0 datum channel exact + orientation map.** In the concrete
+   right-handed (s, e_th, e_ph) frame with eps = +[ikl]:
+   Re[(E - eps(s)B)(m,m)] = -sqrt(27pi/10)F2(t-r)/r^5 * 2Y20 EXACTLY (no
+   other retarded term; FD-adjudicated r^-5 scaling at r=36/72). The N3
+   abstract identity (E + eps B)(m,m) = -psi0 corresponds under
+   eps -> -eps (m <-> mbar); the AthenaK injection w_ab is quadratic in
+   e_th and unaffected for real datums.
+4. **Waveform time-label bug.** The Weyl/waveform tasks are Task_End tasks
+   (state at t + dt) but the writer labeled rows with the pre-advance
+   pmesh->time: data exactly one step early vs label (measured best-fit
+   shifts = dt at all three resolutions; raw E 12-18% with peak ratio 0.98).
+   Fixed: label = time + dt. After shift removal the ladder agreed with the
+   exact waveform to 3.4%/0.38%/0.31% (h = 0.5/0.331/0.277, 6th order).
+
 ## Accepted results log
 
-(empty — populated on verifier admission only)
+| Claim | Evidence type | Evidence / verifier | Status |
+|---|---|---|---|
+| N12a: exact linear finite-radius rpsi4(2,0) and psi0 of the Teukolsky solution in the AthenaK convention, 7 gates incl. linearized vacuum (coefficient-exact) and an independent mpmath-FD cross-check (1.4e-40); convention map AthenaK = -1 x paper; datum channel = (E - eps(s)B)(m,m) in the concrete frame | exact symbolic + independent FD | `scripts/verify_n12_exact_psi4.py` -> results/numerical/n12_exact_psi4_check.txt, coefficients n12_psi4_exact_coeffs.json | [SOLID] |
+| N12b: AthenaK 6th-order ladder converges to the exact waveform — E = 4.99e-2 / 5.36e-3 / 2.02e-3 at h = 0.5/0.331/0.277, measured order 5.39/5.52, finest amplitude 1±2e-4, shift 0.000 | dynamical convergence vs exact truth | `scripts/test_athenak_teuk_ana.sh` + `check_athenak_teuk_ana.py` -> results/numerical/athenak_teuk_ana/gpu6_checker.txt | [SOLID] |
+| Two production bugs root-caused: pgen frame (-theta-hat, h_{r theta} sign) violating linearized vacuum at 5% of |Ricci|; waveform time label one step behind the Task_End state | error ledger | error-database rows 2026-06-12T16:16; N11 amended | [SOLID] |
+
+N12 stage table status: [SOLID]. Next: N13 (CPBC rows in z4c_Sbc.cpp).

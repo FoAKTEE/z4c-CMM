@@ -1,0 +1,44 @@
+{
+ "convention": "AthenaK z4c_calculate_weyl_scalars (BAM contraction, FR4=1/4, GS tetrad), output r*psi4 projected on -2Y20; F = generic pulse profile, F^(k) its k-th derivative",
+ "form": "r psi4_(2,0)(t,r) = sum_kj c[part][k][j] F^(k)(t -/+ r) r^-j",
+ "ret": {
+  "2": {
+   "4": [
+    "3*sqrt(30)*sqrt(pi)/10",
+    2.912438868833549
+   ]
+  },
+  "3": {
+   "3": [
+    "3*sqrt(30)*sqrt(pi)/5",
+    5.824877737667098
+   ]
+  },
+  "4": {
+   "2": [
+    "3*sqrt(30)*sqrt(pi)/5",
+    5.824877737667098
+   ]
+  },
+  "5": {
+   "1": [
+    "2*sqrt(30)*sqrt(pi)/5",
+    3.8832518251113983
+   ]
+  },
+  "6": {
+   "0": [
+    "sqrt(30)*sqrt(pi)/5",
+    1.9416259125556992
+   ]
+  }
+ },
+ "adv": {
+  "2": {
+   "4": [
+    "-3*sqrt(30)*sqrt(pi)/10",
+    -2.912438868833549
+   ]
+  }
+ }
+}

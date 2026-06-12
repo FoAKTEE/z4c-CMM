@@ -1,0 +1,18 @@
+[INFO] fields assembled (1.7 s)
+[INFO] derivative tables built (64.5 s)
+[INFO] linear Ricci built (296.1 s)
+[PASS] G1 trace: delta^ij h_ij = 0 identically
+[PASS] G2 linearized vacuum: all 10 component checks coefficient-exact zero
+[INFO] psi4 evaluated at 4 Pythagorean angles (330.8 s)
+[PASS] G4 psi4 = P4(t,r) sin^2(theta): P4 identical at 4 Pythagorean angles
+[PASS] G5 scri limit: |retarded F^(6)/r^0 coefficient| = sqrt(6 pi/5); convention map AthenaK = (-1) x paper
+[INFO] convention: rpsi4_AthenaK = (-1) x rpsi4_paper-formula
+[PASS] G6 peeling: every retarded term of r*psi4(2,0) is F^(6-j)/r^j
+[INFO] retarded table (k=F-order, j=1/r power, coeff/(-sqrt(6pi/5))): {('2', '4'): '-3/2', ('3', '3'): '-3', ('4', '2'): '-3', ('5', '1'): '-2', ('6', '0'): '-1'}
+[INFO] advanced table: {('2', '4'): '3/2'}
+[PASS] G3 psi0 datum: retarded part = -sqrt(27pi/10) F^(2)(t-r)/r^5 * 2Y20 exactly, no other retarded term (the mode-3 datum normalization)
+[PASS] G7 independent FD cross-check of psi4 at (t,r,th)=(54,36,*): rel dev = 1.36e-40 < 1e-8
+[INFO] G7 values: FD = 0.00788600870684, table = 0.00788600870684
+[INFO] wrote results/numerical/n12_psi4_exact_coeffs.json
+
+OVERALL: PASS  (334.8 s)

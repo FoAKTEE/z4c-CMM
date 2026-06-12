@@ -106,7 +106,12 @@ static void TeukolskyMetric(const Real t, const Real x, const Real y, const Real
   const Real htt_o  = Cf*f1tt + Af*f2tt, htt_d  = Cd*f1tt + Ad*f2tt;
   const Real hpp_o  = Cf*f1pp + Af*f2pp, hpp_d  = Cd*f1pp + Ad*f2pp;
 
-  // frame vectors (Cartesian); axis guard: at sth -> 0 pick e_ph = y-hat
+  // frame vectors (Cartesian); axis guard: at sth -> 0 pick e_ph = y-hat.
+  // e_th = e_ph x r-hat = +theta-hat: the rh x eph order used before iter-18
+  // gives -theta-hat, which flips the h_{r theta} cross term and violates the
+  // linearized vacuum equations at O(B) (5% of |Ricci|; root-caused by the
+  // exact-reference program, ledger N12: vacuum residual 1.8e-4 -> 1.9e-34
+  // under the flip at 30-digit precision).
   Real rh[3] = {x*ir, y*ir, z*ir};
   Real eph[3], eth[3];
   const Real rho = sqrt(fmax(x*x + y*y, 1e-300));
@@ -115,9 +120,9 @@ static void TeukolskyMetric(const Real t, const Real x, const Real y, const Real
   } else {
     eph[0] = 0.0; eph[1] = 1.0; eph[2] = 0.0;
   }
-  eth[0] = rh[1]*eph[2] - rh[2]*eph[1];
-  eth[1] = rh[2]*eph[0] - rh[0]*eph[2];
-  eth[2] = rh[0]*eph[1] - rh[1]*eph[0];
+  eth[0] = eph[1]*rh[2] - eph[2]*rh[1];
+  eth[1] = eph[2]*rh[0] - eph[0]*rh[2];
+  eth[2] = eph[0]*rh[1] - eph[1]*rh[0];
 
   for (int a = 0; a < 3; ++a) {
     for (int b = 0; b < 3; ++b) {

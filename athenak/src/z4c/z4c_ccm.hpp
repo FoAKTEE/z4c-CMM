@@ -166,9 +166,13 @@ static void Z4cCCMInjection(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   } else {  // on the z-axis: any tangential pair works
     eph[0] = 0.0; eph[1] = 1.0; eph[2] = 0.0;
   }
-  eth[0] = sc[1]*eph[2] - sc[2]*eph[1];
-  eth[1] = sc[2]*eph[0] - sc[0]*eph[2];
-  eth[2] = sc[0]*eph[1] - sc[1]*eph[0];
+  // e_th = e_ph x s = +theta-hat (the s x eph order gives -theta-hat; the
+  // real part of the injection w_ab is quadratic in e_th and unaffected,
+  // but Im psi0' would flip — fixed alongside the pgen frame correction,
+  // ledger N12)
+  eth[0] = eph[1]*sc[2] - eph[2]*sc[1];
+  eth[1] = eph[2]*sc[0] - eph[0]*sc[2];
+  eth[2] = eph[0]*sc[1] - eph[1]*sc[0];
 
   // ---- Type-II boost: A = (alpha - gamma_ij beta^i s^j) e^{-2 betahat} -----
   const Real alpha = fmax(z4c.alpha(m,k,j,i), 1e-12);

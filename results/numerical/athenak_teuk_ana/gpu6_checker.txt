@@ -1,0 +1,8 @@
+[INFO] L1 (h = 0.5000): E = 4.9864e-02, best-fit shift = +0.020, amplitude = 0.9920, E_after-fit = 3.37e-02
+[INFO] L2 (h = 0.3306): E = 5.3607e-03, best-fit shift = +0.002, amplitude = 0.9996, E_after-fit = 3.72e-03
+[INFO] L3 (h = 0.2770): E = 2.0189e-03, best-fit shift = +0.000, amplitude = 0.9998, E_after-fit = 2.01e-03
+[PASS] A1 exact match at the finest rung: E(L3) = 2.019e-03 < 0.005
+[PASS] A2 measured convergence order to the ANALYTIC waveform: p(L1,L2) = 5.39, p(L2,L3) = 5.52, both >= 3.5
+[PASS] A3 finest-rung fidelity: |amp - 1| = 1.97e-04 <= 0.002 and |shift| = 0.000 <= dt_step/2 = 0.035
+
+OVERALL: PASS
