@@ -30,5 +30,6 @@ include("bondisolver_cheb.jl")
 include("anchored_series.jl")
 include("worldtubemap.jl")
 include("bondisolver_unringed.jl")
+include("n13_gks.jl")
 
 end # module

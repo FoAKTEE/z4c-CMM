@@ -1,0 +1,66 @@
+N13 O-N13-1 (iter 47): LF/GKS analysis of the constraint-row boundary
+realizations — the documented-analysis branch of the N13 exit condition.
+
+Model (packages/ZccmJl/src/n13_gks.jl): the linearized Z4c constraint
+subsystem at normal incidence (1010.0523v2 eq:sys-theta-Z),
+  dt Theta = -dx Z - k1(2+k2) Theta,  dt Z = -dx Theta - k1 Z,
+characteristics w+- = Theta -+... w+ = Theta + Z outgoing toward the
+boundary; semi-discrete with the AthenaK face structure (6th-order
+interior, order-2 boundary-region stencils, order-2 extrapolated ghosts
+== first-order one-sided at the face). Candidates:
+  somm    matched advection rows on Theta and Z (sigma = 1, 1) — the
+          realization stock Sommerfeld induces (Theta row direct; the
+          Gamma-tilde row advects Gamma[g] + 2Z as a whole)
+  v1      cpbc=1: somm + the -2Z/r sink (sigma_Z = 3, MISMATCHED)
+  adv2    cpbc=2 model: one-sided inward Z-row, sigma_Z = 2-weighted
+  bjorhus characteristic replacement dt w- = 0 at the face (textbook
+          maximally dissipative row)
+
+RESULTS (pinned in the runtests testset 'N13 constraint-row LF/GKS'):
+[PASS] G1 frozen spectra: max Re(lambda) < 1e-10 (roundoff zero) for ALL
+       four candidates at h = 0.5 and h = 0.25 — no GKS instability in
+       ANY pair-level closure, including the one-sided advected row.
+       => The AthenaK cpbc=2 NaN (error-db iter 20) is attributable to
+       the METRIC-PART face recomputation (-2 d_j(alpha At) with
+       one-sided normal stencils interacting with the At/g-tilde face
+       rows), NOT to the constraint-row concept. Diagnosis sharp.
+[PASS] G2 packet absorption (energy; k1 = 0, r = 41):
+       somm    0.999985, reflected |w-| 3e-15 of peak
+       v1      0.963878, reflected |w-| 1.0e-1 of peak  <- THE SINK HURTS
+       adv2    0.999939, reflected 6e-3
+       bjorhus 0.999997, reflected 2e-15 (best in class)
+[PASS] G3 continuum reflection of the row family (s = i omega):
+       matched rows: |R| = sigma/(2 omega r) (0.012 at omega = 1) with
+       ZERO scheme ambiguity; mismatched v1 rows (sigma 1 vs 3) disagree
+       by 3x — the spread IS the self-generated reflection scale.
+
+CONCLUSIONS (amending the exit-condition expectation honestly):
+1. The admissible-and-optimal realization of the paper's L = 1 CPBC
+   rows ((l^a d_a) Theta = 0, (l^a d_a) Z = 0 = advection rows) is the
+   MATCHED-falloff advection family — which the STOCK Sommerfeld rows
+   already realize (Theta directly; Z through the whole-Gamma row).
+   The Bjorhus w- replacement is marginally better (0.999997 vs
+   0.999985) and is the clean upgrade path if ever needed.
+2. The v1 damped row is NOT the correct realization: its sigma-mismatch
+   self-generates ~10% pair reflection while buying nothing (the pair
+   was already absorbed). Production guidance: keep cpbc = 0 (stock) as
+   the default (it already is); retire the cpbc=1 sink from
+   recommendation; cpbc=2 remains ledgered-unstable due to the
+   metric-part treatment.
+3. WHY the battery absorption gate (H-ratio < 0.95 at X = 0.05) was
+   unmeasurable (0.9999): the constraint-pair traveling waves are
+   absorbed at 1 - O((sigma/2 omega r)^2) ~ 1 - 1e-4 by EVERY matched
+   realization — the boundary H-norm is dominated by content the
+   (Theta, Z) rows cannot influence (physical/gauge-sector induced
+   violations and truncation sources). No Z-row choice can move that
+   gate; the gate tested the wrong lever. This is the documented
+   LF/GKS analysis the exit condition's second branch calls for, with
+   the conclusion amended from 'v1 is correct' to 'matched advection
+   (= stock) is correct; v1's sink is counterproductive'.
+
+Scope caveats (honest): the model is the constraint PAIR at normal
+incidence with frozen coefficients; tangential coupling (Z_A, omega != 0
+Lopatinskii family) and the full main-system/constraint coupling are not
+modeled — the pair captures the (Theta, Z_s) radial physics the rows act
+on. The metric-part diagnosis (G1) is by elimination at the pair level;
+a full-system discrete analysis would confirm it directly.

@@ -376,6 +376,36 @@ end
     end
 end
 
+@testset "N13 constraint-row LF/GKS analysis (O-N13-1, iter 47)" begin
+    # frozen semi-discrete spectra: ALL pair-level closures stable (no
+    # 1/h-growing real parts) — the AthenaK cpbc=2 NaN is attributable to
+    # the metric-part face recomputation, not the constraint-row concept
+    for bc in (:somm, :v1, :adv2, :bjorhus)
+        @test gks_spectrum_maxre(101, 0.5, bc) < 1e-10
+        @test gks_spectrum_maxre(201, 0.25, bc) < 1e-10
+    end
+    # packet absorption (k1 = 0, r = 41): matched Sommerfeld rows already
+    # absorb the (Theta, Z) pair near-perfectly; the v1 sink's sigma
+    # mismatch REFLECTS ~10% of the packet; Bjorhus is best-in-class
+    aS, rS = gks_packet_absorption(401, 0.25, :somm)
+    aV, rV = gks_packet_absorption(401, 0.25, :v1)
+    aA, rA = gks_packet_absorption(401, 0.25, :adv2)
+    aB, rB = gks_packet_absorption(401, 0.25, :bjorhus)
+    @info "GKS packet: somm $aS (refl $rS), v1 $aV (refl $rV), adv2 $aA, bjorhus $aB"
+    @test aS > 0.9999 && rS < 1e-12
+    @test aB > 0.9999 && rB < 1e-12
+    @test aV < 0.97            # measured 0.9639 — the sink hurts
+    @test rV > 0.05            # measured 0.103 reflected w-
+    @test aA > 0.999           # one-sided advected row: stable + absorbing
+    # continuum reflection family: matched rows |R| = sigma/(2 omega r);
+    # mismatched (v1) rows disagree by 3x (the scheme ambiguity = the
+    # self-generated reflection scale)
+    lo, hi = gks_reflection(1.0, 1.0, 1.0)
+    @test isapprox(lo, 1/(2*41); rtol=1e-2) && isapprox(hi, lo; rtol=1e-10)
+    lo3, hi3 = gks_reflection(1.0, 1.0, 3.0)
+    @test isapprox(hi3/lo3, 3.0; rtol=1e-2)
+end
+
 @testset "characteristic pulse injection (2308.10361 Sec V.C, N14 fidelity)" begin
     # ingoing l=2 m=0 J-pulse on the initial null slice; quiescent tube
     # BCs; psi0 probe at the Cauchy boundary radius. Production geometry

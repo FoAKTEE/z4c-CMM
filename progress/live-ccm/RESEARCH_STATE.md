@@ -103,9 +103,21 @@ vs gate 0.95). Failed attempts ledgered: L=1 advected row (face-stencil
 ghost reads, NaN t=19.75); L=0 metric-transparent row (non-dissipative
 face loop, NaN t=43.25).
 
-- **O-N13-1 (gating the solid claim):** characteristic-exact Z transport
-  with INWARD one-sided first-derivative face stencils (no outflow-ghost
-  reads), GKS/LF-checked (mission-2 model1d closure lesson).
+- **O-N13-1 DISCHARGED (iter 47) — documented LF/GKS analysis**
+  (results/numerical/n13_gks_check.txt; ZccmJl src/n13_gks.jl + testset
+  15/15). Findings: (1) ALL pair-level closures are GKS-stable incl. the
+  one-sided advected row — the cpbc=2 NaN is attributable to the
+  metric-part face recomputation, not the row concept; (2) MATCHED
+  advection rows (= what stock Sommerfeld induces on (Theta, Z)) absorb
+  the constraint pair at 1−O((sigma/2wr)^2): packet 0.999985; Bjorhus
+  w−-replacement best-in-class 0.999997; (3) the v1 sink's sigma-mismatch
+  SELF-GENERATES ~10% pair reflection (packet 0.9639) — v1 is NOT the
+  correct realization; production default stays cpbc=0; (4) the battery
+  H-ratio gate was structurally insensitive to the Z-row choice (the
+  boundary H-norm is dominated by physical/gauge-sector + truncation
+  content) — the absorption gate tested the wrong lever. N13 [SOLID] via
+  the documented-analysis branch, conclusion amended from 'v1 correct'
+  to 'matched advection (= stock) correct; sink counterproductive'.
 - **Config note:** X = 2 with linear ID is under-dissipated at nghost=4
   (NaN ~ t=50 even for stock Sommerfeld; raise diss/kappa1 or solve ID —
   N14-era X=2 batteries).
