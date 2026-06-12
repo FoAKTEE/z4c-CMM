@@ -7,7 +7,8 @@
 
 using LinearAlgebra
 
-export ChebRegGrid, cheb_sweep, cheb_evolve_J, cheb_psi0_hierarchy
+export ChebRegGrid, cheb_sweep, cheb_evolve_J, cheb_psi0_hierarchy,
+       ChebSweepOps, cheb_sweep_fact, cheb_evolve_J_sat
 
 struct ChebRegGrid{T<:Real}
     rwt::T
@@ -124,3 +125,68 @@ end
 
 rofy_c(g::ChebRegGrid{T}, y::T) where {T} = 2g.rwt/(1 - y)
 export rofy_c
+
+"""u-independent factorized sweep operators (LU once, reuse every stage —
+BigFloat-feasible; the per-stage dense solves were the runtime wall)."""
+struct ChebSweepOps{T<:Real}
+    FQ; FU; FW
+    g::ChebRegGrid{T}
+end
+
+function ChebSweepOps(g::ChebRegGrid{T}) where {T}
+    n = length(g.y)
+    one_y = 1 .- g.y
+    A = Matrix(Diagonal(ones(T, n)) + Diagonal(one_y)*g.D)
+    A[1, :] .= 0; A[1, 1] = 1
+    A2 = -2*Matrix{T}(I, n, n) + Diagonal(one_y)*g.D
+    A2[1, :] .= 0; A2[1, 1] = 1
+    A3 = Matrix(Diagonal(one_y)*g.D)
+    A3[1, :] .= 0; A3[1, 1] = 1
+    A3[n, :] .= -g.D[n, :]
+    ChebSweepOps{T}(lu(A), lu(A2), lu(A3), g)
+end
+
+function cheb_sweep_fact(ops::ChebSweepOps{T}, jr::Vector{T},
+                         bc::NTuple{4,T}) where {T}
+    g = ops.g
+    n = length(g.y)
+    one_y = 1 .- g.y
+    djr = g.D*jr
+    b = 4jr .- 4one_y.*djr; b[1] = bc[1]
+    qr = ops.FQ\b
+    b2 = copy(qr); b2[1] = bc[2]
+    ur = ops.FU\b2
+    b3 = 2jr .+ 2ur .+ qr./2
+    srcp = g.D*b3
+    b3w = copy(b3); b3w[1] = bc[3]; b3w[n] = srcp[n]
+    wr = ops.FW\b3w
+    G = one_y.^2 ./ (2g.rwt).*djr .- one_y.*jr./g.rwt
+    hr = bc[4] .+ (G .- G[1])./4 .- (g.Aint*ur)./(4g.rwt) .-
+         3 .*(g.Aint*jr)./(4g.rwt)
+    (qr, ur, wr, hr)
+end
+
+"""SAT evolution (sigma = 1; O-N14-1 resolution) using factorized ops."""
+function cheb_evolve_J_sat(g::ChebRegGrid{T}, u0::T, u1::T, du::T,
+                           X, rc, tau; sigma::T = T(1)) where {T}
+    ops = ChebSweepOps(g)
+    rwt = g.rwt
+    N = length(g.y) - 1
+    taupen = sigma*(1/(2rwt))/(T(1)/N^2)
+    jr = T[teuk_jr(u0, rofy_c(g, y), X, rc, tau) for y in g.y]
+    u = u0
+    bcs(uu) = (teuk_qr(uu, rwt, X, rc, tau), teuk_ur(uu, rwt, X, rc, tau),
+               teuk_wr(uu, rwt, X, rc, tau), teuk_hr(uu, rwt, X, rc, tau))
+    rhs(uu, J) = begin
+        (_, _, _, hr) = cheb_sweep_fact(ops, J, bcs(uu))
+        hr[1] += taupen*(teuk_jr(uu, rwt, X, rc, tau) - J[1])
+        hr
+    end
+    while u < u1 - du/2
+        k1 = rhs(u, jr); k2 = rhs(u + du/2, jr .+ du/2 .* k1)
+        k3 = rhs(u + du/2, jr .+ du/2 .* k2); k4 = rhs(u + du, jr .+ du .* k3)
+        jr .+= du/6 .* (k1 .+ 2k2 .+ 2k3 .+ k4)
+        u += du
+    end
+    jr
+end

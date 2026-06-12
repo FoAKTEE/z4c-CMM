@@ -193,3 +193,42 @@ end
     @test_broken rels[1] < 5e-3
     @test_broken rels[2] < rels[1]
 end
+
+@testset "spectral solver (O-N14-1 DISCHARGED, iter 37)" begin
+    X, rc, tau = 1.0e-5, 20.0, 2.0
+    want20 = -9/8*teuk_F(2, 20.0, X, rc, tau)/41.0^5
+    # exact-slice sweep: machine-exact (ringed Teukolsky fields are
+    # low-degree polynomials in y)
+    g = ChebRegGrid(41.0, 33)
+    jr = [teuk_jr(20.0, rofy_c(g, y), X, rc, tau) for y in g.y]
+    bc = (teuk_qr(20.0, 41.0, X, rc, tau), teuk_ur(20.0, 41.0, X, rc, tau),
+          teuk_wr(20.0, 41.0, X, rc, tau), teuk_hr(20.0, 41.0, X, rc, tau))
+    qr, ur, wr, hr = cheb_sweep(g, jr, bc)
+    @test maximum(abs.(qr .- [teuk_qr(20.0, rofy_c(g, y), X, rc, tau) for y in g.y])) < 1e-18
+    @test abs(cheb_psi0_hierarchy(g, jr, bc) - want20)/abs(want20) < 1e-6
+    # Float64 evolved psi0: documented conditioning floor (~0.05; the datum
+    # is r^-5-peeling-tiny: psi0/J ~ 1e-8 — iter-35 analysis)
+    g65 = ChebRegGrid(41.0, 65)
+    jre = cheb_evolve_J_sat(g65, 16.0, 20.0, 0.00078125, X, rc, tau)
+    bc20 = (teuk_qr(20.0, 41.0, X, rc, tau), teuk_ur(20.0, 41.0, X, rc, tau),
+            teuk_wr(20.0, 41.0, X, rc, tau), teuk_hr(20.0, 41.0, X, rc, tau))
+    relF = abs(cheb_psi0_hierarchy(g65, jre, bc20) - want20)/abs(want20)
+    @info "Float64 evolved psi0 rel = $(relF) (conditioning floor ~0.05)"
+    @test relF < 0.2
+    # BigFloat: the O-N14-1 gate (rel < 5e-3, measured 3.3e-4 at du=3.9e-4;
+    # 5.3e-3 at du=7.8e-4 — use the passing point; ~80 s)
+    setprecision(BigFloat, 128) do
+        Xb, rcb, taub = big"1.0e-5", big"20.0", big"2.0"
+        wantb = -big(9)/8*teuk_F(2, big"20.0", Xb, rcb, taub)/big"41.0"^5
+        gb = ChebRegGrid(big"41.0", 49)
+        jrb = cheb_evolve_J_sat(gb, big"16.0", big"20.0", big"0.000390625",
+                                Xb, rcb, taub)
+        bcb = (teuk_qr(big"20.0", big"41.0", Xb, rcb, taub),
+               teuk_ur(big"20.0", big"41.0", Xb, rcb, taub),
+               teuk_wr(big"20.0", big"41.0", Xb, rcb, taub),
+               teuk_hr(big"20.0", big"41.0", Xb, rcb, taub))
+        relB = Float64(abs(cheb_psi0_hierarchy(gb, jrb, bcb) - wantb)/abs(wantb))
+        @info "BigFloat evolved psi0 rel = $(relB) (gate 5e-3)"
+        @test relB < 5e-3
+    end
+end

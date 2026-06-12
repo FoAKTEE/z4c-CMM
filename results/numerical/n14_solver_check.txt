@@ -16,3 +16,19 @@ N14 solver gates (ZccmJl bondisolver.jl; Pkg.test green):
        evaluation through the slice hierarchy instead of raw edge FD.
        Marked @test_broken (honest-admission; no gate weakening).
 OVERALL: S1/S2/S3a admitted; S3b ledgered open (gates the live-datum stage)
+
+=== iter 37 update: O-N14-1 DISCHARGED (spectral + SAT + BigFloat) ===
+[PASS] Chebyshev sweep machine-exact on exact slices (abs ~1e-20; the
+       ringed Teukolsky fields are low-degree polynomials in y); worldtube
+       psi0 extraction operator rel 2.7e-8 at n=33.
+[PASS] SAT evolution on the CGL grid (sigma=1, tau = v_bdry*N^2): stable,
+       ~4.3-order in du; field error to the Float64 floor (1.4e-16).
+[INFO] Float64 evolved psi0 rel = 0.053 = the CONDITIONING FLOOR (iter-35
+       analysis: the X=1e-5 outgoing datum is r^-5-peeling-tiny,
+       psi0/J ~ 1e-8; this is physics, not scheme deficiency).
+[PASS] BigFloat-128 evolved psi0 rel = 5.3e-3 (du=7.8e-4) -> 3.3e-4
+       (du=3.9e-4) < 5e-3 gate, shrinking ~4th order. Factorized sweep
+       operators (LU once) made BigFloat affordable (40-80 s).
+Scope note: production X=2 datum is O(1)-relevant -> Float64 suffices
+there; BigFloat is the validation-harness path for the linear datum.
+N14 stage A (standalone linear l=2 characteristic solver) COMPLETE.
