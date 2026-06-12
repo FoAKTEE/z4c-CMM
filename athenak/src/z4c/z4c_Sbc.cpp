@@ -25,7 +25,8 @@ namespace z4c {
 KOKKOS_INLINE_FUNCTION
 static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
     const RegionIndcs &indcs, const DualArray1D<RegionSize> &size,
-    const bool cpbc, const int m, const int k, const int j, const int i) {
+    const int cpbc, const int face,
+    const int m, const int k, const int j, const int i) {
   // -------------------------------------------------------------------------------------
   // Scratch data
   //
@@ -131,25 +132,105 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   // violations; this row lets them leave. All inputs are STATE derivatives
   // (race-free; second derivatives via Dxx/Dxy at order 2, like the rest of
   // this kernel).
-  if (cpbc) {
-    // Constraint-damped boundary row (Z4c-CCM eq:bc-cpbc, v1 realization):
-    // keep the stock dissipative Sommerfeld advection on the full
-    // Gamma-tilde (stable baseline) and ADD a causal-rate sink on the
-    // constraint vector Z_a = (Gamma_a - d_j gt_aj)/2, draining incoming
-    // constraint content instead of reflecting it. Zeroth-order in
-    // derivatives — cannot excite grid-scale face modes. The L>=1 advected
-    // realizations are ledgered failed attempts (error-db iters 19a/19b:
-    // d_k d_j gt stencils reach outflow ghosts -> blow-up t~20; the
-    // L=0 metric-transparent row closes a non-dissipative face loop ->
-    // blow-up t~43); the characteristic-exact row is obligation O-N13-1.
+  if (cpbc == 1) {
+    // v1 constraint-damped row: stock advection + causal-rate sink on
+    // Z_a = (Gamma_a - d_j gt_aj)/2 (zeroth order; stable but absorption
+    // unmeasurable — ledger iter 19).
     for (int a = 0; a < 3; a++) {
-      Real divg = 0.0;     // d_j gt_aj
+      Real divg = 0.0;
       for (int b = 0; b < 3; b++) {
         divg += Dx<2>(b, idx, z4c.g_dd, m, a, b, k, j, i);
       }
       const Real Z = 0.5*(z4c.vGam_u(m,a,k,j,i) - divg);
       rhs.vGam_u(m,a,k,j,i) -= 2.0*Z/r;
     }
+  } else if (cpbc == 2) {
+    // O-N13-1 v2 — LEDGERED UNSTABLE (error-db iter 20: NaN t = 19 on the
+    // X = 1e-5 battery): one-sided inward stencils do not rescue the
+    // closure; the instability is in the row structure (no damping on the
+    // Gamma-At face loop). Kept compilable as the documented attempt; do
+    // not use in production. The admissible closure is to be derived from
+    // the frozen-coefficient LF/GKS analysis (O-N13-1, redirected).
+    // Original design: characteristic-exact advected Z row, ALL face-normal
+    // derivative reads one-sided INWARD; tangential edges centered (O-N6-4).
+    //   Z_a   = (Gamma_a - d_j gt_aj)/2
+    //   rhs(Gamma_a) = -2 d_j(alpha At_aj) + 2 (-s.dZ_a - 2 Z_a/r)
+    // (falloff power 2: Z ~ r^-2 for outgoing constraint content).
+    const int axis = face/2;
+    const int dirsgn = (face % 2) ? -1 : +1;   // inward index step
+    const Real idn = idx[axis];
+    const int dk = (axis == 2) ? dirsgn : 0;
+    const int dj = (axis == 1) ? dirsgn : 0;
+    const int di = (axis == 0) ? dirsgn : 0;
+
+    // one-sided first derivative along the face axis (2nd order, inward)
+#define DN1(Q, ...) (dirsgn*idn*( \
+      -1.5*Q(m, ##__VA_ARGS__, k,      j,      i) \
+      +2.0*Q(m, ##__VA_ARGS__, k+dk,   j+dj,   i+di) \
+      -0.5*Q(m, ##__VA_ARGS__, k+2*dk, j+2*dj, i+2*di)))
+    // one-sided second derivative along the face axis (2nd order)
+#define DN2(Q, ...) (idn*idn*( \
+       2.0*Q(m, ##__VA_ARGS__, k,      j,      i) \
+      -5.0*Q(m, ##__VA_ARGS__, k+dk,   j+dj,   i+di) \
+      +4.0*Q(m, ##__VA_ARGS__, k+2*dk, j+2*dj, i+2*di) \
+      -1.0*Q(m, ##__VA_ARGS__, k+3*dk, j+3*dj, i+3*di)))
+    // one-sided-normal derivative of a centered tangential derivative
+#define DNT(Q, tdir, ...) (dirsgn*idn*( \
+      -1.5*Dx<2>(tdir, idx, Q, m, ##__VA_ARGS__, k,      j,      i) \
+      +2.0*Dx<2>(tdir, idx, Q, m, ##__VA_ARGS__, k+dk,   j+dj,   i+di) \
+      -0.5*Dx<2>(tdir, idx, Q, m, ##__VA_ARGS__, k+2*dk, j+2*dj, i+2*di)))
+
+    const Real alp = z4c.alpha(m,k,j,i);
+    Real dal[3];
+    for (int b = 0; b < 3; b++) {
+      dal[b] = (b == axis) ? DN1(z4c.alpha)
+                           : Dx<2>(b, idx, z4c.alpha, m, k, j, i);
+    }
+    for (int a = 0; a < 3; a++) {
+      // first derivatives of gt_aj and At_aj (normal one-sided)
+      Real dg[3][3], dA[3][3], dGam[3];
+      for (int c = 0; c < 3; c++) {
+        for (int b = 0; b < 3; b++) {
+          dg[c][b] = (c == axis) ? DN1(z4c.g_dd, a, b)
+                                 : Dx<2>(c, idx, z4c.g_dd, m, a, b, k, j, i);
+          dA[c][b] = (c == axis) ? DN1(z4c.vA_dd, a, b)
+                                 : Dx<2>(c, idx, z4c.vA_dd, m, a, b, k, j, i);
+        }
+        dGam[c] = (c == axis) ? DN1(z4c.vGam_u, a)
+                              : Dx<2>(c, idx, z4c.vGam_u, m, a, k, j, i);
+      }
+      Real divg = 0.0;
+      for (int b = 0; b < 3; b++) divg += dg[b][b];
+      const Real Z = 0.5*(z4c.vGam_u(m,a,k,j,i) - divg);
+      // d_c (d_j gt_aj): second derivatives with the normal rule
+      Real sdZ = 0.0;
+      for (int c = 0; c < 3; c++) {
+        Real ddivg_c = 0.0;
+        for (int b = 0; b < 3; b++) {
+          if (c == axis && b == axis) {
+            ddivg_c += DN2(z4c.g_dd, a, b);
+          } else if (c == axis) {
+            ddivg_c += DNT(z4c.g_dd, b, a, b);
+          } else if (b == axis) {
+            ddivg_c += DNT(z4c.g_dd, c, a, b);
+          } else if (b == c) {
+            ddivg_c += Dxx<2>(b, idx, z4c.g_dd, m, a, b, k, j, i);
+          } else {
+            ddivg_c += Dxy<2>(c, b, idx, z4c.g_dd, m, a, b, k, j, i);
+          }
+        }
+        sdZ += s_u(c)*0.5*(dGam[c] - ddivg_c);
+      }
+      Real dtGamdef = 0.0;
+      for (int b = 0; b < 3; b++) {
+        dtGamdef += -2.0*(alp*dA[b][b]
+                          + z4c.vA_dd(m,a,b,k,j,i)*dal[b]);
+      }
+      rhs.vGam_u(m,a,k,j,i) = dtGamdef + 2.0*(-sdZ - 2.0*Z/r);
+    }
+#undef DN1
+#undef DN2
+#undef DNT
   }
 }
 
@@ -175,7 +256,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   auto &rhs_ = rhs;
   bool &user_Sbc = opt.user_Sbc;
 
-  const bool cpbc_on = opt.cpbc;
+  const int cpbc_on = opt.cpbc;
 
   // CCM physical-mode injection (z4c_ccm.hpp); no-op unless <z4c> ccm = true
   const bool ccm_on = opt.ccm;
@@ -203,12 +284,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, j, is);
+            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 0, m, k, j, is);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, is); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, j, is);
+              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 0, m, k, j, is);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, is); }
             }
           break;
@@ -220,12 +301,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, j, ie);
+            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 1, m, k, j, ie);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, ie); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, j, ie);
+              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 1, m, k, j, ie);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, j, ie); }
             }
           break;
@@ -249,12 +330,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, js, i);
+            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 2, m, k, js, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, js, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, js, i);
+              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 2, m, k, js, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, js, i); }
             }
           break;
@@ -266,12 +347,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, je, i);
+            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 3, m, k, je, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, je, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, k, je, i);
+              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 3, m, k, je, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, k, je, i); }
             }
           break;
@@ -295,12 +376,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, ks, j, i);
+            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 4, m, ks, j, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ks, j, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, ks, j, i);
+              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 4, m, ks, j, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ks, j, i); }
             }
           break;
@@ -312,12 +393,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, ke, j, i);
+            Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 5, m, ke, j, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ke, j, i); }
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, m, ke, j, i);
+              Z4cSommerfeld(z4c_, rhs_, indcs, size, cpbc_on, 5, m, ke, j, i);
             if (ccm_on) { Z4cCCMInjection(z4c_, rhs_, indcs, size, ccm_mode, tcur, ccm_amp, ccm_t0, ccm_sigma, ccm_betahat, ccm_chifloor, m, ke, j, i); }
             }
           break;

@@ -175,7 +175,7 @@ class Z4c {
     // Cauchy-characteristic matching: inject a psi0 datum into the physical
     // (TT) incoming modes at the outer boundary (z4c_ccm.hpp). With
     // ccm_amp = 0 this reduces exactly to the Sommerfeld scheme.
-    bool cpbc;          // N13: constraint-preserving Gamma-tilde row (Z_i advected)
+    int cpbc;           // N13: 0=off, 1=Z-sink (damped), 2=advected (O-N13-1)
     bool ccm;
     int ccm_mode;       // datum mode: 1 uniform, 2 l2m0 pulse, 3 Teukolsky self-datum
     Real ccm_amp;       // datum amplitude (analytic Gaussian provider)

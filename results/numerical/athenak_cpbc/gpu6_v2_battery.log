@@ -1,0 +1,15 @@
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/flat  (5 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/somm  (58 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/cpbc  (59 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/cpbc2  (242 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/ccmcp  (59 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/somm_X5e-2  (58 s)
+done: /data/haiyangw/claude/z4c-CMM/results/numerical/athenak_cpbc/gpu6_v2/cpbc_X5e-2  (60 s)
+[PASS] B1 Minkowski + CPBC: final LINF-dev = 4.82e-14 < 1e-12
+[FAIL] B2 constraint absorption at X = 0.05 (t >= 62): int L2-H ratio cpbc/somm = nan < 0.95, int L2-M ratio = 0.0000 < 0.95
+[FAIL] B2a linear-amplitude consistency: |E(cpbc)/E(somm) - 1| = nan < 0.05 (Z ~ roundoff at X = 1e-5)
+[FAIL] B3 waveform unharmed: E(cpbc) = nan <= 1.2 x E(somm) = 5.984e-02
+[FAIL] B4 convergence with CPBC: E(164) = nan, E(248) = nan, order p = nan >= 3.5
+[FAIL] B5 CPBC + CCM datum: finite, L2-H(final) = nan < 1e-7 and E = nan <= 1.2 x E(cpbc)
+
+OVERALL: FAIL
