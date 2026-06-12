@@ -1,0 +1,19 @@
+[PASS] TT channel: gamma^{ij} d_t gamma_ij == 0 (1+log lapse source K == 0)  (t=0.2s)
+[PASS] TT channel: Gammat^i = -d_j ht^{ij} == 0 (gamma-driver source)  (t=0.2s)
+[PASS] => linearized 1+log + gamma-driver receive ZERO source from the CCM channel: paper-1 gauge BCs decouple from the injection  (t=0.2s)
+[PASS] dispersion: outgoing lam = w/c+ and incoming lam = -w/c- both solve the advected wave equation (P1 eq:eomgammasA)  (t=0.4s)
+[PASS] naive Sommerfeld reflection R = b*(b - 1)/(-b**2 + b + 2) == -b(1-b)/((1+b)(2-b)) != 0 for b != 0  (t=0.5s)
+[PASS] paper-1 boundary-adapted operator reflection R = 0 == 0 IDENTICALLY  (t=0.5s)
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] GPU sweep: analytic R satisfies the Sommerfeld BC (residual 2.2e-16), paper-1 BC residual 0.0e+00 with R = 0, and |R_naive| >= 0.023 > 0 for b in [0.05, 0.6], over 4,194,304 samples  (t=12.2s)
+
+CONCLUSION: the CCM channel does not source the gauge sector (A), and
+on paper-1's own boundary wave model the boundary-adapted characteristic
+operator eliminates the shift-induced reflection that naive Sommerfeld
+produces (B) — replacing paper-3's Sommerfeld gauge placeholder with
+paper-1's gauge BCs is consistent and strictly better at normal
+incidence. Oblique/curvature analysis -> N7; numerical R-coefficient
+tests -> N8. N5 admitted.
+
+wall clock: 12.2s
+OVERALL: PASS

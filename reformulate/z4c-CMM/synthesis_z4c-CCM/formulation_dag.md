@@ -79,7 +79,7 @@ subgraph SGN["NEW: Z4c-CCM formulation — mission 2 work program"]
   N2["N2 SOLID (verified iter 8) Z4c boundary tetrad\n<-> CCE tetrad: Choice-2 boost A holds verbatim;\nfactor sqrt(2)/2 exact; 4-GPU sweep residual 9e-16\n(scripts/verify_n2_boost.py)"]
   N3["N3 SOLID (verified iter 9) physical-mode\ninjection: (d_t + d_s)^2 gamma_AB^TF =\n4(psi0 mbar mbar + cc), psi0 = (1/4)(d_t+d_s)^2 h_mm,\nOFF-SHELL; CCE psi0' -> h_AB^TF datum of B5;\nL=0 Bjorhus form (scripts/verify_n3_dictionary.py)"]
   N4["N4 SOLID (verified iter 11) constraint sector:\norder-L CPBCs retained VERBATIM — TT injection\nchannel is constraint-orthogonal (H = M_i = 0\noff-shell, negative controls pass); channel\ntaxonomy: TT/gauge/vector/trace"]
-  N5["N5 HYPOTHESIS gauge sector: paper-1\ngauge BCs with asymptotically harmonic\nshift REPLACE paper-3 Sommerfeld\nplaceholder -> targets reflection bottleneck"]
+  N5["N5 SOLID (verified iter 12) gauge sector:\npaper-1 gauge BCs replace Sommerfeld; CCM channel\nsources no gauge mode (exact); model reflection\nR_Sommerfeld = -b(1-b)/((1+b)(2-b)) vs R_P1 = 0"]
   N6["N6 HYPOTHESIS Z4c-CCM composite scheme:\nfull 10-mode BC set + CCE coupling cadence\n(communication, interpolation, time stepping)"]
   N7["N7 OPEN well-posedness: LF/Kreiss boundary\nstability with inhomogeneous physical datum;\ncomposite system (weakly hyperbolic\nBondi-like sector caveat from P3)"]
   N8["N8 FUTURE GPU implementation (FINAL PRODUCT):\nJAX float64 code runnable on <=4 GPUs; tests\nTeukolsky wave, Kerr perturbation, pulse injection;\nR-coefficient + constraint monitor; every test <=10 min"]
@@ -193,7 +193,7 @@ Every cited label below is a `node_id` in the corresponding
 | N2 | z4c-CCM | new; reuse of D4 with B1 frame; verifier scripts/verify_n2_boost.py → results/numerical/n2_boost_check.txt | [SOLID] verified |
 | N3 | z4c-CCM | new; E2/E3 pattern into B5 slot; verifier scripts/verify_n3_dictionary.py → results/numerical/n3_dictionary_check.txt | [SOLID] verified |
 | N4 | z4c-CCM | new; B3 + A4 reuse argument; verifier scripts/verify_n4_cpbc_compat.py → results/numerical/n4_cpbc_compat_check.txt | [SOLID] verified |
-| N5 | z4c-CCM | new; B4 replacing E4 | [HYPOTHESIS] |
+| N5 | z4c-CCM | new; B4 replacing E4; verifier scripts/verify_n5_gauge.py → results/numerical/n5_gauge_check.txt | [SOLID] verified |
 | N6 | z4c-CCM | new; composite of N3, N4, N5 + D5 | [HYPOTHESIS] |
 | N7 | z4c-CCM | new; B6 machinery, inhomogeneous data | [FUTURE] (analysis obligation) |
 | N8 | z4c-CCM | new; P3 test suite + B7/E5/A4 diagnostics | [FUTURE] |

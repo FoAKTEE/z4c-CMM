@@ -1,20 +1,15 @@
-# Iteration 11 — N4 admitted: CPBCs retained verbatim; channel taxonomy refined
+# Iteration 12 — N5 admitted: gauge sector — P1 BCs replace Sommerfeld, bottleneck removed at model level
 
-1. **Paper anchor** — DAG node N4; P1 eq:general_CPBCs / eq:theta _modes / eq:sys-theta-Z; P3 constraint-matching design argument.
-2. **What shipped** — `scripts/verify_n4_cpbc_compat.py` + certified output `results/numerical/n4_cpbc_compat_check.txt`; knowledge row N4 → solid (predecessor N3); error rows: v1 negative-control taxonomy slip (h_xx is gauge, not constraint-sourcing) + v2 pass; DAG doc N4 [SOLID].
-3. **Next-3 roadmap** — N5 (gauge sector: paper-1 gauge BCs replace P3 Sommerfeld; verifiable core = gauge-channel decoupling + the h_xx/lapse/shift channel bookkeeping from this iteration's taxonomy), N6 (composite 10-mode BC table + zccm boundary module), N7 (well-posedness sketch). No same-mode loop.
-4. **Simplification flag** — n/a.
+1. **Paper anchor** — DAG node N5; P1 eq:BCs-alpha / eq:general_BCs_gauge_first / eq:eomgammasA; P3 Sommerfeld-gauge future-work bottleneck.
+2. **What shipped** — `scripts/verify_n5_gauge.py` + certified output `results/numerical/n5_gauge_check.txt` (first-try PASS, 12.2 s); knowledge row N5 → solid (predecessor N4); DAG doc N5 [SOLID]; RESEARCH_STATE rows N4+N5; nodal note 10-iter window refreshed.
+3. **Next-3 roadmap** — N6 (composite scheme: explicit 10-mode BC table document + zccm boundary module on GPU), N7 (well-posedness sketch document), N8 (GPU test suite: Teukolsky/pulse + R-coefficient). No same-mode loop.
+4. **Simplification flag** — watch: N6 boundary module must reuse z4c_vars constructors.
 5. **Verifier output** (verbatim, certified):
-   [PASS] TT channel: linearized H == 0 identically (off-shell)
-   [PASS] TT channel: linearized M_i == 0 identically (off-shell)
-   [PASS] => dot Theta, dot Z_i sources vanish; U-_Theta, U-_Z stay 0 under ANY CCM physical datum
-   [PASS] NEGATIVE CONTROL (vector channel h_xy): M_y = -Derivative(G(t,x),t,x)/2 != 0
-   [PASS] taxonomy: longitudinal h_xx(t,x) is ALSO constraint-free (gauge channel)
-   [PASS] NEGATIVE CONTROL (tangential trace h_yy = h_zz = G): H = -2*Derivative(G,(x,2)) != 0
-   [PASS] GPU sweep: TT residual 0.0 vs control amplitude 1.23e+01, 4,194,304 modes (4x A100)
-   OVERALL: PASS (12.4s)
-
-Physics note (feeds N5/N6): boundary-channel taxonomy — TT = physical (CCM-driven),
-h_xx = gauge, h_xA = constraint-vector (sources M_A), tangential trace =
-constraint-scalar (sources H). This is the linearized shadow of P1's
-4 constraint + 4 gauge + 2 physical incoming-mode split.
+   [PASS] TT channel: gamma^{ij} d_t gamma_ij == 0 (1+log lapse source K == 0)
+   [PASS] TT channel: Gammat^i = -d_j ht^{ij} == 0 (gamma-driver source)
+   [PASS] => linearized 1+log + gamma-driver receive ZERO source from the CCM channel
+   [PASS] dispersion: outgoing lam = w/c+ and incoming lam = -w/c- both solve P1 eq:eomgammasA
+   [PASS] naive Sommerfeld reflection R = -b(1-b)/((1+b)(2-b)) != 0 for b != 0
+   [PASS] paper-1 boundary-adapted operator reflection R = 0 IDENTICALLY
+   [PASS] GPU sweep: residuals 2.2e-16 / 0.0; |R_naive| >= 0.023 for b in [0.05,0.6]; 4,194,304 samples (4x A100)
+   OVERALL: PASS (12.2s)
