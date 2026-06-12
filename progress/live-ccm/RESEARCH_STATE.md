@@ -193,12 +193,37 @@ AthenaK solver ↔ ZccmJl ↔ exact analytic (N12) ↔ SpECTRE. Caveat: the
 oracle slice is identical ANALYTIC worldtube data; the live chain is
 separately gated (iters 44-45).
 
-## Next-iteration plan (iter 47+)
+## Figures + method paper refreshed (iter 48): exit condition closed
 
-1. N13 LF/GKS revisit (O-N13-1); X=2 configuration; O(dt) coupling
-   refinement (linear-in-time BC interpolation between samples).
-2. Figures + method-paper refresh on corrected-solution batteries;
-   N11-figure regeneration.
+Fig 1 zccm_teuk_exact.pdf (exact-reference ladder, N12 data); Fig 2
+zccm_live_ccm.pdf (live CCM: Sec V.C fidelity, burst + control, SpECTRE
+oracle). sec:teuktest upgraded to the exact-reference protocol with the
+production-defect disclosures; NEW sec:liveccm (eq:beta-hierarchy +
+verification items i-v). Build clean (7 pages, 0 unresolved refs). No
+pre-fix N11 data remains in the paper. Transcript:
+results/numerical/figures_refresh_check.txt. Ledger N16 [SOLID].
+
+## MISSION EXIT STATUS (iter 48): ALL FOUR CONDITIONS HOLD
+
+1. N13 [SOLID] — iter 47 (documented LF/GKS analysis, amended
+   conclusion).
+2. N14 [SOLID] — iters 43-46 (native in-process lockstep CCM; live
+   worldtube data; psi0 through the Type-II boost; standalone solver vs
+   the N12 exact chain; live batteries vs analytic truth; Sec V.C
+   fidelity; SpECTRE cross-oracle documented).
+3. Figures + method paper refreshed from corrected batteries — iter 48.
+4. Ledger + RESEARCH_STATE consistent; no [BLOCKING] markers; all
+   commits pushed.
+
+## OPTIONAL post-exit quality items (not exit conditions)
+
+- X=2 nonlinear configuration (diss/kappa1 tuning or constraint-solved
+  ID; the under-dissipation note stands).
+- O(dt) coupling refinement (linear-in-time BC interpolation between
+  worldtube samples).
+- SpECTRE oracle on LIVE-sampled (vs analytic) worldtube data.
+- Bjorhus w- constraint-row realization (best-in-class in the GKS model;
+  marginal gain over stock).
 
 ## Binding directive added (iter 29, 2026-06-12)
 

@@ -389,8 +389,9 @@ $(\partial_t + c_+\partial_x)$ [P1/CCM op., $N{=}16385$] &
 \label{sec:teuktest}
 
 Full 3+1 evolution: AthenaK Z4c \cite{Zhu:2024utz} (vendored, pinned;
-RK4, CFL $0.25$, second-order stencils, $\kappa_1=0.02$), with
-\eqref{eq:bc-phys} realized at the Cauchy outer boundary as described below.
+RK4, CFL $0.25$, sixth-order stencils at \texttt{nghost}${}=4$,
+$\kappa_1=0.02$), with \eqref{eq:bc-phys} realized at the Cauchy outer
+boundary as described below.
 This subsection is self-contained: every symbol used by the test is defined
 here or in Secs.~\ref{sec:frame}--\ref{sec:n6}.
 
@@ -491,74 +492,152 @@ $\psi_0^{\rm datum}\to0$ reduces \eqref{eq:teuk-inject} to the unmodified
 scheme exactly (V6; machine-zero reduction in Table~\ref{tab:dynamic}
 methodology, AthenaK battery: Minkowski preserved to $2.6\times10^{-33}$).
 
-\paragraph{Protocol and result.}
-Parameters of Ref.~\cite{Ma:2023qjn}: $r_c=20$, $\tau=2$,
-$X\in\{10^{-5}, 2\}$, Cauchy boundary (worldtube analog) at $41$,
-$t\in[0,80]$; extraction of $r\psi_4^{(2,0)}$ at $r=36$; grids $164^3$
-($h=1/2$) with $132^3$, $104^3$ error-estimate companions; reference run
-with boundary at $104$ ($416^3$, same $h$) — causally disconnected, since
-contamination reaching $r=36$ by $t=80$ requires boundary data at
-$t_b < 12$, where the solution \eqref{eq:teuk-F} is bounded by
-$X e^{-[(104-40)/\tau]^2} = X e^{-1024}$. Error norm on the common output
-grid:
+\paragraph{Exact finite-radius reference (node N12).}
+The extraction reference is the \emph{analytic} waveform at the
+extraction radius itself (no auxiliary reference run): in the AthenaK
+extraction convention ($=-1\times$ the scri member of
+\eqref{eq:teuk-psi0} continued to finite $r$),
 \begin{equation}
-E[\mathrm{run}] =
-\frac{\big\| r\psi_4^{(2,0)}[\mathrm{run}] -
- r\psi_4^{(2,0)}[\mathrm{ref}]\big\|_{2}}
-{\big\| r\psi_4^{(2,0)}[\mathrm{ref}]\big\|_{2}},
-\qquad
-E_{h}[\mathrm{run}] =
-\frac{\big\| r\psi_4^{(2,0)}\big|_{164^3} -
- r\psi_4^{(2,0)}\big|_{132^3}\big\|_{2}}
-{\big\| r\psi_4^{(2,0)}[\mathrm{ref}]\big\|_{2}} .
+r\,\psi_4^{(2,0)}(t,r) =
+\sqrt{\tfrac{6\pi}{5}}\Big[F^{(6)} + \frac{2F^{(5)}}{r}
+ + \frac{3F^{(4)}}{r^{2}} + \frac{3F^{(3)}}{r^{3}}
+ + \frac{3F^{(2)}}{2\,r^{4}}\Big](t-r)
+\;-\; \sqrt{\tfrac{6\pi}{5}}\,\frac{3F^{(2)}}{2\,r^{4}}(t+r),
+\label{eq:teuk-exact-psi4}
+\end{equation}
+verified by seven symbolic gates (tracelessness, coefficient-exact
+linearized vacuum, $\sin^2\theta$ factorization, peeling, scri limit,
+independent $30$-digit finite-difference cross-check at $10^{-40}$) and
+— independently — by the SpECTRE \texttt{CharacteristicExtract} cross
+oracle below.
+
+\paragraph{Protocol and result.}
+Parameters of Ref.~\cite{Ma:2023qjn}: $r_c=20$, $\tau=2$, $X=10^{-5}$,
+Cauchy boundary (worldtube analog) at $41$, $t\in[0,80]$; extraction of
+$r\psi_4^{(2,0)}$ at $r=36$; resolution ladder $h = 0.5,\ 0.331,\ 0.277$
+(4$\times$A100, every run $<600$\,s). Error against
+\eqref{eq:teuk-exact-psi4} at each rung's own output times:
+\begin{equation}
+E(h) =
+\frac{\big\| r\psi_4^{(2,0)}[h] - r\psi_4^{(2,0)}[\text{exact}]\big\|_2}
+     {\big\| r\psi_4^{(2,0)}[\text{exact}]\big\|_2}
+= 4.99\times10^{-2},\ \ 5.36\times10^{-3},\ \ 2.02\times10^{-3},
 \label{eq:teuk-E}
 \end{equation}
-Measured (Fig.~\ref{fig:teuk}; 4$\times$A100, every run $<600$\,s):
-\begin{align}
-X=10^{-5}&:&
-E[\text{Somm}] &= E[\text{CCM}] = 2.732\times10^{-4}
-&&\ll\; E_h = 0.70,
-\nonumber\\
-X=2&:&
-E[\text{Somm}] &= E[\text{CCM}] = 8.87\times10^{-2}
-&&\ll\; E_h = 0.69,
-\label{eq:teuk-numbers}
-\end{align}
-reproducing the boundary-error $\ll$ truncation-error hierarchy and the
-perturbative indistinguishability of Ref.~\cite{Ma:2023qjn} (their
-Sec.~V.A). The CCM$-$Sommerfeld waveform difference switches on exactly at
-the boundary$\to$extraction causal time ($t \ge 64.5$) at relative
-amplitude $5\times10^{-10}$--$4\times10^{-9}$: the self-datum
-\eqref{eq:teuk-psi0} obeys peeling, $\psi_0\sim r^{-5}$, so a purely
-outgoing pulse supplies an incoming correction suppressed by $41^{-5}$ at
-this worldtube — resolving CCM from Sommerfeld at figure level requires
-the CCE-fed datum (nonlinear backscatter), the documented successor of the
-$\psi_0^{\rm datum}$ provider. The deficit of the measured peak against the
-scri formula \eqref{eq:teuk-psi0} is finite-difference truncation, not the
-finite extraction radius: peak ratio $0.292/0.465/0.612$ at
-$104^3/132^3/164^3$ ($\sim\!4$ points per $\tau$ at second order).
-Constraints stay bounded on all runs ($X=2$: $\|H\|_{L_2}$
-$3.5\times10^{-3}\to5.4\times10^{-3}$, damped after $t\approx35$, with the
-$O(X^2)$ violation of the linear data \eqref{eq:teuk-id} absorbed by the
-$\kappa_1$ damping).
+with measured convergence order $5.39$ (first pair) and $5.52$ (second
+pair), finest-rung amplitude $1\pm2\times10^{-4}$ and time shift $0.000$
+(Fig.~\ref{fig:teuk}). Two production defects were found \emph{only} by
+this exact-reference program and are corrected in all data shown: a
+frame-orientation error in the initial data ($\hat e_\theta$ flipped;
+linearized vacuum violated at $5\%$ of $|R_{ij}|$, invisible to
+constraint monitors and to run-vs-reference protocols since it sat on
+both sides) and a one-step offset in the waveform time labels. The
+self-datum CCM$-$Sommerfeld difference remains peeling-suppressed
+($\psi_0\sim r^{-5}$, relative imprint $\sim10^{-9}$ of peak at this
+worldtube), as in Ref.~\cite{Ma:2023qjn} Sec.~V.A.
 \end{nfblock}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.98\textwidth]{zccm_teuk_paper.pdf}
-\caption{Exact-parameter Teukolsky test of Sec.~\ref{sec:teuktest}
-($r_c{=}20$, $\tau{=}2$, boundary $41$, extraction $r{=}36$; amplitudes
-normalized by $X$). Top: $(\ell,m){=}(2,0)$ mode of $r\psi_4$ for the
-causally disconnected reference, Sommerfeld, and Z4c-CCM
-\eqref{eq:teuk-inject} runs; at $X{=}10^{-5}$ the linear scri formula
-\eqref{eq:teuk-psi0} is overlaid (its excess is the second-order truncation
-deficit quoted in the text). Bottom: differences \eqref{eq:teuk-E};
-$|\mathrm{CCM}-\mathrm{ref}|$ and $|\mathrm{Somm}-\mathrm{ref}|$ coincide,
-both sit below the two-resolution error estimates (dashed), and
-$|\mathrm{CCM}-\mathrm{Somm}|$ (green) activates only after the
-boundary$\to$extraction causal time with the $r^{-5}$ peeling suppression
-of the self-datum. Generator:
-\texttt{scripts/plot\_paper\_figure\_teuk.py}; data:
-\texttt{results/numerical/athenak\_teuk\_paper/} (ledger node N11).}
+\includegraphics[width=0.92\textwidth]{zccm_teuk_exact.pdf}
+\caption{Exact-reference Teukolsky test of Sec.~\ref{sec:teuktest}
+($r_c{=}20$, $\tau{=}2$, boundary $41$, extraction $r{=}36$,
+$X{=}10^{-5}$). Top: $(\ell,m){=}(2,0)$ mode of $r\psi_4$ — the exact
+finite-radius waveform \eqref{eq:teuk-exact-psi4} (solid) and the
+three-rung sixth-order ladder. Bottom: pointwise errors against the
+exact reference; measured order $5.39/5.52$, finest-rung relative $L_2$
+error $2.02\times10^{-3}$ \eqref{eq:teuk-E}. Generator:
+\texttt{scripts/plot\_paper\_figures\_v2.py}; data:
+\texttt{results/numerical/athenak\_teuk\_ana/gpu6/} (ledger node N12).}
 \label{fig:teuk}
+\end{figure}
+
+\begin{nfblock}
+\subsection{Live Cauchy--characteristic matching inside AthenaK
+(nodes N13--N14)}
+\label{sec:liveccm}
+
+The $\psi_0^{\rm datum}$ provider of \eqref{eq:teuk-inject} is replaced
+by a \emph{native, in-process} characteristic solver evolving in
+lockstep with the Cauchy evolution (one process, no file round-trips).
+On the compactified radial coordinate $y = 1 - 2r_{\rm wt}/r$
+(Chebyshev--Gauss--Lobatto collocation, LU-factorized global solves,
+SAT time advance), the solver evolves the \emph{unringed} $\ell{=}2$
+$t$-scalars $(J_t,Q_t,U_t,W_t,H_t)$ of the linearized Bondi--Sachs
+hierarchy with the $\beta$ sources required by live (worldtube-anchored
+gauge) data — machine-derived as exact-rational fits on the anchored
+and plain solution families jointly:
+\begin{align}
+\partial_r(r^2 Q) &= -\,r^2\,\partial_r(\bar\eth J) - 4r\,\eth\beta,
+&
+\partial_r U &= Q/r^2,
+\nonumber\\
+\partial_r(r^2 W) &= \tfrac12\bar\eth\bar\eth J + 2r\,\bar\eth U
+ + \tfrac{r^2}{2}\partial_r(\bar\eth U) - \tfrac43\,\bar\eth\eth\beta,
+&
+\partial_r(rH) &= \tfrac12 r\,\partial_r^2 J + \partial_r J
+ + \frac{\eth^2\beta}{r} - \frac{\eth Q}{2r} - \eth U,
+\label{eq:beta-hierarchy}
+\end{align}
+with $H=\partial_u J$ and $\beta$ $r$-independent at this order. The
+ringed variables ($rJ$, $r^2U$, \dots) diverge at scri on anchored-gauge
+data ($k=0,1$ tails); the unringed system \eqref{eq:beta-hierarchy} is
+regular on $y\in[-1,1]$ in both gauges, and
+$\psi_0^t = -\partial_r J_t/(2r) - \partial_r^2 J_t/4$ is gauge-invariant
+(the anchored tails are exactly $\psi_0$-silent). Worldtube data are
+sampled live from the Cauchy ADM state on three geodesic spheres
+($\ell{=}2$ projections; $\partial_t h = -2K$ at linear order) and mapped
+by a six-row local contract to the anchored boundary scalars
+$(J,Q,U,W,H,\beta)_{\rm wt}$. Cone labeling is retarded, $u = t - r$:
+the boundary datum at Cauchy time $t$ is the $\psi_0$ probe at $r_B$ on
+the earlier cone $u = t - r_B$ (causality lag, served from a per-substep
+history).
+
+\emph{Verification.} (i) Standalone: anchored end-to-end $\psi_0$ probe
+within $8.8\times10^{-5}$ of the exact datum
+($7.1\times10^{-6}$ at halved step; truncation-dominated). (ii) Live
+analytic-stub battery: mode-(solver) vs.\ mode-(self-datum) waveforms
+agree to $4.1\times10^{-9}$ of peak. (iii) For the purely outgoing test
+the live datum is conditioning-limited \emph{by physics}
+($\psi_0/J\sim10^{-8}$ peeling: fidelity would need
+$10^{-11}$-relative tube data); the fidelity demonstration instead uses
+the characteristic-pulse-injection test of Ref.~\cite{Ma:2023qjn}
+Sec.~V.C (ingoing $\ell{=}2$ pulse on the initial null slice, quiescent
+Cauchy data, $\psi_0/J = 7\times10^{-3}$): the live datum matches the
+verified solver to $7\times10^{-8}$ of peak in the causally clean
+window; the transmitted burst exits the Cauchy domain at
+$t_2 = t_1 + 2R$ within $0.12$; a no-datum control shows the entire
+response is datum-attributable ($2.9\times10^{-10}$ of peak)
+[Fig.~\ref{fig:liveccm}(a,b)]. (iv) Cross-oracle: SpECTRE
+\texttt{CharacteristicExtract} (the CCE of Ref.~\cite{Ma:2023qjn}), run
+on a Bondi--Sachs worldtube file generated from the exact solution,
+reproduces $\Psi_4 = -\sqrt{6\pi/5}\,F^{(6)}$ to $6\times10^{-6}$
+relative and the datum normalization
+$\Psi_0 = -\tfrac98 F^{(2)}$ ($s^2$ shape) to $0.1\%$
+[Fig.~\ref{fig:liveccm}(c)]. (v) Constraint rows: a frozen-coefficient
+LF/GKS analysis of the $(\Theta, Z_s)$ boundary realizations shows every
+matched-falloff advection closure is stable and already absorbs the
+constraint pair at $1-O\big((\sigma/2\omega r)^2\big)$; falloff-mismatched
+sink rows self-generate $O(10\%)$ pair reflection — the production
+default remains the matched (stock) realization of the
+\eqref{eq:bc-cpbc} rows.
+\end{nfblock}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{zccm_live_ccm.pdf}
+\caption{Live-CCM results (Sec.~\ref{sec:liveccm}). (a) The
+characteristic-pulse fidelity test: live $\psi_0$ datum at the Cauchy
+boundary vs.\ the quiescent-worldtube (mirror/CCE) reference — the
+early-window agreement is $7\times10^{-8}$ of peak; the later $O(1)$
+separation \emph{is} the matching physics (the live run transmits and
+later re-receives the pulse). (b) The transmitted burst at the
+extraction radius exits at $t_2 = t_1 + 2R$; the no-datum control is
+consistent with zero. (c) SpECTRE \texttt{CharacteristicExtract} on the
+exact worldtube data vs.\ the closed forms (shaded wide: oracle output;
+dashed: $-\sqrt{6\pi/5}F^{(6)}$ and $-\tfrac98 c_2 F^{(2)}$). Generator:
+\texttt{scripts/plot\_paper\_figures\_v2.py}; data:
+\texttt{results/numerical/n14\_native/}, \texttt{n14\_pulse\_ref.csv},
+\texttt{spectre\_oracle/} (ledger nodes N13--N14).}
+\label{fig:liveccm}
 \end{figure}

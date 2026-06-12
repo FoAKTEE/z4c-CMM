@@ -1,0 +1,50 @@
+Figures + method-paper refresh (iter 48) — the last open exit condition.
+
+Regenerated artifacts (generator scripts/plot_paper_figures_v2.py;
+vector PDF; every data source post-dates the pgen-frame and time-label
+fixes):
+
+[NEW] paper/.../figures/zccm_teuk_exact.pdf  (replaces zccm_teuk_paper.pdf
+      as the referenced Fig. 1; the old PDF stays on disk as provenance)
+      Content: exact-reference Teukolsky ladder — the analytic
+      rpsi4(2,0)(t, r=36) (N12a) + the three-rung 6th-order ladder and
+      pointwise errors. Data: results/numerical/athenak_teuk_ana/gpu6/
+      (iter-18 corrected battery; gpu6_checker.txt: E = 4.99e-2/5.36e-3/
+      2.02e-3, order 5.39/5.52, finest amplitude 1+-2e-4, shift 0.000).
+[NEW] paper/.../figures/zccm_live_ccm.pdf (Fig. 2)
+      (a) Sec V.C pulse: live psi0 datum (mode-6 ccm5-diag) vs ZccmJl
+          mirror reference (n14_pulse_ref.csv); t1/t2 marks.
+      (b) transmitted burst rpsi4(2,0) at r=36 (mode6) vs no-datum
+          control (mode6_ctrl).
+      (c) SpECTRE oracle Psi4/Psi0 (2,0) vs the closed forms
+          -sqrt(6pi/5) F6 and -(9/8) c2 F2
+          (spectre_oracle/TeukolskyOracleReduction.h5).
+
+Method-paper text refresh (sections/method.tex; dark-blue nfblock
+convention for new content, per the stage-5 user directive):
+[FIX] sec:teuktest config: second-order -> sixth-order (nghost=4).
+[NEW] eq:teuk-exact-psi4: the exact finite-radius rpsi4(2,0) (N12a) with
+      the AthenaK convention map (-1 x paper scri member), 7 gates +
+      SpECTRE confirmation noted.
+[REPLACE] protocol/result paragraph: causally-disconnected-reference
+      protocol + stale N11 numbers (E = 2.732e-4 vs ref at 2nd order;
+      peak ratios 0.292/0.465/0.612) -> exact-reference ladder
+      (eq:teuk-E: 4.99e-2/5.36e-3/2.02e-3, order 5.39/5.52) + the two
+      production-defect disclosures (frame orientation; time labels).
+[NEW] sec:liveccm (nodes N13-N14): native in-process solver; unringed
+      beta-corrected hierarchy eq:beta-hierarchy (the machine-derived
+      exact-rational sources); gauge regularity + psi0 invariance;
+      live sampling + six-row map; retarded-cone lag coupling;
+      verification items (i)-(v): standalone 8.8e-5, stub battery
+      4.1e-9 of peak, conditioning finding + Sec V.C fidelity gates,
+      SpECTRE oracle 6e-6 / 0.1%, N13 LF/GKS conclusion.
+[NEW] Fig. 1 + Fig. 2 captions with generator + data provenance.
+
+Build: latexmk clean — "Output written on main.pdf (7 pages)"; zero
+unresolved references ("??" count 0 in main.log); the new equations and
+section render (pdftotext spot checks).
+
+Data provenance summary: every number in the refreshed test/live
+sections traces to an admitted ledger row (N12 iter 18; N14 iters
+43-46; N13 iter 47); no figure or quoted number remains from the
+pre-fix N11 batteries.
