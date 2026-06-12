@@ -1,0 +1,62 @@
+N14 cross-oracle (iter 46): SpECTRE CharacteristicExtract on identical
+worldtube data — the exit-condition oracle obligation.
+
+Oracle: ref-code/spectre-cce CceExecutables (sxs-collaboration/spectre
+release v2026.06.09.01 — the SAME CCE used by arXiv:2308.10361),
+prebuilt CharacteristicExtract binary, run single-core (+p1).
+
+[PASS] O1 smoke: the bundled regression test (BondiSachsCceR0200.h5 ->
+       CheckCceOutput.py vs CharacteristicExtractReduction_Expected.h5)
+       passes in this environment: variable error 1.49e-5 (tolerance
+       1.0), wall 1:44.
+
+[PASS] O2 worldtube generation (scripts/gen_spectre_worldtube.jl): a
+       Bondi-Sachs-format H5 file (TeukolskyBondiCceR0041.h5) written
+       from the EXACT linear Teukolsky solution in the Bondi gauge
+       (ZccmJl machine-derived series; N14 stage A): J, DrJ, H, Q, U, W
+       (2,0) modal coefficients at a constant-Bondi-radius worldtube
+       r_B = 41 (R(0,0) = 41 sqrt(4pi), Beta = 0, DuR = 0), X = 1e-3,
+       rc = 20, tau = 2, t in [0,45], dt = 0.05. Because the data is
+       prescribed directly on a Bondi-coordinate sphere, the dataset is
+       an exact linear solution — no Cauchy-coordinate gauge shift (zr)
+       enters. Mode conversions: s^2 = 4 sqrt(2pi/15) 2Y20 (spin 2),
+       sc = -sqrt(8pi/15) 1Y20 (spin 1), P = sqrt(16pi/5) Y20 (W).
+       Format reverse-engineered from the bundled test legends
+       (Re/Im (l,m) pairs, m from -l; real m>=0 compression; LMax=16).
+
+[PASS] O3 the oracle run: CharacteristicExtract on our file, 2:29 wall,
+       zero errors (run log cce_oracle_run3.log). Two format failures
+       root-caused on the way (error-db): HDF5.jl UTF-8 string
+       attributes rejected (spectre requires ASCII); fixed-length S32
+       byte strings also rejected (reader expects VARIABLE-length ASCII)
+       — final fix: h5py string_dtype(encoding="ascii").
+
+[PASS] O4 THE CROSS-ORACLE GATES (scripts/check_spectre_oracle.jl):
+       fit A * F^(n)(t - c) per scri quantity, (2,0) mode:
+       Strain peak 1.456e-03 | F4 residual 1.358e-04 of peak | c=0.00
+              A = +1.941695, A/naive = +1.000
+       News   peak 1.985e-03 | F5 residual 1.814e-06 of peak | c=0.00
+              A = +1.941621, A/naive = +2.000 (clean factor-2:
+              spectre News = du(r Jbar), ours = half that — documented)
+       Psi4   peak 3.641e-03 | F6 residual 9.918e-06 of peak | c=0.00
+              A = -1.941623 = -sqrt(6pi/5) to 6e-6 RELATIVE:
+              the INDEPENDENT PRODUCTION CCE CONFIRMS THE N12 EXACT
+              SCRI WAVEFORM rpsi4(2,0) = -sqrt(6pi/5) F6 (paper
+              convention; AthenaK = -1 x paper).
+       Psi0   peak 1.453e-03 | F2 residual 2.171e-03 of peak | c=0.00
+              A = -2.908988, A/naive = +0.999: spectre scri psi0
+              = -(9/8) F2 x s^2-shape to 0.1% — THE PSI0 DATUM CHANNEL
+              NORMALIZATION CROSS-ORACLED (the same -(9/8) F2 datum the
+              native solver was gated on, iters 35-45).
+       shift consistency: max spread 0.000 [gate < 0.2] PASS.
+
+Closure of the verification chain: native AthenaK solver <-> ZccmJl
+(admitted gates, iters 36-45) <-> exact analytic series (N12) <->
+SpECTRE CharacteristicExtract (this iteration) — all four agree on the
+linear Teukolsky scri content and the psi0 datum normalization.
+
+Caveat (honest scope): the oracle ran on identical ANALYTIC worldtube
+data (the strongest-controlled slice). Feeding identical LIVE
+AthenaK-sampled worldtube data to both codes is a possible future
+refinement; the live chain is separately gated by iters 44-45
+(n14_native_check.txt, n14_pulse_check.txt).

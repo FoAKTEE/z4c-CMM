@@ -166,13 +166,26 @@ the admitted 6th-order scaling (half-res is O(1)-truncated for this
 sharp pulse); converged ladder out of budget — the SpECTRE cross-oracle
 is the designated coupled-solution fidelity instrument.
 
-## N14 next-iteration plan (iter 46+)
+## N14 cross-oracle (iter 46): DISCHARGED [SOLID]
 
-1. SpECTRE CharacteristicExtract cross-oracle on identical worldtube
-   data (ref-code/spectre-cce).
-2. N13 LF/GKS revisit (O-N13-1); X=2 configuration; O(dt) coupling
+SpECTRE CharacteristicExtract (release v2026.06.09.01 prebuilt binary —
+the paper's own CCE) run on a Bondi-Sachs worldtube file generated from
+the EXACT linear Teukolsky Bondi-gauge series (constant-Bondi-R tube 41,
+X=1e-3, (2,0) only). Transcript: results/numerical/
+n14_spectre_oracle_check.txt. Results: Psi4 amplitude −1.941623 =
+−sqrt(6pi/5) to 6e-6 relative (CONFIRMS the N12 exact scri waveform);
+Psi0 = −(9/8)F² s²-shape to 0.1% (the datum-channel normalization
+cross-oracled); Strain F⁴ exact; News F⁵ with a documented factor-2
+convention; all time shifts 0.00. Verification chain closed: native
+AthenaK solver ↔ ZccmJl ↔ exact analytic (N12) ↔ SpECTRE. Caveat: the
+oracle slice is identical ANALYTIC worldtube data; the live chain is
+separately gated (iters 44-45).
+
+## Next-iteration plan (iter 47+)
+
+1. N13 LF/GKS revisit (O-N13-1); X=2 configuration; O(dt) coupling
    refinement (linear-in-time BC interpolation between samples).
-3. Figures + method-paper refresh on corrected-solution batteries;
+2. Figures + method-paper refresh on corrected-solution batteries;
    N11-figure regeneration.
 
 ## Binding directive added (iter 29, 2026-06-12)

@@ -1,0 +1,71 @@
+Charm++: standalone mode (not using charmrun)
+Charm++> Running in Multicore mode: 1 threads (PEs)
+The following options differ from their suggested values:
+H5LookaheadTimes, line 151:
+  Specified: 10000
+  Suggested: 200
+UseBetaIntegralEstimate, line 129:
+  Specified: false
+  Suggested: true
+OptimizeL0Mode, line 128:
+  Specified: true
+  Suggested: false
+RequireConvergence, line 127:
+  Specified: false
+  Suggested: true
+MaxIterations, line 126:
+  Specified: 1000
+  Suggested: 300
+Terminated due to an uncaught exception:
+
+############ ERROR ############
+Stack trace:
+
+  0. [error handling]
+  1. /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract(+0x4e30169) [0x6554696d0169] - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x4e30169
+  2. std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > h5::read_rank1_attribute<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x4923dd5
+  3. h5::Dat::Dat(bool, h5::detail::OpenGroup&&, long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, unsigned int) - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x4908d04
+  4. h5::Dat const& h5::H5File<(h5::AccessType)1>::get<h5::Dat>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x1d688f0
+  5. Cce::BondiWorldtubeH5BufferUpdater<ComplexModalVector>::BondiWorldtubeH5BufferUpdater(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::optional<double>) - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x1d69004
+  6. _ZN8Parallel19create_from_optionsI17EvolutionMetavarsIN3Cce19H5WorldtubeBoundaryEEJN9observers4Tags17ReductionFileNameENS6_14VolumeFileNameENS_4Tags11InputSourceENS2_4Tags11InitializeJILb0EEEN8Spectral4Swsh4Tags4LMaxENSB_22ExtractionRadiusFromH5ENSB_15EndTimeFromFileENSB_17StartTimeFromFileENSG_20Nu [...] InterpolationOrderEEEEN6tuples11TaggedTupleIJDpT0_EEERKNS2H_IJDpT1_EEEN7brigand4listIJS2J_EEE.isra.0 - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x1a61ed0
+  7. Parallel::Main<EvolutionMetavars<Cce::H5WorldtubeBoundary> >::Main(CkArgMsg*) - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x1cc0682
+  8. _initCharm(int, char**) in /work/charm_7_0_0/src/ck-core/init.C:1709
+  9. ConverseRunPE(int) in /work/charm_7_0_0/src/arch/util/machine-common-core.C:1614
+ 10. ConverseInit in /work/charm_7_0_0/src/arch/util/machine-common-core.C:1530
+ 11. charm_main in /work/charm_7_0_0/src/ck-core/init.C:1759
+ 12. __libc_start_call_main in ../sysdeps/x86/libc-start.c:74
+ 13. __libc_start_main in ../sysdeps/nptl/libc_start_call_main.h:347
+ 14. _start - Resolve source file and line with: addr2line -fCpe /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract 0x19849aa
+
+Wall time: 00:00:00
+Node: 0 Proc: 0
+std::vector<_RealType> h5::read_rank1_attribute(hid_t, const string&) [with Type = std::__cxx11::basic_string<char>; hid_t = long int; std::string = std::__cxx11::basic_string<char>] in /work/spectre/src/IO/H5/Helpers.cpp:750
+
+Expected ASCII-encoded string but got H5T_cset_t of value 1. Likely the string is UTF8 encoded.
+############ ERROR ############
+
+
+Converse/Charm++ Commit ID: c5f1dcd
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 1 hosts (2 sockets x 64 cores x 2 PUs = 256-way SMP)
+Charm++> cpu topology info is gathered in 0.001 seconds.
+
+Executing 'CharacteristicExtract' using 1 processors.
+Launch command line: /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract --input-file TeukolskyOracle.yaml
+Charm++ startup time in seconds: 0.003267
+Date and time at startup: Fri Jun 12 22:14:05 2026
+
+SpECTRE Build Information:
+Version:                      2026.06.09.01
+Compiled on host:             buildkitsandbox
+Compiled in directory:        /work/spectre/build
+Source directory is:          /work/spectre
+Compiled on git branch:       HEAD
+Compiled on git revision:     8590383
+Linked on:                    2026-06-09T21:05:51+00:00
+Build type:                   Release
+
+
+Option parsing completed.
+
+[Partition 0][Node 0] End of program
