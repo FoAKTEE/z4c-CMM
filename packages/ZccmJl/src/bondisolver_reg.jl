@@ -14,6 +14,7 @@
 # from the worldtube; the scri endpoint set by the regular limit.
 
 export RegGrid, rofy, reg_sweep, reg_evolve_J, reg_psi0_worldtube,
+       reg_psi0_hierarchy,
        teuk_jr, teuk_qr, teuk_ur, teuk_wr, teuk_hr
 
 struct RegGrid{T<:Real}
@@ -195,4 +196,28 @@ function reg_evolve_J(g::RegGrid{T}, u0::T, u1::T, du::T,
         jr[1] = teuk_jr(u, rwt, X, rc, tau)
     end
     jr
+end
+
+"""psi0t at the worldtube via the HIERARCHY (O-N14-1 route 3): no finite
+difference touches the evolved field anywhere —
+  dy jr|_wt  from the Q equation algebraically:
+      qr + (1-y) qr' = 4 jr - 4 (1-y) jr'  =>
+      jr'|_1 = (4 jr_1 - qr_1 - (1-y_1) (D qr)_1) / (4 (1-y_1))
+  d2r Jt|_wt from the verified H equation:
+      (1/4) r d2r Jt = dr(r Ht) + (1/2) Ut + (3/2) Jt / r,
+      dr(r Ht)|_wt = w (D hr)_1
+(qr, hr are sweep-INTEGRATED fields, anchored to exact worldtube BCs)."""
+function reg_psi0_hierarchy(g::RegGrid{T}, jr::Vector{T},
+                            bc::NTuple{4,T}) where {T}
+    qr, ur, wr, hr = reg_sweep(g, jr, bc)
+    rwt = g.rwt
+    y1 = g.y[1]
+    w = (1 - y1)^2/(2rwt)
+    djr1 = (4jr[1] - qr[1] - (1 - y1)*(g.D*qr)[1])/(4*(1 - y1))
+    dJt = w*djr1/rwt - jr[1]/rwt^2
+    drH = w*(g.D*hr)[1]
+    Ut1 = ur[1]/rwt^2
+    Jt1 = jr[1]/rwt
+    d2Jt = (drH + Ut1/2 + T(3)/2*Jt1/rwt)*4/rwt
+    -dJt/(2rwt) - d2Jt/4
 end
