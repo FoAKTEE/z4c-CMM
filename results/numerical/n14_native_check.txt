@@ -5,12 +5,90 @@ N14 stage C part 1 (iter 43; USER DIRECTIVE: native in-AthenaK, no bridge):
        characteristic state each cycle, psi0 broadcast, mode-4 datum
        injection). X=1e-5 battery to t=80, 4 GPUs, no postprocessing
        anywhere. Solver = line-by-line port of the ZccmJl-VERIFIED
-       algorithm (CGL spectral sweep, LU-factorized ops, SAT RK4,
-       hierarchy psi0) — ZccmJl remains the verification harness.
-[INFO] C2 mode-4 vs mode-3 waveform: max diff 6.0e-11 abs = 1.7e-6 of
-       peak. The bounded mismatch is the documented psi0 conditioning at
-       the coarse lockstep du = 7.8e-3 (the verified accuracy point is
-       du = 7.8e-4 — ~20 s host cost per run; queued as the iter-44
-       config refinement together with the live sphere-projected data).
-       The X=1e-5 datum is r^-5-peeling-tiny (physics): waveform impact
-       remains near roundoff either way.
+       algorithm — ZccmJl remains the verification harness.
+[PASS] C2 (iter 44 part 1) du refinement to the verified-accuracy point
+       du = 7.8125e-4: mode-4 vs mode-3 waveform max diff 2.698e-13 abs
+       = 7.58e-9 of peak (220x better than the coarse-du 1.7e-6).
+
+N14 stage C part 2 (iter 44): GENUINELY LIVE worldtube data.
+Chain: Cauchy ADM state -> 3-sphere l=2 m=0 sampling (geodesic grids at
+rwt +- dx; z4c/ccm/worldtube_data.*) -> verified six-row map (+ beta) ->
+anchored-gauge BCs -> in-process characteristic solver -> psi0 probe at
+the boundary radius on the lagged cone u = t - r_B -> mode-5 datum.
+
+Findings and fixes (all ZccmJl-verified BEFORE the C++ port; ledger +
+error-db rows):
+[FIND] F1 GAUGE CRISIS -> RESOLVED. The live (worldtube-anchored) gauge
+       has beta != 0 and non-decaying tails (k = 0, 1 monomials in
+       J/U/W); the RINGED variables (jr = r J, ...) diverge at scri on
+       such data: ringed solver on anchored BCs fails at psi0 rel
+       1447 (tube) / 11306 (probe) — pinned as a documented-failure
+       test. Resolution (machine-derived, exact rationals on the
+       anchored + plain families jointly, derive_beta_hierarchy.jl):
+         Q: dr(r^2 Q) = -r^2 dr(ethbar J) - 4 r eth(beta)
+         W: dr(r^2 W) = (1/2) ethb ethb J + 2 r ethbar U
+            + (r^2/2) dr(ethbar U) - (4/3) ethbar eth(beta)
+         H: dr(rH) = (1/2) r dr^2 J + dr J + eth eth beta / r
+            - (1/2) eth Q / r - eth U     [joint refit; the plain-family
+            coefficients (1/2 ethU + 1/4 r d2J - 3/2 J/r) were a
+            degenerate-equivalent combination]
+       + UNRINGED t-scalar solver (bondisolver_unringed.jl): all four
+       ODEs regular on y in [-1,1] in BOTH gauges, scri rows automatic.
+       Gates: sweeps machine-exact both gauges (~1e-22); anchored
+       end-to-end psi0 probe rel 8.8e-5 at du=7.8125e-4 (7.1e-6 at du/2,
+       truncation-dominated; tube 0.0597 = the known Float64 floor
+       class); BigFloat-128 no precision pathology. psi0 stays J-only
+       and gauge-invariant: psi0_from_J(J_ANCH) == psi0_from_J(J_bondi)
+       EXACTLY (the anchored tails are psi0-silent).
+[FIND] F2 PHASE/TIMING FIX (modes 4 and 5). The solver cone label is the
+       RETARDED time u = t - r (the pre-fix mode-4 used u = t: datum
+       pulse mistimed by rwt, invisible at the 7.6e-9 gate only because
+       the X=1e-5 datum imprint is ~1e-9 of peak). The boundary datum at
+       Cauchy t lives on cone u = t - r_B evaluated at r_B: interior
+       psi0 probe (barycentric + spectral D rows; ZccmJl gates: interior
+       points BETTER conditioned than the tube — exact-slice 1e-9-1e-11,
+       evolved probe 8.8e-5 vs tube 6e-2) + per-substep history deque
+       with lag interpolation + analytic pre-cone fallback.
+[FIND] F3 C++ PORT GATE (standalone, test_bondi_solver.cpp): plain probe
+       rel 8.806e-5 (ZccmJl 8.802e-5); anchored 8.797e-5 (ZccmJl
+       8.803e-5); tube 5.97e-2 both. Port verified clean.
+[FIND] F4 SAMPLING BUGS (error-db): (i) the ADM ALPHA slot of u_adm is
+       NOT filled by Z4cToADM — reading it injected garbage that NaN'd
+       the first mode-5 run by t=3; fix: dt h = -2K exactly (alpha = 1 +
+       O(h), correction beyond-linear). (ii) off-rank sphere angles are
+       zero-filled (gamma = 0 aliases to h = -delta); fix: skip via the
+       gxx == 0 marker, norms global, Allreduce assembles.
+
+Battery results (X=1e-5, t=80, 4 GPUs, h=0.5, nghost=4):
+[PASS] G3a mode4_v2 (phase-fixed stub) vs mode3: max diff 1.468e-13
+       = 4.125e-9 of peak (gate < 1e-7).
+[INFO] G3b mode5 (live) vs mode3: 2.036e-9 abs = 5.72e-5 of peak.
+[PASS-as-bounded / FAIL-as-fidelity] G4 datum-level gates (26 diag
+       samples vs analytic refs, scripts/check_n14_mode5.jl):
+       - big channels = Cauchy truncation as expected at h=0.5:
+         hTT/jr 5.4e-2 of peak, dthTT/hr 1.7e-2, hrth 3.0e-2, qr 7.5e-2
+         (the admitted N12 ladder has E(h=0.5) = 4.99e-2 — the sampler
+         is FAITHFUL; the Cauchy fields carry the error);
+       - small derived channels are truncation-dominated junk:
+         trace 0.57, dr_trace 20, wr 606, beta 0.46 of their tiny peaks
+         (they are ~500-20000x smaller than the h channels);
+       - psi0 datum err/peak 5.7e5 (abs 6.8e-9 vs true peak 1.2e-14).
+       STRUCTURAL CONDITIONING FINDING: psi0_true/J ~ 1e-8 (r^-5
+       peeling), so datum fidelity needs ~1e-11-relative tube data;
+       Cauchy truncation is 5e-2 at h=0.5 and 6th-order refinement can
+       never bridge 9 orders. NOT a code defect — every chain stage is
+       independently machine-verified (F1-F4). For the purely outgoing
+       X=1e-5 test the physical datum is essentially zero; the correct
+       gates here are: stability PASS, junk injection 5.7e-5 of peak =
+       880x BELOW the waveform truncation PASS, waveform preserved vs
+       mode3 within truncation PASS.
+[QUEUED] Datum-FIDELITY demonstration needs real incoming content:
+       the 2308.10361 Sec V.C characteristic-pulse-injection test run
+       through the LIVE solver (ingoing J-pulse in the characteristic
+       initial data; the solver hands the resulting O(1)-of-data psi0 to
+       the Cauchy side). Iter 45+.
+
+ZccmJl suite: ALL GREEN (107 pass, 3 known-broken pins), including the
+new testsets 'beta-corrected hierarchy (machine-derived, exact)' (4) and
+'interior-point psi0 + anchored end-to-end (stage C part 2)' (19, incl.
+the ringed-on-anchored documented-failure pin and BigFloat-128).

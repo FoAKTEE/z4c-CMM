@@ -8,7 +8,8 @@
 using LinearAlgebra
 
 export ChebRegGrid, cheb_sweep, cheb_evolve_J, cheb_psi0_hierarchy,
-       ChebSweepOps, cheb_sweep_fact, cheb_evolve_J_sat
+       ChebSweepOps, cheb_sweep_fact, cheb_evolve_J_sat,
+       cheb_psi0_at, cheb_evolve_J_sat_bc
 
 struct ChebRegGrid{T<:Real}
     rwt::T
@@ -164,6 +165,62 @@ function cheb_sweep_fact(ops::ChebSweepOps{T}, jr::Vector{T},
     hr = bc[4] .+ (G .- G[1])./4 .- (g.Aint*ur)./(4g.rwt) .-
          3 .*(g.Aint*jr)./(4g.rwt)
     (qr, ur, wr, hr)
+end
+
+"""psi0t at an arbitrary radius rstar >= rwt (interior point of the
+characteristic domain) by barycentric interpolation of jr and its spectral
+y-derivatives. Needs ONLY the jr state (no sweep, no BCs): the linear
+hierarchy gives psi0t = -dr Jt/(2r) - dr^2 Jt/4 with Jt = jr/r. The native
+CCM coupling needs this because the Cauchy-boundary datum at radius r_B
+lives on the cone u = t - r_B evaluated at r_B > rwt (causality lag)."""
+function cheb_psi0_at(g::ChebRegGrid{T}, jr::Vector{T}, rstar::T) where {T}
+    n = length(g.y)
+    ystar = 1 - 2g.rwt/rstar
+    wb = T[(-1)^k for k in 0:n-1]; wb[1] /= 2; wb[end] /= 2
+    hit = findfirst(y -> y == ystar, g.y)
+    row = zeros(T, n)
+    if hit === nothing
+        d = wb ./ (ystar .- g.y)
+        row .= d ./ sum(d)
+    else
+        row[hit] = 1
+    end
+    djr = g.D*jr; d2jr = g.D*djr
+    j0 = sum(row .* jr); j1 = sum(row .* djr); j2 = sum(row .* d2jr)
+    r = rstar
+    dydr = 2g.rwt/r^2; d2ydr2 = -4g.rwt/r^3
+    drJ  = j1*dydr/r - j0/r^2
+    d2rJ = (j2*dydr^2 + j1*d2ydr2)/r - 2j1*dydr/r^2 + 2j0/r^3
+    -drJ/(2r) - d2rJ/4
+end
+
+"""SAT evolution with a general worldtube-BC closure: bcfun(u) returns the
+ringed tube values (jr, qr, ur, wr, hr) — e.g. the worldtube_map output on
+live Cauchy scalars (the production CCM path). jr0 is the initial slice
+(start quiescent: the anchored-gauge series has a + b/r tails whose ringed
+jr = r J diverges at scri, so a series init is NOT representable; with
+F(u0) ~ 0 the zero slice is exact)."""
+function cheb_evolve_J_sat_bc(g::ChebRegGrid{T}, u0::T, u1::T, du::T,
+                              jr0::Vector{T}, bcfun;
+                              sigma::T = T(1)) where {T}
+    ops = ChebSweepOps(g)
+    N = length(g.y) - 1
+    taupen = sigma*(1/(2g.rwt))/(T(1)/N^2)
+    jr = copy(jr0)
+    u = u0
+    rhs(uu, J) = begin
+        b = bcfun(uu)
+        (_, _, _, hr) = cheb_sweep_fact(ops, J, (b[2], b[3], b[4], b[5]))
+        hr[1] += taupen*(b[1] - J[1])
+        hr
+    end
+    while u < u1 - du/2
+        k1 = rhs(u, jr); k2 = rhs(u + du/2, jr .+ du/2 .* k1)
+        k3 = rhs(u + du/2, jr .+ du/2 .* k2); k4 = rhs(u + du, jr .+ du .* k3)
+        jr .+= du/6 .* (k1 .+ 2k2 .+ 2k3 .+ k4)
+        u += du
+    end
+    jr
 end
 
 """SAT evolution (sigma = 1; O-N14-1 resolution) using factorized ops."""

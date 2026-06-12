@@ -1,8 +1,9 @@
 //========================================================================================
 // bondi_solver.cpp — see bondi_solver.hpp. Port gated against the
-// ZccmJl-admitted numbers (N14 ledger): exact-slice sweep machine-exact;
-// SAT evolution ~4.3-order; Float64 psi0 conditioning floor ~0.05 of the
-// r^-5-tiny linear datum (physics, not scheme — iter-35 analysis).
+// ZccmJl-admitted numbers (N14 ledger, iter 44 unringed scheme):
+// exact-slice sweeps machine-exact on BOTH gauges; anchored end-to-end
+// psi0 probe rel 8.8e-5 at du = 7.8125e-4 (7.1e-6 at du/2,
+// truncation-dominated); tube value at the documented ~0.05 floor class.
 //========================================================================================
 #include <cmath>
 #include <cstdio>
@@ -103,51 +104,126 @@ BondiSolver::BondiSolver(double rwt, int n, double u0, double du_max)
     }
     D_[i*n + i] = -rowsum;
   }
-  // Aint = inv(D with row0 -> e0) * (I with row0 zeroed)
-  std::vector<double> A(D_);
-  for (int j = 0; j < n; ++j) A[0*n + j] = 0.0;
-  A[0] = 1.0;
-  std::vector<int> piv;
-  lu_factor(&A, &piv, n);
-  Aint_.assign(n*n, 0.0);
-  for (int col = 0; col < n; ++col) {
-    std::vector<double> e(n, 0.0);
-    if (col != 0) e[col] = 1.0;
-    lu_solve(A, piv, n, &e);
-    for (int i = 0; i < n; ++i) Aint_[i*n + col] = e[i];
-  }
-  // sweep operators (verified linear system; BC row 1 each; W: scri row by
-  // L'Hopital handled via the same structure as ZccmJl cheb_sweep)
-  auto build = [&](std::vector<double>* M, int kind) {
+  // unringed sweep operators (scri rows automatic — regular limits):
+  //   QW = 2I + (1-y)D (Q and W share it), U = D, H = I + (1-y)D
+  // each with the tube BC row (row 0 -> e0)
+  auto build = [&](std::vector<double>* M, double diag, bool oyD) {
     M->assign(n*n, 0.0);
     for (int i = 0; i < n; ++i) {
       const double oy = 1.0 - y_[i];
       for (int j = 0; j < n; ++j) {
-        double v = oy*D_[i*n + j];
-        if (kind == 0) v += (i == j) ? 1.0 : 0.0;        // Q: I + (1-y)D
-        if (kind == 1) v += (i == j) ? -2.0 : 0.0;       // U: -2I + (1-y)D
-        (*M)[i*n + j] = v;                                // W: (1-y)D
+        (*M)[i*n + j] = (oyD ? oy : 1.0)*D_[i*n + j]
+                        + ((i == j) ? diag : 0.0);
       }
     }
     for (int j = 0; j < n; ++j) (*M)[0*n + j] = 0.0;
-    (*M)[0] = 1.0;                                        // BC row
-    if (kind == 2) {                                      // W scri row
-      for (int j = 0; j < n; ++j) (*M)[(n-1)*n + j] = -D_[(n-1)*n + j];
-    }
+    (*M)[0] = 1.0;
   };
-  build(&luQ_, 0); lu_factor(&luQ_, &pivQ_, n);
-  build(&luU_, 1); lu_factor(&luU_, &pivU_, n);
-  build(&luW_, 2); lu_factor(&luW_, &pivW_, n);
+  build(&luQW_, 2.0, true);  lu_factor(&luQW_, &pivQW_, n);
+  build(&luU_, 0.0, false);  lu_factor(&luU_, &pivU_, n);
+  build(&luH_, 1.0, true);   lu_factor(&luH_, &pivH_, n);
   taupen_ = (1.0/(2.0*rwt))*N*N;       // SAT: sigma=1, v_bdry * N^2
-  jr_.assign(n, 0.0);
+  Jt_.assign(n, 0.0);
 }
 
 void BondiSolver::init_teukolsky(double X, double rc, double tau) {
+  X_ = X; rc_ = rc; tau_ = tau; have_teuk_ = true;
   for (int i = 0; i < n_; ++i) {
     const double ir = (1.0 - y_[i])/(2.0*rwt_);          // 1/r (0 at scri)
-    jr_[i] = 0.75*(Fn(4, u_, X, rc, tau)
-                   + Fn(2, u_, X, rc, tau)*ir*ir);
+    Jt_[i] = 0.75*(Fn(4, u_, X, rc, tau)*ir
+                   + Fn(2, u_, X, rc, tau)*ir*ir*ir);
   }
+}
+
+std::vector<double> BondiSolver::bary_row(double rstar) const {
+  const int n = n_;
+  const double ystar = 1.0 - 2.0*rwt_/rstar;
+  std::vector<double> row(n, 0.0);
+  for (int k = 0; k < n; ++k) {
+    if (y_[k] == ystar) { row[k] = 1.0; return row; }
+  }
+  double ssum = 0.0;
+  for (int k = 0; k < n; ++k) {
+    double w = (k % 2 == 0) ? 1.0 : -1.0;
+    if (k == 0 || k == n-1) w *= 0.5;
+    row[k] = w/(ystar - y_[k]);
+    ssum += row[k];
+  }
+  for (int k = 0; k < n; ++k) row[k] /= ssum;
+  return row;
+}
+
+void BondiSolver::set_probe(double rstar) {
+  probe_r_ = rstar;
+  probe_row_ = bary_row(rstar);
+  // rowD = row * D, rowD2 = rowD * D (vector-matrix products, built once)
+  probe_rowD_.assign(n_, 0.0);
+  probe_rowD2_.assign(n_, 0.0);
+  for (int j = 0; j < n_; ++j) {
+    double a1 = 0.0;
+    for (int i = 0; i < n_; ++i) a1 += probe_row_[i]*D_[i*n_ + j];
+    probe_rowD_[j] = a1;
+  }
+  for (int j = 0; j < n_; ++j) {
+    double a2 = 0.0;
+    for (int i = 0; i < n_; ++i) a2 += probe_rowD_[i]*D_[i*n_ + j];
+    probe_rowD2_[j] = a2;
+  }
+  hist_.clear();
+  record_probe();
+}
+
+double BondiSolver::psi0_at(double rstar) const {
+  std::vector<double> djt, d2jt;
+  matvec(D_, Jt_, n_, &djt);
+  matvec(D_, djt, n_, &d2jt);
+  const std::vector<double> row = bary_row(rstar);
+  double j1 = 0.0, j2 = 0.0;
+  for (int k = 0; k < n_; ++k) { j1 += row[k]*djt[k]; j2 += row[k]*d2jt[k]; }
+  const double oy = 2.0*rwt_/rstar;                      // 1 - ystar
+  const double drJ = oy*oy/(2.0*rwt_)*j1;
+  const double d2rJ = oy*oy/(4.0*rwt_*rwt_)*(oy*oy*j2 - 2.0*oy*j1);
+  return -drJ/(2.0*rstar) - d2rJ/4.0;
+}
+
+void BondiSolver::record_probe() {
+  if (probe_r_ <= 0.0) return;
+  double j1 = 0.0, j2 = 0.0;
+  for (int k = 0; k < n_; ++k) {
+    j1 += probe_rowD_[k]*Jt_[k];
+    j2 += probe_rowD2_[k]*Jt_[k];
+  }
+  const double oy = 2.0*rwt_/probe_r_;
+  const double drJ = oy*oy/(2.0*rwt_)*j1;
+  const double d2rJ = oy*oy/(4.0*rwt_*rwt_)*(oy*oy*j2 - 2.0*oy*j1);
+  hist_.emplace_back(u_, -drJ/(2.0*probe_r_) - d2rJ/4.0);
+  // prune far-past entries (lag never exceeds r_B - rwt plus margin)
+  const double keep = (probe_r_ - rwt_) + 16.0*du_max_ + 1.0;
+  while (hist_.size() > 2 && hist_.front().first < u_ - keep) {
+    hist_.pop_front();
+  }
+}
+
+double BondiSolver::probe_query(double u) const {
+  if (hist_.empty() || u <= hist_.front().first) {
+    // before the recorded cones: analytic Teukolsky fallback (the run
+    // starts quiescent; the retarded phase on cone u at any radius is u)
+    if (have_teuk_ && probe_r_ > 0.0) {
+      const double r5 = std::pow(probe_r_, 5);
+      return -1.125*Fn(2, u, X_, rc_, tau_)/r5;
+    }
+    return hist_.empty() ? 0.0 : hist_.front().second;
+  }
+  if (u >= hist_.back().first) return hist_.back().second;
+  // binary search for the bracketing pair
+  size_t lo = 0, hi = hist_.size() - 1;
+  while (hi - lo > 1) {
+    const size_t mid = (lo + hi)/2;
+    if (hist_[mid].first <= u) lo = mid; else hi = mid;
+  }
+  const double u0 = hist_[lo].first, u1 = hist_[hi].first;
+  const double f = (u1 > u0) ? (u - u0)/(u1 - u0) : 0.0;
+  return (1.0 - f)*hist_[lo].second + f*hist_[hi].second;
 }
 
 BondiSolver::WtBC BondiSolver::teuk_bc(double u, double rwt, double X,
@@ -162,56 +238,61 @@ BondiSolver::WtBC BondiSolver::teuk_bc(double u, double rwt, double X,
   b.wr = -1.5*Fn(4, u, X, rc, tau) - 1.5*Fn(3, u, X, rc, tau)*ir
          - 0.75*Fn(2, u, X, rc, tau)*ir*ir;
   b.hr = 0.75*(Fn(5, u, X, rc, tau) + Fn(3, u, X, rc, tau)*ir*ir);
+  b.beta = 0.0;                                   // plain Bondi gauge
   return b;
 }
 
-void BondiSolver::sweep(const std::vector<double>& jr, const WtBC& bc,
-                        std::vector<double>* qr, std::vector<double>* ur,
-                        std::vector<double>* wr, std::vector<double>* hr) {
+void BondiSolver::sweep(const std::vector<double>& Jt, const WtBC& bc,
+                        std::vector<double>* Qt, std::vector<double>* Ut,
+                        std::vector<double>* Wt,
+                        std::vector<double>* Ht) const {
   const int n = n_;
-  std::vector<double> djr;
-  matvec(D_, jr, n, &djr);
-  // Q
+  const double bt = bc.beta;
+  std::vector<double> djt, d2jt;
+  matvec(D_, Jt, n, &djt);
+  matvec(D_, djt, n, &d2jt);
+  // Q: 2 Qt + (1-y) Qt' = -4 (1-y) Jt' + 24 bt
   std::vector<double> b(n);
   for (int i = 0; i < n; ++i) {
-    b[i] = 4.0*jr[i] - 4.0*(1.0 - y_[i])*djr[i];
+    b[i] = -4.0*(1.0 - y_[i])*djt[i] + 24.0*bt;
   }
-  b[0] = bc.qr;
-  lu_solve(luQ_, pivQ_, n, &b);
-  *qr = b;
-  // U
-  b = *qr; b[0] = bc.ur;
+  b[0] = bc.qr/rwt_;
+  lu_solve(luQW_, pivQW_, n, &b);
+  *Qt = b;
+  // U: Ut' = Qt/(2 rwt)
+  for (int i = 0; i < n; ++i) b[i] = (*Qt)[i]/(2.0*rwt_);
+  b[0] = bc.ur/(rwt_*rwt_);
   lu_solve(luU_, pivU_, n, &b);
-  *ur = b;
-  // W
-  for (int i = 0; i < n; ++i) b[i] = 2.0*jr[i] + 2.0*(*ur)[i] + 0.5*(*qr)[i];
-  std::vector<double> srcp;
-  matvec(D_, b, n, &srcp);
-  b[0] = bc.wr; b[n-1] = srcp[n-1];
-  lu_solve(luW_, pivW_, n, &b);
-  *wr = b;
-  // H via integration by parts (first derivatives only):
-  // hr = hr_wt + (G - G_1)/4 - Aint(ur)/(4 rwt) - 3 Aint(jr)/(4 rwt)
-  std::vector<double> G(n), iu, ij;
+  *Ut = b;
+  std::vector<double> dut;
+  matvec(D_, *Ut, n, &dut);
+  // W: 2 Wt + (1-y) Wt' = (1-y) Jt/rwt + 2 Ut + (1-y) Ut'/2 + 4 bt (1-y)/rwt
   for (int i = 0; i < n; ++i) {
     const double oy = 1.0 - y_[i];
-    G[i] = oy*oy/(2.0*rwt_)*djr[i] - oy*jr[i]/rwt_;
+    b[i] = oy*Jt[i]/rwt_ + 2.0*(*Ut)[i] + oy*dut[i]/2.0 + 4.0*bt*oy/rwt_;
   }
-  matvec(Aint_, *ur, n, &iu);
-  matvec(Aint_, jr, n, &ij);
-  hr->resize(n);
+  b[0] = bc.wr/(rwt_*rwt_);
+  lu_solve(luQW_, pivQW_, n, &b);
+  *Wt = b;
+  // H: Ht + (1-y) Ht' = ((1-y)/(4 rwt))[(1-y)^2 Jt'' - 2 (1-y) Jt']
+  //    + ((1-y)^2/(2 rwt)) Jt' + 3 bt (1-y)/rwt + Qt (1-y)/(4 rwt) + Ut
   for (int i = 0; i < n; ++i) {
-    (*hr)[i] = bc.hr + (G[i] - G[0])/4.0 - iu[i]/(4.0*rwt_)
-               - 3.0*ij[i]/(4.0*rwt_);
+    const double oy = 1.0 - y_[i];
+    b[i] = oy/(4.0*rwt_)*(oy*oy*d2jt[i] - 2.0*oy*djt[i])
+           + oy*oy/(2.0*rwt_)*djt[i] + 3.0*bt*oy/rwt_
+           + (*Qt)[i]*oy/(4.0*rwt_) + (*Ut)[i];
   }
+  b[0] = bc.hr/rwt_;
+  lu_solve(luH_, pivH_, n, &b);
+  *Ht = b;
 }
 
-std::vector<double> BondiSolver::rhs(double u, const std::vector<double>& jr,
-                                     const WtBC& bc) {
-  std::vector<double> qr, ur, wr, hr;
-  sweep(jr, bc, &qr, &ur, &wr, &hr);
-  hr[0] += taupen_*(bc.jr - jr[0]);                       // SAT (sigma = 1)
-  return hr;
+std::vector<double> BondiSolver::rhs(double u, const std::vector<double>& Jt,
+                                     const WtBC& bc) const {
+  std::vector<double> Qt, Ut, Wt, Ht;
+  sweep(Jt, bc, &Qt, &Ut, &Wt, &Ht);
+  Ht[0] += taupen_*(bc.jr/rwt_ - Jt[0]);                  // SAT (sigma = 1)
+  return Ht;
 }
 
 template <typename F>
@@ -219,41 +300,23 @@ void BondiSolver::advance(double t, const F& bc) {
   while (u_ < t - 1e-12) {
     const double du = std::fmin(du_max_, t - u_);
     const WtBC b0 = bc(u_), bh = bc(u_ + du/2.0), b1 = bc(u_ + du);
-    std::vector<double> k1 = rhs(u_, jr_, b0);
+    std::vector<double> k1 = rhs(u_, Jt_, b0);
     std::vector<double> tmp(n_);
-    for (int i = 0; i < n_; ++i) tmp[i] = jr_[i] + du/2.0*k1[i];
+    for (int i = 0; i < n_; ++i) tmp[i] = Jt_[i] + du/2.0*k1[i];
     std::vector<double> k2 = rhs(u_ + du/2.0, tmp, bh);
-    for (int i = 0; i < n_; ++i) tmp[i] = jr_[i] + du/2.0*k2[i];
+    for (int i = 0; i < n_; ++i) tmp[i] = Jt_[i] + du/2.0*k2[i];
     std::vector<double> k3 = rhs(u_ + du/2.0, tmp, bh);
-    for (int i = 0; i < n_; ++i) tmp[i] = jr_[i] + du*k3[i];
+    for (int i = 0; i < n_; ++i) tmp[i] = Jt_[i] + du*k3[i];
     std::vector<double> k4 = rhs(u_ + du, tmp, b1);
     for (int i = 0; i < n_; ++i) {
-      jr_[i] += du/6.0*(k1[i] + 2.0*k2[i] + 2.0*k3[i] + k4[i]);
+      Jt_[i] += du/6.0*(k1[i] + 2.0*k2[i] + 2.0*k3[i] + k4[i]);
     }
     u_ += du;
+    record_probe();
   }
 }
 // explicit instantiation for the std::function closure used by callers
 template void BondiSolver::advance<std::function<BondiSolver::WtBC(double)>>(
     double, const std::function<BondiSolver::WtBC(double)>&);
-
-double BondiSolver::psi0_worldtube(const WtBC& bcnow) {
-  // hierarchy-based: dy jr|_wt from the Q equation; d2r J from the H
-  // identity (ZccmJl cheb_psi0_hierarchy, verified iters 35-37)
-  const int n = n_;
-  std::vector<double> qr, ur, wr, hr;
-  sweep(jr_, bcnow, &qr, &ur, &wr, &hr);
-  std::vector<double> dq, dh;
-  matvec(D_, qr, n, &dq);
-  matvec(D_, hr, n, &dh);
-  const double oy = 1.0 - y_[0];                          // = 2
-  const double w = oy*oy/(2.0*rwt_);
-  const double djr1 = (4.0*jr_[0] - qr[0] - oy*dq[0])/(4.0*oy);
-  const double dJt = w*djr1/rwt_ - jr_[0]/(rwt_*rwt_);
-  const double drH = w*dh[0];
-  const double d2Jt = (drH + ur[0]/(rwt_*rwt_)/2.0
-                       + 1.5*(jr_[0]/rwt_)/rwt_)*4.0/rwt_;
-  return -dJt/(2.0*rwt_) - d2Jt/4.0;
-}
 
 }  // namespace z4c_ccm

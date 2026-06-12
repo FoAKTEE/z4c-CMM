@@ -29,5 +29,6 @@ include("bondisolver_reg.jl")
 include("bondisolver_cheb.jl")
 include("anchored_series.jl")
 include("worldtubemap.jl")
+include("bondisolver_unringed.jl")
 
 end # module

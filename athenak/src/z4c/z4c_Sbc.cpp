@@ -17,6 +17,7 @@
 #include "z4c/z4c_ccm.hpp"
 #include <functional>
 #include "z4c/ccm/bondi_solver.hpp"
+#include "z4c/ccm/worldtube_data.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
@@ -270,7 +271,64 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   // mode 4 kernels read it through the amp slot (psi0 = scalar * sin^2 th).
   // The analytic Teukolsky worldtube stub gates the machinery end-to-end;
   // the live sphere-projected data path replaces it next stage.
+  if (opt.ccm && opt.ccm_mode == 5) {
+    // N14 stage C part 2: GENUINELY LIVE worldtube data — the l=2 m=0
+    // contract scalars sampled from the Cauchy ADM state (collective),
+    // mapped by the verified six-row local map (+ beta) to anchored-gauge
+    // BCs for the in-process UNRINGED beta-corrected solver. Cone labeling
+    // u = t - r: the tube sample at Cauchy t feeds cone u = t - rwt; the
+    // boundary datum at Cauchy t is the probe at r_B on the earlier cone
+    // u = t - r_B (causality lag). BCs held fixed across the substeps
+    // since the last sample (O(dt); refinement: linear-in-time).
+    Real psi0_live = 0.0;
+    int rank = 0;
+#if MPI_PARALLEL_ENABLED
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+#endif
+    const Real dx = (pm->mesh_size.x1max - pm->mesh_size.x1min)
+                    /pm->mesh_indcs.nx1;
+    const Real rwt_l = pm->mesh_size.x1max - 2.0*dx;
+    const Real rB = pm->mesh_size.x1max;
+    z4c_ccm::WtScalars ws = z4c_ccm::sample_worldtube(pmy_pack, rwt_l, dx);
+    if (rank == 0) {
+      static z4c_ccm::BondiSolver* solver5 = nullptr;
+      if (solver5 == nullptr) {
+        solver5 = new z4c_ccm::BondiSolver(rwt_l, 65, pm->time - rwt_l,
+                                           7.8125e-4);
+        solver5->init_teukolsky(opt.ccm_amp, opt.ccm_t0, opt.ccm_sigma);
+        solver5->set_probe(rB);
+      }
+      const z4c_ccm::BondiSolver::WtBC bnow =
+          z4c_ccm::worldtube_map(rwt_l, ws);
+      std::function<z4c_ccm::BondiSolver::WtBC(double)> bc =
+          [&](double) { return bnow; };
+      solver5->advance(pm->time - rwt_l, bc);
+      psi0_live = solver5->probe_query(pm->time - rB);
+      // datum-level diagnostic (offline ZccmJl checker): live scalars +
+      // mapped BCs + the served datum, every 100th call on rank 0
+      static int diag_count = 0;
+      if (diag_count++ % 100 == 0) {
+        std::fprintf(stderr,
+            "ccm5-diag t=%.6e hTT=%.9e dthTT=%.9e hrr=%.9e tr=%.9e "
+            "drtr=%.9e hrth=%.9e dthrth=%.9e jr=%.9e qr=%.9e ur=%.9e "
+            "wr=%.9e hr=%.9e beta=%.9e psi0=%.9e\n",
+            pm->time, ws.hTT, ws.dt_hTT, ws.hrr, ws.trace, ws.dr_trace,
+            ws.hrth, ws.dt_hrth, bnow.jr, bnow.qr, bnow.ur, bnow.wr,
+            bnow.hr, bnow.beta, psi0_live);
+      }
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Bcast(&psi0_live, 1, MPI_ATHENA_REAL, 0, MPI_COMM_WORLD);
+#endif
+    ccm_amp = psi0_live;
+  }
   if (opt.ccm && opt.ccm_mode == 4) {
+    // analytic-stub worldtube (plain Bondi gauge, beta = 0). Iter-44 phase
+    // fix: the solver time is the RETARDED cone label u = t - rwt (the
+    // pre-fix wiring used u = t, mistiming the datum pulse by rwt — within
+    // the C2 gate only because the datum imprint is ~1e-9 of the peak).
+    // The tube sits AT the boundary radius, so the lag is zero and the
+    // current-cone probe at rwt IS the datum.
     Real psi0_live = 0.0;
     int rank = 0;
 #if MPI_PARALLEL_ENABLED
@@ -280,17 +338,20 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       static z4c_ccm::BondiSolver* solver = nullptr;
       const Real rwt = pm->mesh_size.x1max;
       if (solver == nullptr) {
-        solver = new z4c_ccm::BondiSolver(rwt, 65, pm->time, 0.0078125);
+        // du_max at the ZccmJl verified-accuracy point (~100k substeps
+        // over t=80, host cost ~20 s/run)
+        solver = new z4c_ccm::BondiSolver(rwt, 65, pm->time - rwt,
+                                          7.8125e-4);
         solver->init_teukolsky(opt.ccm_amp, opt.ccm_t0, opt.ccm_sigma);
+        solver->set_probe(rwt);
       }
       const Real X = opt.ccm_amp, rc = opt.ccm_t0, sg = opt.ccm_sigma;
       std::function<z4c_ccm::BondiSolver::WtBC(double)> bc =
         [&](double uu) {
           return z4c_ccm::BondiSolver::teuk_bc(uu, rwt, X, rc, sg);
         };
-      solver->advance(pm->time, bc);
-      psi0_live = solver->psi0_worldtube(
-          z4c_ccm::BondiSolver::teuk_bc(pm->time, rwt, X, rc, sg));
+      solver->advance(pm->time - rwt, bc);
+      psi0_live = solver->probe_query(pm->time - rwt);
     }
 #if MPI_PARALLEL_ENABLED
     MPI_Bcast(&psi0_live, 1, MPI_ATHENA_REAL, 0, MPI_COMM_WORLD);

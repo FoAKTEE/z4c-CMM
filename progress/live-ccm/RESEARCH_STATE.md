@@ -110,19 +110,52 @@ face loop, NaN t=43.25).
   (NaN ~ t=50 even for stock Sommerfeld; raise diss/kappa1 or solve ID —
   N14-era X=2 batteries).
 
-## N14 next-iteration plan
+## N14 status (iter 44): stage C COMPLETE as machinery, [PRELIMINARY] as datum
 
-Physical-row datum path is independent of the Z row — N14 proceeds.
-Design: host-side axisymmetric (m = 0) Bondi-Sachs module in
-athenak/src/z4c/ccm/ — hierarchy beta/Q/U/W + dJ/du from the 2007.01339
-equation ledger; compactified radius y = 1 - 2 r_wt/r on a Chebyshev or
-high-order FD grid; Gauss-Legendre theta collocation; worldtube Bondi data
-from the live Cauchy state via the cce/ sphere-interpolation machinery
-(in-memory); psi0 at the worldtube -> Type-II boost -> Z4cCCMDatumPsi0
-mode 4 (live), lockstep du = Cauchy dt. Verifiers: standalone linear
-Teukolsky characteristic solve vs the N12 exact module; SpECTRE
-CharacteristicExtract cross-oracle on identical worldtube data; live-CCM
-battery vs the N12 analytic truth.
+Stage A (standalone spectral solver) + B (six-row worldtube map) + C
+(native in-process lockstep CCM, modes 4 and 5) are implemented and
+gated. Iter-44 stage C part 2 delivered the GENUINELY LIVE chain:
+Cauchy ADM -> 3-sphere l=2 sampling -> six-row map (+ beta) ->
+anchored-gauge BCs -> unringed beta-corrected characteristic solver ->
+lagged-cone psi0 probe -> mode-5 datum. Full transcript:
+results/numerical/n14_native_check.txt.
+
+Key iter-44 results (each ZccmJl-verified before the C++ port):
+1. **Gauge crisis resolved.** The live (anchored) gauge has beta != 0
+   and non-decaying tails; the ringed solver fails on it at O(10^3-10^4)
+   in psi0 (documented-failure pin). Machine-derived beta-corrected
+   hierarchy (exact-rational joint fits; Q: -4 r eth(beta); W: -(4/3)
+   ethb eth beta; H: dr(rH) = (1/2) r dr2 J + dr J + eth2 beta/r -
+   (1/2) eth Q/r - eth U) + UNRINGED t-scalar solver: machine-exact
+   sweeps in both gauges; anchored end-to-end psi0 probe rel 8.8e-5.
+   psi0 stays J-only/gauge-invariant (anchored tails exactly psi0-silent).
+2. **Cone-label (retarded time) fix, modes 4+5.** u = t - r; boundary
+   datum = interior probe at r_B on cone u = t - r_B (causality lag,
+   history deque). Phase-fixed mode-4 vs mode-3: 4.1e-9 of peak.
+3. **Sampling bugs:** ADM ALPHA slot unfilled by Z4cToADM (NaN feedback;
+   fix dt h = -2K at linear order); off-rank zero-fill aliasing (skip
+   via gxx == 0). Error-db rows.
+4. **STRUCTURAL CONDITIONING FINDING (the honest core).** The sampled
+   tube data is faithful to the Cauchy solution (hTT err 5.4e-2 of peak
+   = the admitted h=0.5 truncation), but psi0_true/J ~ 1e-8 (peeling):
+   datum fidelity needs ~1e-11-relative tube data — unreachable by mesh
+   refinement. For the purely outgoing X=1e-5 test the live datum is
+   truncation junk at 5.7e5x the (essentially zero) true datum, yet its
+   waveform imprint is 5.7e-5 of peak = 880x BELOW waveform truncation:
+   live CCM is stable and harmless here, but datum FIDELITY is not
+   demonstrable on this test, by physics.
+
+## N14 next-iteration plan (iter 45+)
+
+1. **Datum-fidelity test with real incoming content:** the 2308.10361
+   Sec V.C characteristic-pulse-injection run through the LIVE solver
+   (ingoing J-pulse in characteristic initial data; psi0 at the tube is
+   O(1) of the data, conditioning benign). Gate vs the paper's response
+   and vs mode-2 (prescribed-datum) batteries.
+2. SpECTRE CharacteristicExtract cross-oracle on identical worldtube data.
+3. N13 LF/GKS revisit (O-N13-1); figures + method-paper refresh on
+   corrected-solution batteries; X=2 configuration; O(dt) coupling
+   refinement (linear-in-time BC interpolation between samples).
 
 ## Binding directive added (iter 29, 2026-06-12)
 
