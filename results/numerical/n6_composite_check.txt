@@ -1,0 +1,15 @@
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] mode count: BC table supplies exactly 10 == 10 incoming-mode targets (2 phys + 4 constraint + 4 gauge)  (t=7.5s)
+[PASS] physical target is symmetric trace-free (2 dof exactly)  (t=7.8s)
+[PASS] P1 reduction limit: psi0_CCE = 0 gives all-homogeneous targets (max |target| = 0.0e+00) — Z4c-CCM contains Z4c-CPBC  (t=22.2s)
+[PASS] wire-through N1+N2+N3 chain: psi0_cce = psi0_cau/A^2 returns 4(psi0_cau mbm + cc) exactly (rel residual 2.92e-16 < 1e-12) over 1,048,576 random states  (t=22.2s)
+[PASS] transparency: outgoing modes leave zero residual with zero datum (0.0e+00); incoming modes are genuinely constrained — residual equals the analytic (2k)^2 a exactly (ratio dev 0.0e+00)  (t=22.2s)
+
+CONCLUSION: the composite Z4c-CCM boundary-condition table is complete
+(10 modes), reduces to paper-1's CPBC scheme at psi0 = 0, transports the
+CCE psi0 through boost+dictionary consistently (wire-through exact), and
+is transparent to outgoing radiation while constraining incoming modes.
+N6 admitted; obligations O-N6-1..4 -> N7/N8/N9.
+
+wall clock: 22.2s
+OVERALL: PASS
