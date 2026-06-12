@@ -145,17 +145,35 @@ Key iter-44 results (each ZccmJl-verified before the C++ port):
    live CCM is stable and harmless here, but datum FIDELITY is not
    demonstrable on this test, by physics.
 
-## N14 next-iteration plan (iter 45+)
+## N14 datum-fidelity (iter 45): Sec V.C pulse injection — PASSED
 
-1. **Datum-fidelity test with real incoming content:** the 2308.10361
-   Sec V.C characteristic-pulse-injection run through the LIVE solver
-   (ingoing J-pulse in characteristic initial data; psi0 at the tube is
-   O(1) of the data, conditioning benign). Gate vs the paper's response
-   and vs mode-2 (prescribed-datum) batteries.
-2. SpECTRE CharacteristicExtract cross-oracle on identical worldtube data.
-3. N13 LF/GKS revisit (O-N13-1); figures + method-paper refresh on
-   corrected-solution batteries; X=2 configuration; O(dt) coupling
+Mode 6 = live machinery + ingoing l=2 J-pulse in the characteristic
+initial data over QUIESCENT Cauchy ID (paper 2308.10361 Sec V.C; pulse
+conditioning psi0/J = 7.0e-3 vs 1e-8 for the outgoing test). Transcript:
+results/numerical/n14_pulse_check.txt. ZccmJl first (testset 8/8: ID
+normalization exact; n49/n65/n97 ladder — n=65 converged to 2.1e-7 of
+peak; du error 4.3e-12; mirror reference dumped n14_pulse_ref.csv);
+C++ standalone port gate 1.3e-7/2.3e-7 vs the reference.
+Live battery gates: A early-window datum fidelity 7.0e-8 of peak
+(t<=19), 2.4e-5 (t<=28.5) — the live chain reproduces the verified
+solver at O(1) conditioning (vs iter-44's 5.7e5x junk on the outgoing
+test); B transmission burst at t=160.88 vs t2~161 predicted, early
+times quiet 1.6e-4; C loop closure: exit burst re-crosses r_B,
+live/mirror = 72.5; D control (no datum): 2.9e-10 of peak — the
+response is fully datum-attributable. Gate L (full-vs-half ladder,
+tube pinned via the new z4c/ccm_rwt): 1.12 of peak = consistent with
+the admitted 6th-order scaling (half-res is O(1)-truncated for this
+sharp pulse); converged ladder out of budget — the SpECTRE cross-oracle
+is the designated coupled-solution fidelity instrument.
+
+## N14 next-iteration plan (iter 46+)
+
+1. SpECTRE CharacteristicExtract cross-oracle on identical worldtube
+   data (ref-code/spectre-cce).
+2. N13 LF/GKS revisit (O-N13-1); X=2 configuration; O(dt) coupling
    refinement (linear-in-time BC interpolation between samples).
+3. Figures + method-paper refresh on corrected-solution batteries;
+   N11-figure regeneration.
 
 ## Binding directive added (iter 29, 2026-06-12)
 

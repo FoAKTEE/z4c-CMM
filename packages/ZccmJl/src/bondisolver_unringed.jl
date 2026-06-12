@@ -32,7 +32,8 @@
 
 using LinearAlgebra
 
-export UnringedOps, ut_sweep, ut_evolve_sat, ut_psi0_at
+export UnringedOps, ut_sweep, ut_evolve_sat, ut_psi0_at, ut_pulse_id,
+       ut_evolve_sat_probe
 
 struct UnringedOps{T<:Real}
     FQ; FU; FW; FH
@@ -102,6 +103,54 @@ function ut_evolve_sat(g::ChebRegGrid{T}, u0::T, u1::T, du::T,
         u += du
     end
     Jt
+end
+
+"""2308.10361 Sec V.C characteristic-pulse initial data, t-scalar nodal
+values: J = +2Y20 * Jcal(y) with +2Y20 = (1/4) sqrt(15/2pi) s^2, so
+Jt = (1/4) sqrt(15/2pi) * Jcal;  Jcal = 4 Z (ymax-y)(y-ymin)/(ymax-ymin)^2
+* exp(-((y-yc)/tauy)^2) on [ymin, ymax], 0 outside (the support-edge kink
+is at the e^-28 level of peak — spectrally smooth). Paper parameters:
+yc = 0, ymin/max = -+0.8, tauy = 0.15, Z = 1e-3."""
+function ut_pulse_id(g::ChebRegGrid{T}, Z::T; ymin::T = T(-0.8),
+                     ymax::T = T(0.8), yc::T = T(0),
+                     tauy::T = T(0.15)) where {T}
+    pref = sqrt(T(15)/(2*T(pi)))/4
+    map(g.y) do y
+        (y <= ymin || y >= ymax) ? zero(T) :
+            pref*4Z*(ymax - y)*(y - ymin)/(ymax - ymin)^2 *
+            exp(-((y - yc)/tauy)^2)
+    end
+end
+
+"""ut_evolve_sat + a psi0 probe time series: returns (Jt_final, us, vals)
+where vals[i] = psi0t(rprobe) on the cone us[i] (every `stride` substeps)."""
+function ut_evolve_sat_probe(g::ChebRegGrid{T}, u0::T, u1::T, du::T,
+                             Jt0::Vector{T}, bcfun, rprobe::T;
+                             sigma::T = T(1), stride::Int = 32) where {T}
+    ops = UnringedOps(g)
+    N = length(g.y) - 1
+    taupen = sigma*(1/(2g.rwt))/(T(1)/N^2)
+    Jt = copy(Jt0)
+    u = u0
+    us = T[u]; vals = T[ut_psi0_at(g, Jt, rprobe)]
+    rhs(uu, Jx) = begin
+        b = bcfun(uu)
+        (_, _, _, Ht) = ut_sweep(ops, Jx, (b[2], b[3], b[4], b[5]), b[6])
+        Ht[1] += taupen*(b[1] - Jx[1])
+        Ht
+    end
+    step = 0
+    while u < u1 - du/2
+        k1 = rhs(u, Jt); k2 = rhs(u + du/2, Jt .+ du/2 .* k1)
+        k3 = rhs(u + du/2, Jt .+ du/2 .* k2); k4 = rhs(u + du, Jt .+ du .* k3)
+        Jt .+= du/6 .* (k1 .+ 2k2 .+ 2k3 .+ k4)
+        u += du
+        step += 1
+        if step % stride == 0
+            push!(us, u); push!(vals, ut_psi0_at(g, Jt, rprobe))
+        end
+    end
+    (Jt, us, vals)
 end
 
 """psi0t at radius rstar >= rwt from the unringed Jt state (barycentric

@@ -62,6 +62,7 @@ ccm_amp         = 1.0e-5
 ccm_t0          = 20.0
 ccm_sigma       = 2.0
 ccm_betahat     = 0.0
+ccm_rwt         = 0.0    # live tube radius (modes 5/6); <=0: x1max - 2 dx
 # psi4 extraction
 nrad_wave_extraction = 1
 extraction_radius_0  = 36.0

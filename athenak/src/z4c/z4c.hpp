@@ -182,6 +182,7 @@ class Z4c {
     Real ccm_t0;        // datum pulse center time
     Real ccm_sigma;     // datum pulse width
     Real ccm_betahat;   // characteristic betahat on the worldtube (boost)
+    Real ccm_rwt;       // live worldtube radius (modes 5/6; <=0: x1max-2dx)
     // Boundary extrapolation order
     int extrap_order;
     // Value of chi to specify the excision region for constraint evaluation

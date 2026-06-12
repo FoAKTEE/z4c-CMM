@@ -376,6 +376,47 @@ end
     end
 end
 
+@testset "characteristic pulse injection (2308.10361 Sec V.C, N14 fidelity)" begin
+    # ingoing l=2 m=0 J-pulse on the initial null slice; quiescent tube
+    # BCs; psi0 probe at the Cauchy boundary radius. Production geometry
+    # (mode 6): rwt = 40, r_B = 41, Z = 1e-3, paper pulse shape.
+    rwt, rB, Z = 40.0, 41.0, 1.0e-3
+    g = ChebRegGrid(rwt, 65)
+    Jt0 = ut_pulse_id(g, Z)
+    # normalization: Jt = (1/4) sqrt(15/2pi) * Jcal; Jcal(yc) = Z exactly,
+    # and y = 0 is a CGL node for even N
+    @test any(y -> y == 0.0, g.y)
+    @test isapprox(maximum(Jt0), sqrt(15/(2pi))/4*Z; rtol=1e-12)
+    @test Jt0[1] == 0.0 && Jt0[end] == 0.0          # compact support
+    qbc(u) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    # short-window evolution (u: -40 -> 20, i.e. t at r_B up to 61 —
+    # includes the first trough) + radial-refinement ladder
+    series = Dict{Int,Vector{Float64}}()
+    local ts
+    for n in (49, 65, 97)
+        gn = ChebRegGrid(rwt, n)
+        (_, us, vals) = ut_evolve_sat_probe(gn, -rwt, 20.0, 0.00078125,
+                                            ut_pulse_id(gn, Z), qbc, rB)
+        series[n] = vals
+        n == 65 && (ts = us .+ rB)
+    end
+    pk = maximum(abs.(series[65]))
+    e49 = maximum(abs.(series[49] .- series[65]))/pk
+    e97 = maximum(abs.(series[97] .- series[65]))/pk
+    @info "pulse psi0 ladder: n49-vs-n65 = $e49, n97-vs-n65 = $e97 of window peak"
+    @test e49 < 2e-3        # measured 3.9e-4 over the full run
+    @test e97 < 1e-5        # measured 2.1e-7 of peak (n=65 converged)
+    # conditioning: psi0 is O(1e-3) of the J data (vs 1e-8 for the purely
+    # outgoing Teukolsky test — the fidelity-test design point)
+    @test pk/maximum(abs.(Jt0)) > 1e-3   # measured 7.0e-3 full-run
+    # regression pins from the admitted full-run reference
+    # (results/numerical/n14_pulse_ref.csv): first trough at t = 52.50,
+    # psi0(trough) = -1.718782e-6
+    itr = argmin(series[65])
+    @test abs(ts[itr] - 52.50) < 0.5
+    @test isapprox(series[65][itr], -1.718782e-6; rtol=1e-3)
+end
+
 @testset "worldtube map (stage B): identity + anchored evolution + psi0" begin
     X, rc, tau = 1.0e-5, 20.0, 2.0
     rwt = 41.0

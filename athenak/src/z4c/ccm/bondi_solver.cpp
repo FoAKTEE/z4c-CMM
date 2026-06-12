@@ -135,6 +135,22 @@ void BondiSolver::init_teukolsky(double X, double rc, double tau) {
   }
 }
 
+void BondiSolver::init_pulse(double Z, double ymin, double ymax,
+                             double yc, double tauy) {
+  const double pref = std::sqrt(15.0/(2.0*M_PI))/4.0;
+  for (int i = 0; i < n_; ++i) {
+    const double y = y_[i];
+    if (y <= ymin || y >= ymax) {
+      Jt_[i] = 0.0;
+    } else {
+      const double env = 4.0*Z*(ymax - y)*(y - ymin)
+                         /((ymax - ymin)*(ymax - ymin));
+      const double a = (y - yc)/tauy;
+      Jt_[i] = pref*env*std::exp(-a*a);
+    }
+  }
+}
+
 std::vector<double> BondiSolver::bary_row(double rstar) const {
   const int n = n_;
   const double ystar = 1.0 - 2.0*rwt_/rstar;

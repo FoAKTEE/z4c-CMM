@@ -156,6 +156,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.ccm_t0 = pin->GetOrAddReal("z4c", "ccm_t0", 0.0);
   opt.ccm_sigma = pin->GetOrAddReal("z4c", "ccm_sigma", 1.0);
   opt.ccm_betahat = pin->GetOrAddReal("z4c", "ccm_betahat", 0.0);
+  // live worldtube radius (modes 5/6); <= 0 -> default x1max - 2 dx
+  opt.ccm_rwt = pin->GetOrAddReal("z4c", "ccm_rwt", 0.0);
 
   opt.excise_chi = pin->GetOrAddReal("z4c", "excise_chi", 0.0625);
 

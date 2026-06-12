@@ -108,6 +108,7 @@ static void Z4cCCMDatumPsi0(const int mode, const Real t, const Real x1,
       *re = -sqrt(27.0*M_PI/10.0)*F2*y22/(r*r*r*r*r);
       break;
     }
+    case 6:   // live + characteristic pulse ID (Sec V.C fidelity test)
     case 5:   // live sphere-projected worldtube data (same read path)
     case 4: {
       // LIVE datum (N14 stage C, native in-AthenaK solver): psi0 t-scalar

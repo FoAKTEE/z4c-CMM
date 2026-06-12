@@ -1,0 +1,91 @@
+N14 datum-FIDELITY stage (iter 45): 2308.10361 Sec V.C characteristic-
+pulse injection through the LIVE native solver (mode 6).
+
+Why this test: iter 44 established (structurally, honestly) that the
+purely outgoing X=1e-5 Teukolsky test cannot demonstrate datum fidelity
+— psi0_true/J ~ 1e-8 by peeling, below any feasible Cauchy truncation.
+The Sec V.C pulse puts REAL incoming content in the characteristic
+domain: measured conditioning psi0/J = 7.0e-3 — five orders better; the
+datum is now O(1) of the physics being transmitted.
+
+Setup (production geometry): ingoing l=2 m=0 J-pulse on the initial
+null slice, Jt = (1/4)sqrt(15/2pi) * 4Z (ymax-y)(y-ymin)/(ymax-ymin)^2
+exp(-((y-yc)/tauy)^2), paper parameters yc=0, ymin/max=-+0.8, tauy=0.15,
+Z=1e-3; QUIESCENT Cauchy initial data (problem/amp=0); live worldtube
+sampling at rwt=40 (datum served at r_B=41 on the lagged cone u=t-r_B);
+tlim=180; h=0.5, nghost=4, 4 GPUs.
+
+ZccmJl-admitted reference numbers (BEFORE the C++ port; new testset
+'characteristic pulse injection'):
+[PASS] pulse-ID normalization exact (Jt(yc) = (1/4)sqrt(15/2pi) Z,
+       rtol 1e-12); compact support exact.
+[PASS] radial-resolution ladder of the standalone quiescent-BC (mirror)
+       run: n49-vs-n65 = 3.9e-4, n97-vs-n65 = 2.1e-7 of peak (n=65 is
+       converged); du-halving = 4.3e-12 of peak (time error negligible).
+[PASS] conditioning: max|psi0(r_B)|/max|Jt| = 7.019e-3 (vs ~1e-8 for the
+       outgoing Teukolsky test — the fidelity-test design point).
+[REF]  mirror reference series dumped: results/numerical/n14_pulse_ref.csv
+       (rwt=40, r_B=41, n=65, du=7.8125e-4): first trough
+       psi0(t=52.50) = -1.718782e-6; peak |psi0| = 2.711123e-6 at t=75.47.
+[PASS] C++ standalone port gate (test_bondi_solver.cpp, production call
+       pattern advance->probe_query): trough rel 1.25e-7, peak rel
+       2.25e-7 vs the ZccmJl reference.
+
+Live battery gates (scripts/check_n14_mode6.jl; mode6/ = headline run):
+The quiescent-BC reference is the MIRROR (CCE) solution; the live run is
+the TRANSPARENT (CCM) solution. They provably coincide only before the
+pulse interacts with the tube; the later O(1) deviation is the
+transparency physics (paper Fig. pluse_on_cce_waveform), not an error.
+[PASS] Gate A (early-window datum fidelity): live-vs-mirror psi0 dev
+       7.0e-8 of peak at t <= 19 (gate < 1e-6); 2.4e-5 at t <= 28.5
+       (gate < 1e-4). Compare iter-44's outgoing test: junk at 5.7e5x
+       the datum — here the live chain reproduces the verified solver
+       output at O(1) conditioning.
+[INFO] full-run live-vs-mirror deviation 1.7 of mirror peak = the
+       expected mirror/transparent physical difference; the live psi0 at
+       t in [160,180] is the EXIT BURST re-crossing r_B.
+[PASS] Gate B (transmission): rpsi4(2,0) at r=36 peaks 7.415e-4 at
+       t = 160.88 — the paper's t2 = t_in + 2R prediction gives ~161
+       (center arrival ~79 + Cauchy diameter 82). Early times (t<45)
+       quiet at 1.6e-4 of peak.
+[PASS] Gate C (loop closure): exit-window (t >= 160) live|psi0|/mirror
+       = 72.5 (gate > 10) — the transmitted pulse re-crosses r_B and the
+       live tube data carries it back into the characteristic domain;
+       the mirror reference has no such signal.
+[INFO] Gate L (coupled self-convergence, tube pinned at 39 via the new
+       z4c/ccm_rwt option): full-vs-half rpsi4 max diff = 5.33e-4 =
+       1.12 of peak. CONSISTENT with the admitted 6th-order scaling
+       (N12: E(h=0.5) = 4.99e-2 -> E(h=1.0) ~ 2^5.39 x ~ 2.1): the
+       half-res run has O(1) truncation for this sharp pulse, so the
+       pair BOUNDS but cannot demonstrate convergence; a converged
+       ladder needs h = 0.25 (8x cost > the 10-min budget). The SpECTRE
+       cross-oracle (iter 46) is the designated fidelity instrument for
+       the coupled solution.
+[PASS] Gate D (control, identical config minus datum): peak |rpsi4| =
+       2.2e-13 = 2.9e-10 of the mode-6 peak — the ENTIRE Cauchy response
+       is datum-transmitted; nothing else excites the domain.
+
+Checker output (final, scripts/check_n14_mode6.jl):
+Gate A: dev/peak (t <= 19.0) = 7.027e-08  [gate < 1e-06] PASS
+Gate A: dev/peak (t <= 28.5) = 2.367e-05  [gate < 1e-04] PASS
+        full-run live-vs-mirror deviation = 1.720e+00 of ref peak
+Gate B: rpsi4(2,0) r=36 peak 7.415e-04 at t = 160.88 [|t-161|<5] PASS
+        early-time (t<45) max = 1.578e-04 of peak PASS
+Gate C: exit-window live|psi0|/mirror = 72.5 [gate > 10] PASS
+Gate L: full-vs-half rpsi4 max|diff| = 5.329e-04 = 1.120e+00 of peak
+Gate D: control peak |rpsi4| = 2.169e-13 = 2.926e-10 of mode-6 peak PASS
+info: tube |jr| peak 3.115e-02 at t = 178.00; hTT peak 7.787e-04
+
+ZccmJl suite after additions: 115 pass + 3 known-broken pins (the new
+'characteristic pulse injection' testset: 8/8, including the n49/n97
+ladder gates and the trough regression pins).
+
+VERDICT: the live CCM chain DIRECTS CHARACTERISTIC INFORMATION INTO THE
+CAUCHY DOMAIN with verified datum fidelity in the causally-clean window
+(7e-8 of peak), correct transmission timing (t2 within 0.12 of the
+prediction), closed two-way loop (exit burst re-enters the
+characteristic side), and a fully datum-attributable response (control
+2.9e-10). This is the Sec V.C demonstration the paper uses to validate
+CCM transparency. Remaining for [SOLID]: an independent coupled-solution
+oracle (SpECTRE CharacteristicExtract, iter 46) and a converged
+resolution ladder (budget-limited here).

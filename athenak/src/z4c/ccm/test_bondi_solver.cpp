@@ -53,6 +53,28 @@ int main() {
                 std::fabs(s.probe_query(20.0) - want(42.025))
                 /std::fabs(want(42.025)));
   }
+  // ---- Sec V.C pulse, quiescent BCs: gate vs the ZccmJl reference ----
+  // (results/numerical/n14_pulse_ref.csv: rwt=40, rB=41, Z=1e-3, n=65,
+  // du=7.8125e-4; trough psi0(t=52.50) = -1.718782e-6, peak |psi0| =
+  // 2.711123e-6 at t=75.47, conditioning 7.019e-3)
+  {
+    const double rw = 40.0, rB = 41.0;
+    BondiSolver s(rw, 65, -rw, 0.00078125);
+    s.init_pulse(1.0e-3);
+    s.set_probe(rB);
+    std::function<BondiSolver::WtBC(double)> bc =
+        [](double) { return BondiSolver::WtBC{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; };
+    // production pattern: advance to cone t - rwt, then query the lagged
+    // cone t - rB (the history is pruned to the lag window)
+    s.advance(52.50 - rw, bc);
+    const double v_trough = s.probe_query(52.50 - rB);
+    s.advance(75.47 - rw, bc);
+    const double v_peak = s.probe_query(75.47 - rB);
+    std::printf("pulse: psi0(t=52.50) = %.6e (ref -1.718782e-6, rel %.2e)\n",
+                v_trough, std::fabs(v_trough + 1.718782e-6)/1.718782e-6);
+    std::printf("pulse: psi0(t=75.47) = %.6e (ref peak 2.711123e-6, rel %.2e)\n",
+                v_peak, std::fabs(std::fabs(v_peak) - 2.711123e-6)/2.711123e-6);
+  }
   // ---- anchored map-BC evolution (Julia V5) ----
   {
     BondiSolver s(rwt, 65, 8.0, 0.00078125);

@@ -271,7 +271,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   // mode 4 kernels read it through the amp slot (psi0 = scalar * sin^2 th).
   // The analytic Teukolsky worldtube stub gates the machinery end-to-end;
   // the live sphere-projected data path replaces it next stage.
-  if (opt.ccm && opt.ccm_mode == 5) {
+  if (opt.ccm && (opt.ccm_mode == 5 || opt.ccm_mode == 6)) {
     // N14 stage C part 2: GENUINELY LIVE worldtube data — the l=2 m=0
     // contract scalars sampled from the Cauchy ADM state (collective),
     // mapped by the verified six-row local map (+ beta) to anchored-gauge
@@ -280,6 +280,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
     // boundary datum at Cauchy t is the probe at r_B on the earlier cone
     // u = t - r_B (causality lag). BCs held fixed across the substeps
     // since the last sample (O(dt); refinement: linear-in-time).
+    // Mode 6 (N14 fidelity test, 2308.10361 Sec V.C): same live machinery,
+    // but the characteristic domain starts with the ingoing J-pulse
+    // (Z = ccm_amp; paper shape hardcoded) over QUIESCENT Cauchy data —
+    // psi0 at the boundary is O(1e-3) of the data (ZccmJl-admitted:
+    // conditioning 7.0e-3, n=65 converged to 2.1e-7 of peak).
     Real psi0_live = 0.0;
     int rank = 0;
 #if MPI_PARALLEL_ENABLED
@@ -287,7 +292,10 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
 #endif
     const Real dx = (pm->mesh_size.x1max - pm->mesh_size.x1min)
                     /pm->mesh_indcs.nx1;
-    const Real rwt_l = pm->mesh_size.x1max - 2.0*dx;
+    // tube radius pinned by z4c/ccm_rwt when set (resolution ladders need
+    // the same physical setup across dx); default x1max - 2 dx
+    const Real rwt_l = (opt.ccm_rwt > 0.0) ? opt.ccm_rwt
+                       : pm->mesh_size.x1max - 2.0*dx;
     const Real rB = pm->mesh_size.x1max;
     z4c_ccm::WtScalars ws = z4c_ccm::sample_worldtube(pmy_pack, rwt_l, dx);
     if (rank == 0) {
@@ -295,7 +303,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       if (solver5 == nullptr) {
         solver5 = new z4c_ccm::BondiSolver(rwt_l, 65, pm->time - rwt_l,
                                            7.8125e-4);
-        solver5->init_teukolsky(opt.ccm_amp, opt.ccm_t0, opt.ccm_sigma);
+        if (opt.ccm_mode == 6) {
+          solver5->init_pulse(opt.ccm_amp);
+        } else {
+          solver5->init_teukolsky(opt.ccm_amp, opt.ccm_t0, opt.ccm_sigma);
+        }
         solver5->set_probe(rB);
       }
       const z4c_ccm::BondiSolver::WtBC bnow =

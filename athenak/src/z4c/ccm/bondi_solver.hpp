@@ -52,6 +52,13 @@ class BondiSolver {
   // stores (X, rc, tau) for the pre-cone probe fallback)
   void init_teukolsky(double X, double rc, double tau);
 
+  // 2308.10361 Sec V.C ingoing pulse on the initial null slice:
+  // Jt = (1/4) sqrt(15/2pi) * 4Z (ymax-y)(y-ymin)/(ymax-ymin)^2
+  //      * exp(-((y-yc)/tauy)^2) on [ymin, ymax], 0 outside
+  // (ZccmJl ut_pulse_id; paper parameters yc=0, ymin/max=-+0.8, tauy=0.15)
+  void init_pulse(double Z, double ymin = -0.8, double ymax = 0.8,
+                  double yc = 0.0, double tauy = 0.15);
+
   // record psi0t(rstar) along the evolution (barycentric + D rows built
   // once); call before the first advance()
   void set_probe(double rstar);
