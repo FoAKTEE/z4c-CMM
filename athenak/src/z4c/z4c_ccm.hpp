@@ -1,4 +1,4 @@
-use#ifndef Z4C_Z4C_CCM_HPP_
+#ifndef Z4C_Z4C_CCM_HPP_
 #define Z4C_Z4C_CCM_HPP_
 //========================================================================================
 // AthenaXXX astrophysical plasma code

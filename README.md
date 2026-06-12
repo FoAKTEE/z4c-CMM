@@ -97,12 +97,29 @@ The formulation is implemented in a vendored, SHA-pinned copy of
   documented coupling hook.
 - Test battery (`scripts/test_athenak_ccm.sh` + `check_athenak_ccm.py`,
   input `athenak/inputs/z4c/ccm/z4c_ccm_test.athinput`): T1 reduction
-  (Minkowski preserved with zero datum), T2 causal injection through the
-  boundary, T3 linear response. Runs on CPU (OpenMP) and GPU (CUDA/A100)
-  builds; outputs under `results/numerical/athenak_ccm/`.
-- Build note: with CUDA 13 the vendored kokkos `nvcc_wrapper` default arch is
-  patched to `sm_80`; the snapshot needs a CUDA-12.x toolkit
-  (`PATH=/usr/local/cuda-12.9/bin:$PATH`) — both ledgered.
+  (Minkowski preserved with zero datum: LINF 6.8e-21 CPU / 2.6e-33 GPU /
+  8.4e-33 4-GPU), T2 causal injection through the boundary, T3 linear
+  response (2.0055). Verified on **three configurations** — CPU (OpenMP),
+  single GPU, and **4 GPUs via MPI** (one rank per A100, confirmed by device
+  snapshot) — with time series identical to full `.hst` precision across all
+  of them; outputs under `results/numerical/athenak_ccm/`.
+
+  ```bash
+  # builds (-j 64): CPU / single-GPU / MPI+CUDA
+  cmake -DCMAKE_CXX_COMPILER=g++ -DKokkos_ENABLE_OPENMP=ON -DPROBLEM=z4c_stability
+  cmake -DCMAKE_CXX_COMPILER=$PWD/../kokkos/bin/nvcc_wrapper \
+        -DKokkos_ENABLE_CUDA=ON -DKokkos_ARCH_AMPERE80=ON -DPROBLEM=z4c_stability
+  cmake ... -DAthena_ENABLE_MPI=ON   # + PATH=/usr/local/cuda-12.8/bin:...
+  # batteries
+  scripts/test_athenak_ccm.sh athenak/build_cpu/src/athena cpu
+  scripts/test_athenak_ccm.sh athenak/build_gpu/src/athena gpu
+  CUDA_VISIBLE_DEVICES=0,1,2,3 scripts/test_athenak_ccm.sh \
+      athenak/build_gpu_mpi/src/athena gpu4 mpirun -np 4 --mca pml ucx --mca osc ucx
+  ```
+- Build notes (all ledgered): CUDA 13 removed `sm_70`, so the vendored kokkos
+  `nvcc_wrapper` default arch is patched to `sm_80`; the kokkos snapshot
+  needs a CUDA-12.x toolkit; multi-GPU MPI requires the CUDA-aware UCX PML
+  (the default ob1 PML segfaults on device buffers).
 
 ## The GPU package (`packages/zccm/`)
 

@@ -1,0 +1,4 @@
+1-GPU vs 4-GPU (MPI/UCX) agreement, t2_injection RMS time series:
+  signal samples: 35; max rel diff 0.000e+00 (hst print floor ~1e-6)
+  final RMS: 1gpu 2.476580e-02 | 4gpu 2.476580e-02
+  AGREEMENT: PASS
