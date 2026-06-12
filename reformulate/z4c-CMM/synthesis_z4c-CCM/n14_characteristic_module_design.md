@@ -91,3 +91,30 @@ not trusted):
 Next window: implement scripts/verify_n14_linear_hierarchy.py (transcribe,
 G0 background gate, linearize, l=2 reduce), scripts/bondi_linear.py,
 results/numerical/n14_linear_check.txt.
+
+## Stage-A2 retry state (iter 27 hand-off)
+
+FINDING: the Bondi-like transformation requires T (null-time relabel,
+dr T = h_rr/2 from g_rr = 0), xi (angular, from g_rtheta = 0:
+dr xi = (dtheta T - h_rtheta)/r^2 — A1 DROPPED dtheta T), and rho (areal
+relabel) SIMULTANEOUSLY. The corrected xi changes J's subleading
+coefficients: explains the A2 closure failure; A1's 9/8 psi0 result is
+under re-examination (error-db iter 27).
+
+NEXT (machine derivation, no hand signs): sympy script
+scripts/verify_n14_bondi_transform.py —
+ 1. corrected Teukolsky metric in (t, r, theta) spherical components
+    (orthonormal -> coordinate; the N12-verified solution);
+ 2. ansatz T, xi, rho as F^n(u)/r^k series x angular shapes
+    {(3c^2-1), sc, s^2, const} with unknown rational coefficients;
+ 3. impose g_rr' = 0, g_rtheta' = 0, areal determinant exactly
+    (solve the series conditions);
+ 4. read off J, beta, U, W from the transformed metric (Bondi-like form);
+ 5. gates: (i) psi0 chain re-derivation (-J'/(2r) - J''/4 vs the datum:
+    confirm or AMEND the A1 9/8); (ii) hierarchy closure H == du J with
+    the directly-derived fields (no free integration constants);
+    (iii) U falloff/peeling sanity.
+FALLBACK if the closure still fails: gate the numeric solver directly
+against SpECTRE CharacteristicExtract on Teukolsky worldtube data
+(ref-code/spectre-cce; bypasses my linearization entirely — the stronger
+admission path for the module anyway).
