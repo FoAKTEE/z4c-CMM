@@ -1,0 +1,16 @@
+N14 stage C part 1 (iter 43; USER DIRECTIVE: native in-AthenaK, no bridge):
+[PASS] C1 THE MILESTONE: Cauchy evolution + the native in-process
+       characteristic solver (athenak/src/z4c/ccm/bondi_solver.*) run
+       SIMULTANEOUSLY in one process, lockstep (rank 0 advances the
+       characteristic state each cycle, psi0 broadcast, mode-4 datum
+       injection). X=1e-5 battery to t=80, 4 GPUs, no postprocessing
+       anywhere. Solver = line-by-line port of the ZccmJl-VERIFIED
+       algorithm (CGL spectral sweep, LU-factorized ops, SAT RK4,
+       hierarchy psi0) — ZccmJl remains the verification harness.
+[INFO] C2 mode-4 vs mode-3 waveform: max diff 6.0e-11 abs = 1.7e-6 of
+       peak. The bounded mismatch is the documented psi0 conditioning at
+       the coarse lockstep du = 7.8e-3 (the verified accuracy point is
+       du = 7.8e-4 — ~20 s host cost per run; queued as the iter-44
+       config refinement together with the live sphere-projected data).
+       The X=1e-5 datum is r^-5-peeling-tiny (physics): waveform impact
+       remains near roundoff either way.

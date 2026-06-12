@@ -108,6 +108,14 @@ static void Z4cCCMDatumPsi0(const int mode, const Real t, const Real x1,
       *re = -sqrt(27.0*M_PI/10.0)*F2*y22/(r*r*r*r*r);
       break;
     }
+    case 4: {
+      // LIVE datum (N14 stage C, native in-AthenaK solver): psi0 t-scalar
+      // from the in-process characteristic solver, cached per cycle on the
+      // host (bondi_solver, rank 0 + broadcast). amp carries the cached
+      // scalar in this mode (set in z4c_Sbc.cpp); psi0 = scalar * sin^2 th.
+      *re = amp*s2th;
+      break;
+    }
     default: break;
   }
 }

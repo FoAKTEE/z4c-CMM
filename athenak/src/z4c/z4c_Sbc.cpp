@@ -15,6 +15,8 @@
 #include "mesh/mesh.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_ccm.hpp"
+#include <functional>
+#include "z4c/ccm/bondi_solver.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
@@ -261,7 +263,40 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   // CCM physical-mode injection (z4c_ccm.hpp); no-op unless <z4c> ccm = true
   const bool ccm_on = opt.ccm;
   const int ccm_mode = opt.ccm_mode;
-  const Real ccm_amp = opt.ccm_amp;
+  Real ccm_amp = opt.ccm_amp;
+  // N14 stage C (USER DIRECTIVE: native in-AthenaK implementation): live
+  // psi0 datum from the in-process characteristic solver. Rank 0 advances
+  // the solver in lockstep with the Cauchy time and broadcasts the scalar;
+  // mode 4 kernels read it through the amp slot (psi0 = scalar * sin^2 th).
+  // The analytic Teukolsky worldtube stub gates the machinery end-to-end;
+  // the live sphere-projected data path replaces it next stage.
+  if (opt.ccm && opt.ccm_mode == 4) {
+    Real psi0_live = 0.0;
+    int rank = 0;
+#if MPI_PARALLEL_ENABLED
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+#endif
+    if (rank == 0) {
+      static z4c_ccm::BondiSolver* solver = nullptr;
+      const Real rwt = pm->mesh_size.x1max;
+      if (solver == nullptr) {
+        solver = new z4c_ccm::BondiSolver(rwt, 65, pm->time, 0.0078125);
+        solver->init_teukolsky(opt.ccm_amp, opt.ccm_t0, opt.ccm_sigma);
+      }
+      const Real X = opt.ccm_amp, rc = opt.ccm_t0, sg = opt.ccm_sigma;
+      std::function<z4c_ccm::BondiSolver::WtBC(double)> bc =
+        [&](double uu) {
+          return z4c_ccm::BondiSolver::teuk_bc(uu, rwt, X, rc, sg);
+        };
+      solver->advance(pm->time, bc);
+      psi0_live = solver->psi0_worldtube(
+          z4c_ccm::BondiSolver::teuk_bc(pm->time, rwt, X, rc, sg));
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Bcast(&psi0_live, 1, MPI_ATHENA_REAL, 0, MPI_COMM_WORLD);
+#endif
+    ccm_amp = psi0_live;
+  }
   const Real ccm_t0 = opt.ccm_t0;
   const Real ccm_sigma = opt.ccm_sigma;
   const Real ccm_betahat = opt.ccm_betahat;
