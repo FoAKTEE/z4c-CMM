@@ -1,0 +1,68 @@
+# Z4c-CCM machinery test: Minkowski background, outer boundary with
+# Sommerfeld + CCM psi0 injection (z4c_ccm.hpp).
+#   ccm_amp = 0   -> exact Sommerfeld reduction (flatness preserved)
+#   ccm_amp > 0   -> physical pulse injected through the boundary
+# Run with PROBLEM=z4c_stability (rho large => no initial noise).
+
+<comment>
+problem   = Z4c-CCM injection test (Minkowski + boundary psi0 datum)
+
+<job>
+basename  = ccm
+
+<mesh>
+nghost    = 2
+nx1       = 32
+x1min     = -10.0
+x1max     = 10.0
+ix1_bc    = outflow
+ox1_bc    = outflow
+
+nx2       = 32
+x2min     = -10.0
+x2max     = 10.0
+ix2_bc    = outflow
+ox2_bc    = outflow
+
+nx3       = 32
+x3min     = -10.0
+x3max     = 10.0
+ix3_bc    = outflow
+ox3_bc    = outflow
+
+<meshblock>
+nx1       = 16
+nx2       = 16
+nx3       = 16
+
+<time>
+evolution  = dynamic
+integrator = rk4
+cfl_number = 0.25
+nlim       = -1
+tlim       = 12.0
+ndiag      = 50
+
+<z4c>
+diss            = 0.02      # Kreiss-Oliger dissipation
+lapse_harmonic  = 0.0
+lapse_oplog     = 2.0       # 1+log
+shift_eta       = 2.0
+chi_div_floor   = 0.00001
+damp_kappa1     = 0.02
+damp_kappa2     = 0.0
+user_Sbc        = true      # Sommerfeld RHS at user boundaries
+ccm             = true      # CCM injection machinery active
+ccm_amp         = 0.0       # overridden on the command line per test
+ccm_t0          = 4.0
+ccm_sigma       = 1.0
+ccm_betahat     = 0.0
+
+<problem>
+pgen_name = z4c_stability
+user_hist = true
+rho       = 1.0e10          # noise amp = 1e-10/rho^2 ~ 1e-30 (exact Minkowski)
+
+<output1>
+file_type   = hst
+dt          = 0.25
