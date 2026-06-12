@@ -1,0 +1,17 @@
+[PASS] TT channel: linearized H == 0 identically (off-shell)  (t=0.2s)
+[PASS] TT channel: linearized M_i == 0 identically (off-shell)  (t=0.2s)
+[PASS] => dot Theta, dot Z_i sources vanish; incoming constraint characteristics U-_Theta, U-_Z stay 0 under ANY CCM physical datum  (t=0.2s)
+[PASS] NEGATIVE CONTROL (vector channel h_xy): M_y = -Derivative(G(t, x), t, x)/2 != 0 sources the constraint sector  (t=0.3s)
+[PASS] taxonomy: longitudinal h_xx(t,x) is ALSO constraint-free (gauge channel, handled by the gauge BC sector, not CPBC)  (t=0.3s)
+[PASS] NEGATIVE CONTROL (tangential trace h_yy = h_zz = G): H = -2*Derivative(G(t, x), (x, 2)) != 0  (t=0.3s)
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] GPU sweep: TT-channel constraint residual 0.0e+00 == 0 while negative-control amplitude 1.23e+01 = O(1), over 4,194,304 modes  (t=12.4s)
+
+CONCLUSION: the CCM physical injection (TT channel) is orthogonal to
+the Z4c constraint sector at linearized order — paper-1's order-L CPBCs
+(eq:general_CPBCs) are retained VERBATIM as the 4 constraint-mode BCs of
+Z4c-CCM. Obligations recorded: nonlinear coupling, P1 3D discarded-
+tangential-terms caveat, corner compatibility at BC-sector interfaces.
+
+wall clock: 12.4s
+OVERALL: PASS
