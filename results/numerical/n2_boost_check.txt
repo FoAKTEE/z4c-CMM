@@ -1,0 +1,16 @@
+[PASS] flat-space outgoing root u_r = -1 (u = t - r), symbolic  (t=0.2s)
+[PASS] l' = (n+s)/sqrt(2) null at 12/12 exact rational points  (t=1.9s)
+[PASS] d_mu u null (outgoing root) at 12/12 exact rational points  (t=1.9s)
+[PASS] proportionality l-hat ∝ l': 6 cross products vanish EXACTLY at 12/12 points  (t=1.9s)
+[PASS] factor F*e^(2bh)/(alpha - beta_i s^i) is the SAME exact number at all points (= sqrt(2)/2)  (t=1.9s)
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] GPU sweep: max relative cross-product residual 9.34e-16 < 1e-9 over 4,194,304 samples  (t=17.6s)
+[PASS] GPU sweep: max factor deviation 1.11e-15 < 1e-9  (t=17.6s)
+
+CONCLUSION: l-hat ∝ (n+s)/sqrt(2) with factor (alpha - gamma_ij beta^i s^j)
+* e^(-2 betahat) — a pure 3+1/characteristic identity, no GH/Z4c evolution
+variable enters: paper-3's Choice-2 Type-II boost is valid VERBATIM on the
+Z4c boundary frame (P1 eq:nullvector-k). N2 admitted.
+
+wall clock: 17.6s
+OVERALL: PASS
