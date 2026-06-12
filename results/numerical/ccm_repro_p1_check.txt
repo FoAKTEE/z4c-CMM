@@ -1,0 +1,64 @@
+Mission 4 P1 (iters 1-2): EXACT figure reproduction of arXiv:2308.10361
+from the authors' published data (github.com/Sizheng-Ma/CCM-Figures,
+depth-1 clone at ref-code/ccm-figures; their plot.ipynb generators ported
+headlessly: code cells extracted, magics stripped, Agg backend, NOTEBOOK
+CELL FIGURE SEMANTICS preserved — see the iter-2 port fix below).
+
+[FIX, error-db] Port defect found in iter-2 audit: the six Bondi-violation
+cells plot via pyplot STATE (no figure()/subplots() of their own) — in a
+flat script they overdrew the constraints figure (fig8 corrupted; the six
+violation panels never rendered). Fix: the porter prepends pl.figure() to
+any cell that plots state-based without owning a figure. All four scripts
+re-ported and re-run: 20 figures total.
+
+Per-figure provenance (paper figure file -> our PDF -> data):
+X=1e-5/ (data: {277,288,299}ccm/Norms.dat, {288,299}{ccm,cce}/Strain.dat)
+  low_amp_Strain  -> X=1e-5/fig1.pdf  (Strain.dat; perturbative overlay
+                     sqrt(6pi/5) F''''(t-21) per their notebook)
+  low_amp_con     -> X=1e-5/fig2.pdf  (Norms.dat, 3 resolutions)
+X=2/ (data: {333,355,366,377}ccm + {366,377}cce + reference/lev{5,6}:
+      Strain/News/Psi0-4/Norms/violation .dat)
+  amp2_Strain     -> X=2/fig1.pdf      amp2_News -> fig2.pdf
+  amp2_Psi0       -> fig3.pdf          amp2_Psi1 -> fig4.pdf
+  amp2_Psi2       -> fig5.pdf          amp2_Psi3 -> fig6.pdf  (main text)
+  amp2_Psi4       -> fig7.pdf
+  con             -> fig8.pdf          (Norms.dat, 3 resolutions)
+  BondiViolationMin{...} -> fig9..fig14 by ylabel:
+    fig9  C_psi0   fig10 C_psi1   fig11 C_psi2
+    fig12 C_psi3   fig13 C_psi4   fig14 C_{Im psi2}
+    (violation.dat cols 1-6; CCM vs CCE vs reference — NO scri package
+    needed: the authors published the precomputed norms)
+BH/ (data: {355,366,377}ccm/{Norms,Psi4}.dat, {366,377}cce/Psi4.dat,
+     reference/lev4)
+  kerr_Psi4       -> BH/fig1.pdf       Kerr_con -> BH/fig2.pdf
+pulse_on_characteristic_grid/ (data: {355,366,377}ccm/{InnerPsi0,Psi4,
+     Norms}.dat, cce/Psi4.dat)
+  pluse_on_cce_waveform     -> pulse/fig1.pdf
+  pluse_on_cce_waveform_con -> pulse/fig2.pdf
+
+Visual spot-checks (Read on the PDFs): X=1e-5/fig1 reproduces
+low_amp_Strain exactly (h_{2,0} Perturbative/CCE/CCM + Differences);
+X=2/fig9 reproduces the C_psi0 violation panel (CCM systematically below
+CCE after the burst — the paper's headline Bondi-violation claim);
+pulse/fig1 reproduces pluse_on_cce_waveform (psi0 trough at t1; CCE
+mirror reflection at t1 vs CCM transmitted burst at t2).
+
+Coverage audit vs the paper's 36 includegraphics:
+  REPRODUCED: 20 figures = every data figure of the main text + the X=2
+  appendix sheets + all six Bondi-violation panels.
+  DATA ABSENT (documented, not reproducible from the published repo):
+  the X=1e-5 appendix panels low_amp_{Psi0,Psi1,Psi2,Psi3,Psi4,News}
+  (repo carries only Strain.dat for X=1e-5) and the Kerr appendix panels
+  kerr_{Psi0,Psi1,Psi2,Psi3,News,Strain} (repo carries only Psi4.dat for
+  BH). These are appendix variants of reproduced main-text figures.
+  OUT OF SCOPE (illustrations, not data figures): Teukolsky_wave,
+  Teukolsky_wave_on_cce, matching_algorithm schemes (commented out in
+  the paper source).
+
+Deviations (rendering only): 'Georgia' serif font unavailable ->
+matplotlib fallback; constrained_layout vs subplots_adjust warnings
+(authors' older matplotlib); curves are data-driven and unaffected.
+
+P1 status: COMPLETE for every figure whose data the authors published
+(20/20 reproducible figures reproduced); the 12 absent-data appendix
+panels and 2 illustrations are documented above.
