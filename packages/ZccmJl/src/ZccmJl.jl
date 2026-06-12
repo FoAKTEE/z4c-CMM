@@ -26,5 +26,6 @@ include("bonditransform.jl")
 include("hierarchy.jl")
 include("bondisolver.jl")
 include("bondisolver_reg.jl")
+include("bondisolver_cheb.jl")
 
 end # module
