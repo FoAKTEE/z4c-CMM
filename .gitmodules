@@ -1,0 +1,3 @@
+[submodule "phys-agentic-loop"]
+	path = phys-agentic-loop
+	url = https://github.com/FoAKTEE/phys-agentic-loop.git

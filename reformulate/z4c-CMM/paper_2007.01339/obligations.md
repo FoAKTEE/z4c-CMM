@@ -1,0 +1,15 @@
+# Open obligations — arXiv:2007.01339 (stage 1)
+
+Each item states what evidence would close it.
+
+- **O-1** `[OPEN]` `[BLOCKING]` (for any checked use of the Section IV equations) Symbolically re-derive the compactified hypersurface equations eq:Betanumeric, eq:Qnumeric, eq:Unumeric, eq:Wnumeric, eq:Hnumeric (with bundles eq:auto-27, eq:auto-28, eq:auto-29, eq:script-b, eq:auto-30, eq:auto-31) from the Einstein equations for eq:BondiLikeMetric via the Jacobian eq:numerical-jacobian-u. Closes with: CAS derivation reproducing each printed equation (or documenting corrected discrepancies, cf. C-7). Owner: stage-2 implementation.
+- **O-2** `[OPEN]` Verify the five-step gauge transformation: recompute g^{ůů} (eq:uRequation), g^{ůÅ} (eq:bsxA) from the up-index metric and the transformation ansatz; verify the asymptotic results eq:auto-23 and the Appendix C expansions eq:auto-53 … eq:auto-55. Closes with: CAS check of each order in l̂.
+- **O-3** `[OPEN]` Verify the regularity argument: expand each hypersurface equation in the partially flat gauge and confirm eq:auto-32 … eq:auto-36 and the conditions eq:QWregularity, eq:Hregularity; confirm no logarithm sources at the orders claimed. Closes with: order-by-order CAS expansion.
+- **O-4** `[OPEN]` Verify the news formulas eq:NewsDefinitionIncompletelyFlat and eq:NewsDefinitionBondiLike against the defining limit eq:NewsDefinitionBondi using the transformation chain, and against the literature (Bishop:1997ik, Babiuc:2008qy) forms in a common gauge. Closes with: symbolic equivalence check.
+- **O-5** `[OPEN]` Verify spin coefficients eq:auto-43, bulk Weyl scalars eq:auto-47/eq:auto-48, and asymptotic limits eq:auto-50/eq:auto-51 (including the Θ-cancellation claim). Closes with: CAS computation from the tetrad eq:auto-39.
+- **O-6** `[OPEN]` Resolve the eq:KDef sign inconsistency (printed √(1−JJ̄) vs used √(1+JJ̄)) and scan for further typos against the published erratum/v3 and the companion Mathematica package. Closes with: documented per-equation reconciliation table.
+- **O-7** `[OPEN]` Obtain and run the companion Mathematica package (`companion_package` bib entry) to use as cross-check oracle for O-1 … O-5. Closes with: archived notebook outputs in the repo.
+- **O-8** `[OPEN]` Dimensional/spin-weight consistency pass: every equation in derivation.md gets units (geometric, G=c=1) and spin-weight bookkeeping checked (all ð-results within |s| ≤ 2 as claimed). Closes with: automated spin-weight checker output.
+- **O-9** `[FUTURE]` Numerical demonstration of the full algorithm (companion paper CceNumeric / SpECTRE CCE); out of stage-1 scope.
+- **O-10** `[FUTURE]` Stability analysis of non-perturbative radial integration of eq:uRequation / eq:bsxA (paper explicitly makes no claim).
+- **O-11** `[OPEN]` Boundary-condition completeness: confirm which expansion coefficients are fixed by worldtube data vs regularity (β̂^(0), Q̂^(2), ∂_û Ĵ^(1) "fixed by boundary conditions") and that the count matches the hierarchy's integration constants. Closes with: explicit constant-counting note in stage-2.

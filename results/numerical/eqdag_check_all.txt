@@ -1,0 +1,26 @@
+
+===== paper arxiv-1010.0523v2 =====
+[PASS] acyclicity over 117 nodes
+[PASS] edge closure
+[PASS] tex labels covered by DB equation_labels (80/80)
+[PASS] tex labels present in derivation.md
+[PASS] every DB label registered in derivation.md
+[INFO] tex equation environments: 94; DB labels: 116 (tex-born 80, auto-assigned 36); equation nodes: 116
+
+===== paper arxiv-2007.01339 =====
+[PASS] acyclicity over 104 nodes
+[PASS] edge closure
+[PASS] tex labels covered by DB equation_labels (48/48)
+[PASS] tex labels present in derivation.md
+[PASS] every DB label registered in derivation.md
+[INFO] tex equation environments: 100; DB labels: 103 (tex-born 48, auto-assigned 55); equation nodes: 103
+
+===== paper arxiv-2308.10361 =====
+[PASS] acyclicity over 107 nodes
+[PASS] edge closure
+[PASS] tex labels covered by DB equation_labels (74/74)
+[PASS] tex labels present in derivation.md
+[PASS] every DB label registered in derivation.md
+[INFO] tex equation environments: 106; DB labels: 112 (tex-born 74, auto-assigned 38); equation nodes: 106
+
+OVERALL: PASS

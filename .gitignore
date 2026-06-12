@@ -1,0 +1,13 @@
+# Local-only source artifacts (alignment §16 / project_structure contract)
+ref-paper/
+ref-code/
+# Rendered HTML output
+human-read/
+__pycache__/
+*.pyc
+# Ralph-loop runtime state (per-session)
+.claude/ralph-loop.local.md
+.claude/loop_gate_state.json
+.claude/HUMAN_REVIEW_REQUIRED.md
+.claude/runs/
+.claude/settings.local.json
