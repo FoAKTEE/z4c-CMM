@@ -25,5 +25,6 @@ include("psi0chain.jl")
 include("bonditransform.jl")
 include("hierarchy.jl")
 include("bondisolver.jl")
+include("bondisolver_reg.jl")
 
 end # module

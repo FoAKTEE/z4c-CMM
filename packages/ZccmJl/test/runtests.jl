@@ -152,3 +152,44 @@ end
     p0e = psi0_worldtube(g, Jte)
     @test_broken abs(p0e - want20)/abs(want20) < 5e-3
 end
+
+@testset "regularized solver (O-N14-1): sweep + evolution + psi0" begin
+    X, rc, tau = 1.0e-5, 20.0, 2.0
+    u0 = 22.0
+    # R1: regularized sweep vs closed forms (FULL grid now, scri included)
+    errs = Float64[]
+    for ny in (129, 257, 513)
+        g = RegGrid(41.0, ny)
+        jr = [teuk_jr(u0, rofy(g, y), X, rc, tau) for y in g.y]
+        bc = (teuk_qr(u0, 41.0, X, rc, tau), teuk_ur(u0, 41.0, X, rc, tau),
+              teuk_wr(u0, 41.0, X, rc, tau), teuk_hr(u0, 41.0, X, rc, tau))
+        qr, ur, wr, hr = reg_sweep(g, jr, bc)
+        scale = maximum(abs.(jr))
+        e = max(maximum(abs.(qr .- [teuk_qr(u0, rofy(g, y), X, rc, tau) for y in g.y])),
+                maximum(abs.(ur .- [teuk_ur(u0, rofy(g, y), X, rc, tau) for y in g.y])),
+                maximum(abs.(hr .- [teuk_hr(u0, rofy(g, y), X, rc, tau) for y in g.y])))/scale
+        push!(errs, e)
+    end
+    @info "R1 regularized sweep rel errors: $(errs); orders $(log2(errs[1]/errs[2])), $(log2(errs[2]/errs[3]))"
+    @test errs[3] < 1e-4
+    @test log2(errs[2]/errs[3]) > 1.6     # trapezoid pole march: 2nd order
+    # R2/R3: evolution to the F2 peak and psi0 at the worldtube
+    want20 = -9/8*teuk_F(2, 20.0, X, rc, tau)/41.0^5
+    rels = Float64[]
+    for (ny, du) in ((257, 0.05), (513, 0.025))
+        g = RegGrid(41.0, ny)
+        jr = reg_evolve_J(g, 14.0, 20.0, du, X, rc, tau)
+        p0 = reg_psi0_worldtube(g, jr)
+        push!(rels, abs(p0 - want20)/abs(want20))
+    end
+    @info "R3 psi0_wt rel errors (refining): $(rels)"
+    # O-N14-1 REMAINS OPEN (iter 33): the edge mode survives the
+    # regularized variables, the integration-by-parts H (no D^2
+    # composition), the inward-marched U, and the mixed low-order edge
+    # closure (reduced: 11.8 -> 5.0 at the fine point, still O(1) and
+    # refinement-growing). Sharpened root cause: Dirichlet NODE-PINNING of
+    # the worldtube BC is not an SBP-SAT imposition — the discrete energy
+    # estimate fails at the boundary row. Next: SAT penalty (iter 34).
+    @test_broken rels[1] < 5e-3
+    @test_broken rels[2] < rels[1]
+end
