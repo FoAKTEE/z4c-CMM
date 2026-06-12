@@ -75,7 +75,7 @@ subgraph SGE["GH-CCM reference implementation — P3"]
 end
 
 subgraph SGN["NEW: Z4c-CCM formulation — mission 2 work program"]
-  N1["N1 PRELIMINARY worldtube data from Z4c:\ng_munu(alpha, beta^i, chi, gamma~_ij)\n-> P2 Sec II.B input (variable map only)"]
+  N1["N1 SOLID (verified iter 10) worldtube data\nfrom Z4c: exact variable maps + kinematic\nclosure (D_i beta^i = full covariant divergence,\nresolved); packages/zccm z4c_vars (4-GPU tested)"]
   N2["N2 SOLID (verified iter 8) Z4c boundary tetrad\n<-> CCE tetrad: Choice-2 boost A holds verbatim;\nfactor sqrt(2)/2 exact; 4-GPU sweep residual 9e-16\n(scripts/verify_n2_boost.py)"]
   N3["N3 SOLID (verified iter 9) physical-mode\ninjection: (d_t + d_s)^2 gamma_AB^TF =\n4(psi0 mbar mbar + cc), psi0 = (1/4)(d_t+d_s)^2 h_mm,\nOFF-SHELL; CCE psi0' -> h_AB^TF datum of B5;\nL=0 Bjorhus form (scripts/verify_n3_dictionary.py)"]
   N4["N4 PRELIMINARY constraint sector:\nkeep order-L CPBCs (zero incoming\nTheta, Z modes); kappa1, kappa2 damping\nabsorbs residual injected violation"]
@@ -189,7 +189,7 @@ Every cited label below is a `node_id` in the corresponding
 | E3 | 2308.10361 | eq:bc_bjorhus | [SOLID] transcription |
 | E4 | 2308.10361 | (design statement: gauge BCs stay Sommerfeld — P3 summary/obligations) | [SOLID] transcription |
 | E5 | 2308.10361 | eq:bondi_violation_psi3, eq:im_psi2, eq:gauge_constraint, eq:three_constraint | [SOLID] transcription |
-| N1 | z4c-CCM | new; consumes A2 variables, feeds C2 | [PRELIMINARY] |
+| N1 | z4c-CCM | new; consumes A2 variables, feeds C2; verifiers scripts/verify_n1_varmap.py + packages/zccm/tests/test_z4c_vars.py → results/numerical/n1_varmap_{check,gpu_test}.txt | [SOLID] verified |
 | N2 | z4c-CCM | new; reuse of D4 with B1 frame; verifier scripts/verify_n2_boost.py → results/numerical/n2_boost_check.txt | [SOLID] verified |
 | N3 | z4c-CCM | new; E2/E3 pattern into B5 slot; verifier scripts/verify_n3_dictionary.py → results/numerical/n3_dictionary_check.txt | [SOLID] verified |
 | N4 | z4c-CCM | new; B3 + A4 reuse argument | [PRELIMINARY] |

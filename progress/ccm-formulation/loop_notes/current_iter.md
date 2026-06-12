@@ -1,17 +1,24 @@
-# Iteration 9 — N3 admitted: the physical-dictionary identity (linearized core)
+# Iteration 10 — N1 admitted: Z4c worldtube variable maps + first zccm GPU module
 
-1. **Paper anchor** — DAG node N3; P3 eq:wab / eq:bc_bjorhus pattern landed in P1 eq:BCs_lastII slot; P1 frame eq:nullvector-k.
-2. **What shipped** — `scripts/verify_n3_dictionary.py` + certified output `results/numerical/n3_dictionary_check.txt`; knowledge rows: N3 → solid (predecessor N2); error rows: v1 null-leg convention fail (ledgered with diagnosis) + v2 pass; DAG doc updated (N3 [SOLID]); figure re-rendered.
-3. **Next-3 roadmap** — N1 (Z4c → worldtube 4-metric round-trip; seeds `packages/zccm/`), N4 (CPBC retention + corner obligation note), N5 (gauge-sector replacement statement). Distinct targets — crash-triage clean (the N3 v1 fail was remediated by convention fix, not parameter tweak).
-4. **Simplification flag** — n/a.
-5. **Verifier output** (verbatim, certified at results/numerical/n3_dictionary_check.txt):
-   [PASS] tetrad sanity (flat): l.l = 0, k.k = 0, l.k = -1, m.m = 0, m.mbar = 1  (t=0.6s)
-   [PASS] psi0 = c * (d_t + d_s)^2 (F1 + i F2) OFF-SHELL, pure number c = 1/4  (t=5.2s)
-   [PASS] w-_AB = K (psi0 mbar mbar + conj), component-exact for arbitrary F1, F2, pure number K = 4  (t=5.2s)
-   JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
-   [PASS] GPU sweep: max relative residual 0.00e+00 < 1e-9 over 4,194,304 OFF-shell Fourier modes (independent omega, k)  (t=20.1s)
-   OVERALL: PASS  (wall clock 20.1s)
+1. **Paper anchor** — DAG node N1; P1 eq:Z4_decomp_first group → P2 Sec II.B worldtube input.
+2. **What shipped** — `packages/zccm/` package seed (`zccm/z4c_vars.py`: Z4cState, to_adm/from_adm, four_metric(+inverse), boost_factor [N2], psi0_to_physical_datum [N3]); verifiers `scripts/verify_n1_varmap.py` (exact full-symbolic, 3.9 s) + `packages/zccm/tests/test_z4c_vars.py` (4× A100, 1,048,576 states, 22.3 s); knowledge row N1 → solid; error rows: verifier-side assertion-sign + jit-concretization fail, then pass; DAG doc N1 [SOLID]; figure refreshed.
+3. **Next-3 roadmap** — N4 (CPBC retention statement + corner-compatibility obligation), N5 (gauge-sector replacement statement), N6 (composite scheme assembly: explicit 10-mode BC table + zccm boundary module). Distinct targets — no same-mode loop.
+4. **Simplification flag** — n/a (modules small and single-purpose so far).
+5. **Verifier output** (verbatim; certified at results/numerical/n1_varmap_check.txt and n1_varmap_gpu_test.txt):
+   [PASS] chi recovery … residual det(gamma)*chi^3 - det(gt) == 0  (t=0.3s)
+   [PASS] K recovery … vanishes given trace-free At  (t=1.7s)
+   [PASS] At recovery … == -gt_ij/3 * gt^{kl}At_kl — vanishes given trace-free At  (t=2.4s)
+   [PASS] 4-metric inverse: g4 * g4inv == identity (full symbols)  (t=2.6s)
+   [PASS] KINEMATIC CLOSURE with D_i beta^i = beta^k_,k - (3/2) beta^k (ln chi)_,k … EXACT  (t=2.7s)
+   [PASS] NAIVE reading D = beta^k_,k leaves residual = c * gamma_ij beta^k (ln chi)_,k with c = {1}  (t=3.8s)
+   OVERALL: PASS (3.9s)
+   JAX devices used (4): gpu:0..3
+   [PASS] round trip … max rel residual 4.10e-16 < 1e-12 over 1,048,576 states  (t=22.3s)
+   [PASS] g4 * g4inv == identity: 8.88e-16 < 1e-11
+   [PASS] boost factor matches closed form (0.00e+00), positive for subluminal shift
+   [PASS] physical datum TT with K = 4 (all residuals 0.0)
+   OVERALL: PASS (22.3s)
 
-Physics note: the incoming-mode extractor on the boundary is the OUTGOING null
-direction operator l·∂ (it annihilates outgoing waves f(t−s)) — consistent with
-paper-1's (r² l̊·∂)^{L+1} BC operator; v1's (∂_t − ∂_s) guess was the flipped leg.
+Convention note (new, feeds the formulation document): P1's ∂_tχ equation
+divergence is the FULL covariant D_iβ^i — proven by kinematic closure, with the
+naive ∂_kβ^k reading leaving residual γ_ij β^k ∂_k ln χ (c = 1).

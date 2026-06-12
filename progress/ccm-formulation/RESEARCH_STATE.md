@@ -45,12 +45,13 @@ Rendered figure: `results/figures/zccm_formulation_dag.html`
 | N2: characteristic l̂ ∝ Cauchy (n+s)/√2 with factor √2/2·e^{2β̂}/(α−γ_ij β^i s^j) for fully general 3+1 data ⇒ paper-3 Type-II boost valid verbatim on the Z4c frame | exact rational-point identity testing + 4-GPU float64 sweep | `scripts/verify_n2_boost.py` → results/numerical/n2_boost_check.txt (OVERALL: PASS, 17.6 s) | worldtube at fixed coordinate radius; u=t on tube; outgoing root | [SOLID] | none |
 | N3 (linearized core): (∂_t+∂_s)² γ_AB^TF = 4(ψ₀ m̄_A m̄_B + c.c.), ψ₀ = ¼(∂_t+∂_s)² h_mm = −C(l,m,l,m), OFF-SHELL on the P1 frame ⇒ CCE ψ₀′ (N2 boost) supplies the h_AB^TF datum of eq:BCs_lastII; L=0 Bjørhus form fixed | exact symbolic (arbitrary functions) + 4-GPU off-shell Fourier sweep | `scripts/verify_n3_dictionary.py` → results/numerical/n3_dictionary_check.txt (OVERALL: PASS, 20.1 s) | linear TT perturbation on flat boundary frame; nonlinear/conformal corrections → N6 obligations | [SOLID] | nonlinear corrections, constraint-term replacement (N6) |
 
+| N1: Z4c ↔ ADM ↔ 4-metric maps exact; kinematic closure forces D_iβ^i = full covariant divergence (convention resolved, c=1 residual for naive reading); `packages/zccm` z4c_vars module (with N2 boost + N3 datum constructors) 4-GPU tested | exact full-symbolic (rational) + 4-GPU float64 package test | `scripts/verify_n1_varmap.py` + `packages/zccm/tests/test_z4c_vars.py` → results/numerical/n1_varmap_{check,gpu_test}.txt (both OVERALL: PASS) | det γ̃ = 1, tr_γ̃ Ã = 0 constraints; spatial derivatives supplied by evolution code | [SOLID] | none |
+
 ## Next Work Steps
 
-- `[PRELIMINARY] N1` — Z4c → worldtube 4-metric variable map; verifier: round-trip identity g(α,β,χ,γ̃); seeds `packages/zccm/` JAX module.
 - `[PRELIMINARY] N4` — CPBC retention argument written out with corner-compatibility obligation.
 - `[HYPOTHESIS] N5` — gauge-sector replacement statement + reflection analysis plan.
-- `[HYPOTHESIS] N6` — composite scheme assembly (depends N3, N4, N5).
+- `[HYPOTHESIS] N6` — composite scheme assembly (depends N3, N4, N5): explicit 10-mode BC table + zccm boundary module.
 - `[FUTURE] N7/N8/N9` — well-posedness sketch, tests, damping interplay.
 
 ## Appendix

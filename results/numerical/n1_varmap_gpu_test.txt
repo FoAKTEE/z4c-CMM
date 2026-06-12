@@ -1,0 +1,8 @@
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] round trip from_adm(to_adm(s)) == s: max rel residual 4.10e-16 < 1e-12 over 1,048,576 states  (t=22.3s)
+[PASS] g4 * g4inv == identity: max abs residual 8.88e-16 < 1e-11  (t=22.3s)
+[PASS] boost factor matches closed form (residual 0.00e+00) and is positive (True) for subluminal shift  (t=22.3s)
+[PASS] physical datum TT (trace 0.0e+00, asym 0.0e+00) with K = 4 (residual 0.0e+00)  (t=22.3s)
+
+wall clock: 22.3s
+OVERALL: PASS

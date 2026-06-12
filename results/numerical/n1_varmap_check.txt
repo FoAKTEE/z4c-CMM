@@ -1,0 +1,15 @@
+[PASS] chi recovery: det(gamma) = det(gt)/chi^3 (so chi = (det gamma)^(-1/3) iff det gt = 1) — residual det(gamma)*chi^3 - det(gt) == 0  (t=0.3s)
+[PASS] K recovery: gamma^{ij} K_ij - (Khat + 2 Theta) == (gt^{ij}At_ij)/1 * 1/1 — vanishes given trace-free At  (t=1.7s)
+[PASS] At recovery: chi*(K_ij - gamma_ij K/3) - At_ij == -gt_ij/3 * gt^{kl}At_kl — vanishes given trace-free At  (t=3.5s)
+[PASS] 4-metric inverse: g4 * g4inv == identity (full symbols)  (t=3.7s)
+[PASS] KINEMATIC CLOSURE with D_i beta^i = beta^k_,k - (3/2) beta^k (ln chi)_,k (full covariant divergence): d_t gamma_ij == -2 alpha K_ij + Lie_beta gamma, EXACT  (t=3.8s)
+[PASS] NAIVE reading D = beta^k_,k leaves residual = c * gamma_ij beta^k (ln chi)_,k with constant c = {1} (nonzero => convention resolved, not assumed)  (t=3.9s)
+
+CONCLUSION: packages/zccm z4c_vars maps are exact (round trip, 4-metric
+inverse), and P1's chi-equation divergence MUST be read as the full
+covariant D_i beta^i for ADM kinematic closure — convention note for the
+formulation document; worldtube data g, dt g, dr g from Z4c state is
+therefore complete (spatial derivatives supplied by the evolution code).
+
+wall clock: 3.9s
+OVERALL: PASS
