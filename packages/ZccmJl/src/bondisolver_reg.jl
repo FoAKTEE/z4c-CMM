@@ -173,6 +173,12 @@ function reg_evolve_J(g::RegGrid{T}, u0::T, u1::T, du::T,
     u = u0
     bcs(uu) = (teuk_qr(uu, rwt, X, rc, tau), teuk_ur(uu, rwt, X, rc, tau),
                teuk_wr(uu, rwt, X, rc, tau), teuk_hr(uu, rwt, X, rc, tau))
+    # BC imposition (iter 34 ledger): SAT penalty FAILED both regimes —
+    # O(1) strength is stiff for explicit RK4 (du*tau/h >> 2.8: NaN) and the
+    # v-scaled SBP strength under-tracks the time-dependent inflow BC
+    # (boundary lag; psi0 rel 49-63, WORSE than pinning's 1.6-5.0).
+    # Default = Dirichlet pinning (best known); O-N14-1 continues via the
+    # hierarchy-based psi0 (no edge d2 of the evolved field) next.
     rhs(uu, J) = begin
         Jb = copy(J)
         Jb[1] = teuk_jr(uu, rwt, X, rc, tau)
