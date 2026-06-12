@@ -81,7 +81,7 @@ subgraph SGN["NEW: Z4c-CCM formulation — mission 2 work program"]
   N4["N4 SOLID (verified iter 11) constraint sector:\norder-L CPBCs retained VERBATIM — TT injection\nchannel is constraint-orthogonal (H = M_i = 0\noff-shell, negative controls pass); channel\ntaxonomy: TT/gauge/vector/trace"]
   N5["N5 SOLID (verified iter 12) gauge sector:\npaper-1 gauge BCs replace Sommerfeld; CCM channel\nsources no gauge mode (exact); model reflection\nR_Sommerfeld = -b(1-b)/((1+b)(2-b)) vs R_P1 = 0"]
   N6["N6 SOLID (verified iter 13) composite scheme:\nexplicit 10-mode BC table (z4c_ccm_boundary_\nconditions.md) + zccm.boundary GPU module;\npsi0->0 reduces to P1; wire-through exact"]
-  N7["N7 OPEN well-posedness: LF/Kreiss boundary\nstability with inhomogeneous physical datum;\ncomposite system (weakly hyperbolic\nBondi-like sector caveat from P3)"]
+  N7["N7 SOLID sketch (iter 14): CCM changes data,\nnot operator — D_L(s) = (2s)^(L+1) uniform Kreiss,\ndatum-independent; P1 stability transfers.\nFull proof FUTURE (coupled system, oblique,\ncorners, nonlinear feedback)"]
   N8["N8 FUTURE GPU implementation (FINAL PRODUCT):\nJAX float64 code runnable on <=4 GPUs; tests\nTeukolsky wave, Kerr perturbation, pulse injection;\nR-coefficient + constraint monitor; every test <=10 min"]
   N9["N9 FUTURE damping-parameter interplay:\nkappa1, kappa2 vs injected-data error\n(Z4c analog of gamma2 c^3 term in eq:bc_bjorhus)"]
 end
@@ -195,7 +195,7 @@ Every cited label below is a `node_id` in the corresponding
 | N4 | z4c-CCM | new; B3 + A4 reuse argument; verifier scripts/verify_n4_cpbc_compat.py → results/numerical/n4_cpbc_compat_check.txt | [SOLID] verified |
 | N5 | z4c-CCM | new; B4 replacing E4; verifier scripts/verify_n5_gauge.py → results/numerical/n5_gauge_check.txt | [SOLID] verified |
 | N6 | z4c-CCM | new; composite of N3, N4, N5 + D5; BC table z4c_ccm_boundary_conditions.md; verifier scripts/verify_n6_composite.py → results/numerical/n6_composite_check.txt | [SOLID] verified |
-| N7 | z4c-CCM | new; B6 machinery, inhomogeneous data | [FUTURE] (analysis obligation) |
+| N7 | z4c-CCM | new; B6 machinery, inhomogeneous data; sketch n7_wellposedness_sketch.md; verifier scripts/verify_n7_lf_sketch.py → results/numerical/n7_lf_sketch_check.txt | [SOLID] sketch (full proof future) |
 | N8 | z4c-CCM | new; P3 test suite + B7/E5/A4 diagnostics | [FUTURE] |
 | N9 | z4c-CCM | new; A2 damping vs injected error | [FUTURE] |
 

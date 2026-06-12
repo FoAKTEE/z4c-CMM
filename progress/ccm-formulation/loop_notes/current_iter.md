@@ -1,13 +1,13 @@
-# Iteration 13 — N6 admitted: the composite Z4c-CCM boundary-condition set (keystone)
+# Iteration 14 — N7 sketch admitted: LF/Kreiss program documented, model-level core verified
 
-1. **Paper anchor** — DAG node N6; composite of N3+N4+N5 with P3 D5 cadence; table grounded in P1 eq:general_CPBCs / eq:BCs-alpha / eq:BCs_lastII + P3 eq:bc_bjorhus pattern.
-2. **What shipped** — `reformulate/z4c-CMM/synthesis_z4c-CCM/z4c_ccm_boundary_conditions.md` (the explicit 10-mode BC table + Bjørhus form + cadence + obligations O-N6-1..4); `packages/zccm/zccm/boundary.py` (BCTargets, physical_target, bc_targets, physical_residual — chains N1+N2+N3 on GPU); `scripts/verify_n6_composite.py` + certified output; knowledge row N6 → solid; error rows: v1 threshold slip + v2 pass.
-3. **Next-3 roadmap** — N7 (well-posedness sketch document: frozen-coefficient LF program, assumptions, what is/isn't proven), N8 (GPU test suite: 1D model evolution with CCM injection, R-coefficient measurement — the final-product gate), completion audit. No same-mode loop.
-4. **Simplification flag** — boundary module reuses z4c_vars constructors (no duplication) ✓.
-5. **Verifier output** (verbatim, certified at results/numerical/n6_composite_check.txt):
-   [PASS] mode count: BC table supplies exactly 10 == 10 incoming-mode targets (2 phys + 4 constraint + 4 gauge)
-   [PASS] physical target is symmetric trace-free (2 dof exactly)
-   [PASS] P1 reduction limit: psi0_CCE = 0 gives all-homogeneous targets (max |target| = 0.0e+00)
-   [PASS] wire-through N1+N2+N3 chain: rel residual 2.92e-16 < 1e-12 over 1,048,576 random states
-   [PASS] transparency: outgoing zero residual; incoming residual equals analytic (2k)^2 a exactly
-   OVERALL: PASS (22.2s, 4x A100)
+1. **Paper anchor** — DAG node N7; P1 eq:lapl-four / eq:bc_general / sol:lf / sol:lf2 machinery; P3 weak-hyperbolicity caveat.
+2. **What shipped** — `reformulate/z4c-CMM/synthesis_z4c-CCM/n7_wellposedness_sketch.md` (assumptions 1–6 explicit; open items 1–4 as [FUTURE] obligations with human sign-off requested); `scripts/verify_n7_lf_sketch.py` + certified output; knowledge row N7 → solid (sketch scope); error row: pass (one cosmetic root-pairing fix, noted in trial row).
+3. **Next-3 roadmap** — N8 (final product gate: 1D model evolution test with CCM injection on 4 GPUs measuring reflection coefficients + package README; then completion audit), N9 stays [FUTURE] (documented obligation, not in exit conditions). No same-mode loop.
+4. **Simplification flag** — n/a.
+5. **Verifier output** (verbatim, certified at results/numerical/n7_lf_sketch_check.txt):
+   [PASS] LF interior roots are exactly {s/(1+b), -s/(1-b)} (set match)
+   [PASS] admissibility: Re lam+ > 0 iff Re s > 0
+   [PASS] L=0..3: D_L(s) = (2s)^(L+1) exactly; uniform ratio 2^(L+1); datum-independent (True)
+   [PASS] Sommerfeld determinant D = s(2+b)/(1+b) != 0 (well-posed; defect is reflection per N5)
+   [PASS] GPU sweep: |D_L(s)|/|s|^(L+1) == 2^(L+1) to 3.2e-14 over 4,194,304 samples, L = 0..3
+   OVERALL: PASS (13.5s, 4x A100)

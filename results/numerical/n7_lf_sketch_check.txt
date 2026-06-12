@@ -1,0 +1,20 @@
+[PASS] LF interior roots are exactly {s/(1+b), -s/(1-b)} (set match): got [s/(b - 1), s/(b + 1)]  (t=0.4s)
+[PASS] admissibility: Re lam+ > 0 iff Re s > 0 (lam+ = s/(1+b), 1+b > 0)  (t=0.4s)
+[PASS] L=0: D_L(s) = (2s)^1 exactly; uniform ratio 2^1; datum-independent (True)  (t=0.4s)
+[PASS] L=1: D_L(s) = (2s)^2 exactly; uniform ratio 2^2; datum-independent (True)  (t=0.4s)
+[PASS] L=2: D_L(s) = (2s)^3 exactly; uniform ratio 2^3; datum-independent (True)  (t=0.4s)
+[PASS] L=3: D_L(s) = (2s)^4 exactly; uniform ratio 2^4; datum-independent (True)  (t=0.4s)
+[PASS] Sommerfeld determinant D = s*(b + 2)/(b + 1) = s(2+b)/(1+b) != 0 for Re s > 0 (well-posed; defect is reflection per N5, not ill-posedness)  (t=0.4s)
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] GPU sweep: |D_L(s)|/|s|^(L+1) == 2^(L+1) to 3.2e-14 over 4,194,304 right-half-plane samples, L = 0..3, b in [0, 0.6]  (t=13.5s)
+
+CONCLUSION: the uniform Kreiss determinant condition holds for the
+P1/CCM boundary operator at every absorbing order on the model, and the
+determinant is datum-independent — CCM changes the data, not the
+operator, so P1's boundary-stability results transfer to the
+inhomogeneous Z4c-CCM rows. Open items (coupled system, oblique/
+curvature, corners, nonlinear feedback) remain FUTURE obligations per
+n7_wellposedness_sketch.md. N7 sketch admitted.
+
+wall clock: 13.5s
+OVERALL: PASS
