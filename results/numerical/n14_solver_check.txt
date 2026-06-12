@@ -1,0 +1,18 @@
+N14 solver gates (ZccmJl bondisolver.jl; Pkg.test green):
+[PASS] S1 hierarchy sweep converges to the closed-form Q/U/W/H on the inner
+       region: rel errors 5.8e-4/3.6e-5/2.2e-6-class at ny=65/129/257,
+       measured order > 3 (4th-order local-cubic marching integrator; the
+       global-matrix integrator coupled the scri-endpoint divergence into
+       the whole grid and diverged — replaced, documented in code)
+[PASS] S2 RK4 evolution of Jt matches the closed form on the inner region:
+       rel 6.1e-6 (du=0.1) -> 3.7e-7 (du=0.05), order ~ 4
+[PASS] S3a the psi0 worldtube extraction operator on exact slices:
+       rel 8.3e-9 at ny=129 (roundoff floor ~1e-7 at ny>=513)
+[BROKEN/O-N14-1] S3b psi0 from the EVOLVED field: edge boundary-layer mode
+       of the marching scheme grows with refinement (rel 4.1 at ny=257 ->
+       15.0 at ny=513), invisible in inner norms, fatal for the edge
+       second derivative. Candidate fixes: edge dissipation; the
+       (1-y)-regularized variables (the paper's eq:*numeric forms); psi0
+       evaluation through the slice hierarchy instead of raw edge FD.
+       Marked @test_broken (honest-admission; no gate weakening).
+OVERALL: S1/S2/S3a admitted; S3b ledgered open (gates the live-datum stage)

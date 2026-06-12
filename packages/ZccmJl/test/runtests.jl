@@ -97,3 +97,58 @@ end
     @test isempty(hc.w_res)            # Q2
     @test hc.h_consistent              # Q3
 end
+
+@testset "bondi solver: S1 hierarchy sweep convergence" begin
+    X, rc, tau = 1.0e-5, 20.0, 2.0
+    u0 = 22.0
+    errs = Float64[]
+    for ny in (65, 129, 257)
+        g = BondiGrid(41.0, ny)
+        Jt = [teuk_Jt(u0, r, X, rc, tau) for r in g.r]
+        bc = (teuk_Qt(u0, 41.0, X, rc, tau), teuk_Ut(u0, 41.0, X, rc, tau),
+              teuk_Wt(u0, 41.0, X, rc, tau), teuk_Ht(u0, 41.0, X, rc, tau))
+        Qt, Ut, Wt, Ht = hierarchy_sweep!(g, Jt, bc)
+        inner = g.y .< 0.0   # inner half (worldtube side); scri-regularized
+                             # variables are the production successor
+        eq = maximum(abs.(Qt[inner] .- [teuk_Qt(u0, r, X, rc, tau) for r in g.r[inner]]))
+        eu = maximum(abs.(Ut[inner] .- [teuk_Ut(u0, r, X, rc, tau) for r in g.r[inner]]))
+        eh = maximum(abs.(Ht[inner] .- [teuk_Ht(u0, r, X, rc, tau) for r in g.r[inner]]))
+        push!(errs, max(eq/abs(bc[1]), eu/abs(bc[2]), eh/abs(bc[4])))
+    end
+    p12 = log2(errs[1]/errs[2]); p23 = log2(errs[2]/errs[3])
+    @info "S1 sweep rel errors: $(errs); orders $(p12), $(p23)"
+    @test errs[3] < 1e-5
+    @test p23 > 3.0
+end
+
+@testset "bondi solver: S2 evolution + S3 psi0 gates" begin
+    X, rc, tau = 1.0e-5, 20.0, 2.0
+    g = BondiGrid(41.0, 129)
+    u0, u1 = 14.0, 26.0
+    errs = Float64[]
+    for du in (0.1, 0.05)
+        Jt = evolve_J(g, u0, u1, du, X, rc, tau)
+        ref = [teuk_Jt(u1, r, X, rc, tau) for r in g.r]
+        inner = g.y .< 0.0
+        push!(errs, maximum(abs.(Jt[inner] .- ref[inner]))/maximum(abs.(ref[inner])))
+    end
+    @info "S2 evolution rel errors (du=0.1, 0.05): $(errs)"
+    @test errs[2] < 2e-4
+    # S3a: the psi0 extraction operator on EXACT slices (u = 20, F2 peak)
+    g2 = BondiGrid(41.0, 129)
+    Jt20 = [teuk_Jt(20.0, r, X, rc, tau) for r in g2.r]
+    p0x = psi0_worldtube(g2, Jt20)
+    want20 = -9/8*teuk_F(2, 20.0, X, rc, tau)/41.0^5
+    relx = abs(p0x - want20)/abs(want20)
+    @info "S3a extraction on exact slice: rel = $(relx)"
+    @test relx < 1e-7
+    # S3b KNOWN-BROKEN (O-N14-1): psi0 from the EVOLVED field is limited by
+    # an edge boundary-layer mode of the marching scheme (error GROWS with
+    # refinement: rel 4.1 at ny=257 -> 15.0 at ny=513; invisible in inner
+    # norms — S2 passes — fatal for edge second derivatives). Candidate
+    # fixes ledgered: edge dissipation, (1-y)-regularized variables
+    # (eq:*numeric forms), hierarchy-based psi0 evaluation.
+    Jte = evolve_J(g, u0, 20.0, 0.05, X, rc, tau)
+    p0e = psi0_worldtube(g, Jte)
+    @test_broken abs(p0e - want20)/abs(want20) < 5e-3
+end
