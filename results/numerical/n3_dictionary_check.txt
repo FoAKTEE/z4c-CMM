@@ -1,0 +1,16 @@
+[PASS] tetrad sanity (flat): l.l = 0, k.k = 0, l.k = -1, m.m = 0, m.mbar = 1  (t=0.6s)
+[PASS] psi0 = c * (d_t + d_s)^2 (F1 + i F2) OFF-SHELL, pure number c = 1/4  (t=5.2s)
+[PASS] w-_AB = K (psi0 mbar mbar + conj), component-exact for arbitrary F1, F2, pure number K = 4  (t=5.2s)
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] GPU sweep: max relative residual 0.00e+00 < 1e-9 over 4,194,304 OFF-shell Fourier modes (independent omega, k)  (t=20.1s)
+
+CONCLUSION: the incoming-mode TT object of Z4c's metric sector equals the
+psi0 bilinear of paper 3 — (d_t + d_s)^2 gamma_AB^TF = 4*(psi0 mbar mbar
++ cc), psi0 = 1/4*(d_t + d_s)^2 h_mm, OFF-SHELL at linear order on the
+paper-1 frame (l.d annihilates outgoing waves: BC transparent to them).
+CCE's psi0' (Type-II boosted, node N2) therefore supplies the physical
+datum of paper-1's slot eq:BCs_lastII; L=0 Bjorhus form ready for the
+GPU implementation. N3 admitted (linearized core).
+
+wall clock: 20.1s
+OVERALL: PASS
