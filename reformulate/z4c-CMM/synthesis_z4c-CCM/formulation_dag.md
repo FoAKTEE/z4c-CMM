@@ -82,7 +82,7 @@ subgraph SGN["NEW: Z4c-CCM formulation — mission 2 work program"]
   N5["N5 SOLID (verified iter 12) gauge sector:\npaper-1 gauge BCs replace Sommerfeld; CCM channel\nsources no gauge mode (exact); model reflection\nR_Sommerfeld = -b(1-b)/((1+b)(2-b)) vs R_P1 = 0"]
   N6["N6 SOLID (verified iter 13) composite scheme:\nexplicit 10-mode BC table (z4c_ccm_boundary_\nconditions.md) + zccm.boundary GPU module;\npsi0->0 reduces to P1; wire-through exact"]
   N7["N7 SOLID sketch (iter 14): CCM changes data,\nnot operator — D_L(s) = (2s)^(L+1) uniform Kreiss,\ndatum-independent; P1 stability transfers.\nFull proof FUTURE (coupled system, oblique,\ncorners, nonlinear feedback)"]
-  N8["N8 FUTURE GPU implementation (FINAL PRODUCT):\nJAX float64 code runnable on <=4 GPUs; tests\nTeukolsky wave, Kerr perturbation, pulse injection;\nR-coefficient + constraint monitor; every test <=10 min"]
+  N8["N8 SOLID (iter 15) FINAL PRODUCT: packages/zccm\n(JAX float64, 4 GPUs) — z4c_vars + boundary + model1d;\nSommerfeld R matches analytic (0.03%), P1/CCM op\nabsorbs at 3e-15, injection transparent to 1e-4;\nfull-GR 3D tests remain future"]
   N9["N9 FUTURE damping-parameter interplay:\nkappa1, kappa2 vs injected-data error\n(Z4c analog of gamma2 c^3 term in eq:bc_bjorhus)"]
 end
 
@@ -196,7 +196,7 @@ Every cited label below is a `node_id` in the corresponding
 | N5 | z4c-CCM | new; B4 replacing E4; verifier scripts/verify_n5_gauge.py → results/numerical/n5_gauge_check.txt | [SOLID] verified |
 | N6 | z4c-CCM | new; composite of N3, N4, N5 + D5; BC table z4c_ccm_boundary_conditions.md; verifier scripts/verify_n6_composite.py → results/numerical/n6_composite_check.txt | [SOLID] verified |
 | N7 | z4c-CCM | new; B6 machinery, inhomogeneous data; sketch n7_wellposedness_sketch.md; verifier scripts/verify_n7_lf_sketch.py → results/numerical/n7_lf_sketch_check.txt | [SOLID] sketch (full proof future) |
-| N8 | z4c-CCM | new; P3 test suite + B7/E5/A4 diagnostics | [FUTURE] |
+| N8 | z4c-CCM | new; P3 test suite + B7/E5/A4 diagnostics; packages/zccm + tests → results/numerical/n8_model1d_test.txt, n1_varmap_gpu_test.txt | [SOLID] model-level (full-GR 3D tests future) |
 | N9 | z4c-CCM | new; A2 damping vs injected error | [FUTURE] |
 
 ## Why this formulation is new (delta over each paper)

@@ -1,0 +1,8 @@
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] sanity: pure outgoing initial data has q_in == 0 exactly (max 0.0e+00)  (t=18.0s)
+[PASS] Sommerfeld: measured q-ratio = 0.1305 vs exact b/(2+b) = 0.1304 (dev 0.03% < 3%); u-amplitude R = 0.2423 vs mirror formula 0.2422  (t=18.0s)
+[PASS] P1/CCM operator: R = 3.24e-15 (fine) < q-ratio_Sommerfeld/100 = 1.30e-03 (absorbing at machine precision; coarse 1.86e-15)  (t=18.1s)
+[PASS] CCM injection: interior reproduces the exact incoming pulse, rel L2 = 1.09e-04 < 1% (two-way transparency)  (t=18.8s)
+
+wall clock: 18.8s
+OVERALL: PASS
