@@ -5,8 +5,10 @@ combining arXiv:1010.0523v2 (Z4c CPBC), 2007.01339 (CCE), 2308.10361 (GH-CCM).
 Organizing principle: physical dof + characteristic modes + boundary conditions.
 End product constraint: ONE DAG (single connected acyclic graph) — enforced by
 the verifier's connected-component check.
-Phase: roadmap admitted (S2-synthesis-dag [SOLID]); N-node derivation work next.
-Branch: `main`. Loop state: `.claude/ralph-loop.local.md` (mission z4c-CCM, iteration 7).
+Phase: mission complete — N1–N6 solid, N7 sketch solid, N8 final product solid;
+N9 remains a documented [FUTURE] obligation (not in the completion gate).
+Branch: `main`. Loop state: `.claude/ralph-loop.local.md` (mission z4c-CCM;
+terminal archive: `progress/ccm-formulation/loop_state_terminal.md`).
 
 ## Source Library
 
@@ -25,9 +27,9 @@ Rendered figure: `results/figures/zccm_formulation_dag.html`
 
 ## Active Claims
 
-| Claim | Needed evidence | Priority | Owner |
-|---|---|---|---|
-| Z4c-CCM BC set: 2 physical ← CCE ψ0 (Type-II boost), 4 constraint ← CPBC, 4 gauge ← P1 gauge BCs is consistent and explicitly writable | N2→N3→N6 derivations, symbolically verified | [PRELIMINARY] | loop agent |
+(none — the mission claim is discharged: the Z4c-CCM BC set is explicit,
+verified, and implemented; see Accepted Results Log. Successor work program:
+[FUTURE] items in Next Work Steps.)
 
 ## Binding user constraints (2026-06-12)
 
@@ -51,12 +53,13 @@ Rendered figure: `results/figures/zccm_formulation_dag.html`
 | N6: composite scheme — explicit 10-mode BC table (z4c_ccm_boundary_conditions.md) + zccm.boundary GPU module; mode count exact, ψ₀→0 reduces to P1 CPBC scheme, N1+N2+N3 wire-through 2.9e-16 over 1M states, outgoing-transparent / incoming-constrained exactly | structural + 4-GPU float64 | `scripts/verify_n6_composite.py` → results/numerical/n6_composite_check.txt (PASS, 22.2 s) | linearized flat boundary frame for the dictionary rows | [SOLID] | O-N6-1..4 routed to N7/N8/N9 |
 | N7: well-posedness sketch — CCM changes data not operator; D_L(s) = (2s)^{L+1} uniform Kreiss at all L, datum-independent; P1 stability transfers verbatim to inhomogeneous rows; full proof program documented as [FUTURE] obligations (coupled feedback, oblique/curvature, corners, nonlinear) | exact LF algebra + 4-GPU sweep | `scripts/verify_n7_lf_sketch.py` → results/numerical/n7_lf_sketch_check.txt (PASS, 13.5 s) | frozen coefficients, normal-incidence model, ψ₀′ as given data | [SOLID] (sketch scope) | full proof [FUTURE] — human sign-off requested (sketch doc items 1–4) |
 
-## Next Work Steps
+| N8 (FINAL PRODUCT): packages/zccm complete — z4c_vars + boundary + model1d; dynamical verification: Sommerfeld reflects at the analytic coefficient (0.03% dev), P1/CCM operator absorbs at 3.2e-15, CCM injection two-way transparent to 1.1e-4 | 4-GPU dynamical evolution + package tests | `packages/zccm/tests/test_model1d.py` → results/numerical/n8_model1d_test.txt (PASS, 18.8 s) | model problem (P1 eq:eomgammasA); full-GR 3D tests are successor work | [SOLID] (model-level) | full-GR 3D test campaign [FUTURE] |
 
-- `[PRELIMINARY] N4` — CPBC retention argument written out with corner-compatibility obligation.
-- `[HYPOTHESIS] N5` — gauge-sector replacement statement + reflection analysis plan.
-- `[HYPOTHESIS] N6` — composite scheme assembly (depends N3, N4, N5): explicit 10-mode BC table + zccm boundary module.
-- `[FUTURE] N7/N8/N9` — well-posedness sketch, tests, damping interplay.
+## Next Work Steps (successor missions — all [FUTURE])
+
+- `[FUTURE] N9` — κ₁/κ₂ damping vs injected-data error (Z4c analog of γ₂c³).
+- `[FUTURE]` N7 full-proof program: coupled Cauchy↔characteristic feedback (weak hyperbolicity), oblique/curvature, corners (sketch doc items 1–4; human sign-off requested).
+- `[FUTURE]` full-GR 3D tests: Teukolsky wave, Kerr perturbation, pulse injection with a production Z4c code + SpECTRE-style CCE.
 
 ## Appendix
 
