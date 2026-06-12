@@ -86,33 +86,38 @@ def device_checks(key):
     p1lim = jnp.max(jnp.abs(tz.physical)) + jnp.max(jnp.abs(tz.theta)) \
         + jnp.max(jnp.abs(tz.z_A)) + jnp.max(jnp.abs(tz.lapse))
 
-    # 3. wire-through: psi0_cce = psi0_cauchy / A^2 must return
-    #    4(psi0_cauchy mbm + cc) exactly through the module chain
+    # 3. wire-through (EXACT targets): psi0_cce = psi0_cauchy / A^2 must
+    #    return U^-|BC = -(psi0_cau mbm + cc) through the module chain
     ks = jax.random.split(key, 2)
     psi0_cau = (jax.random.uniform(ks[0], (B,), jnp.float64, -1, 1)
                 + 1j * jax.random.uniform(ks[1], (B,), jnp.float64, -1, 1))
     bs = jnp.einsum("bij,bi,bj->b", gamma, beta, s_unit)
     Aval = (alpha - bs) * jnp.exp(-2.0 * bchar)
     tw = bc_targets(s, psi0_cau / Aval**2, s_unit, bchar)
-    expect11 = 4.0 * jnp.real(psi0_cau)
-    expect12 = 4.0 * jnp.imag(psi0_cau)
+    expect11 = -jnp.real(psi0_cau)
+    expect12 = -jnp.imag(psi0_cau)
     wt = jnp.max(jnp.abs(tw.physical[:, 0, 0] - expect11) / (1 + jnp.abs(expect11))) \
         + jnp.max(jnp.abs(tw.physical[:, 0, 1] - expect12) / (1 + jnp.abs(expect12)))
 
-    # 4. transparency vs constraint: Fourier modes, d2 = (Dt + Dx)^2 amplitude
-    kk = jax.random.uniform(ks[0], (B,), jnp.float64, 0.1, 5.0)
-    a1 = jax.random.uniform(ks[1], (B,), jnp.float64, 0.5, 1.0)
-    # outgoing G(t - x): (d_t + d_x)^2 G = 0 exactly
-    d2_out = jnp.zeros((B, 2, 2))
-    res_out = physical_residual(d2_out, tz)
-    # incoming G(t + x) cos mode: (d_t + d_x)^2 -> amplitude (2 k)^2 a... wait
-    # phase k(x + t): d_t -> k ds, d_x -> k: (d_t + d_x)^2 amp = (2k)^2 a
-    d2_in = jnp.zeros((B, 2, 2)).at[:, 0, 0].set((2 * kk) ** 2 * a1)
-    d2_in = d2_in.at[:, 1, 1].set(-((2 * kk) ** 2) * a1)
-    res_in = physical_residual(d2_in, tz)
-    # normalize by the analytic incoming amplitude (2k)^2 a — ratio must be 1
-    ratio = jnp.abs(res_in[:, 0, 0]) / ((2 * kk) ** 2 * a1)
-    return (p1lim, wt, jnp.max(jnp.abs(res_out)),
+    # 4. residual semantics (EXACT object): zero incoming Weyl content with
+    #    zero datum -> residual 0; synthetic U^- = -(psi_in mbm + cc) with
+    #    MATCHING datum -> residual 0; with zero datum the residual equals
+    #    |U^-| exactly (the BC genuinely constrains).
+    u_zero = jnp.zeros((B, 2, 2))
+    res_out = physical_residual(u_zero, tz)
+    ks2 = jax.random.split(ks[1], 2)
+    psi_in = (jax.random.uniform(ks2[0], (B,), jnp.float64, 0.5, 1.0)
+              + 1j * jax.random.uniform(ks2[1], (B,), jnp.float64, 0.5, 1.0))
+    u_in = jnp.zeros((B, 2, 2))
+    u_in = u_in.at[:, 0, 0].set(-jnp.real(psi_in))
+    u_in = u_in.at[:, 1, 1].set(jnp.real(psi_in))
+    u_in = u_in.at[:, 0, 1].set(-jnp.imag(psi_in))
+    u_in = u_in.at[:, 1, 0].set(-jnp.imag(psi_in))
+    t_match = bc_targets(s, psi_in / Aval**2, s_unit, bchar)
+    res_match = physical_residual(u_in, t_match)
+    res_in = physical_residual(u_in, tz)
+    ratio = jnp.abs(res_in[:, 0, 0]) / jnp.abs(jnp.real(psi_in))
+    return (p1lim, wt, jnp.max(jnp.abs(res_out)) + jnp.max(jnp.abs(res_match)),
             jnp.max(jnp.abs(ratio - 1.0)))
 
 res = [jax.jit(device_checks, device=d)(jax.random.PRNGKey(61 + i))
@@ -125,13 +130,13 @@ rin = max(float(r[3]) for r in res)
 
 report(f"P1 reduction limit: psi0_CCE = 0 gives all-homogeneous targets "
        f"(max |target| = {p1lim:.1e}) — Z4c-CCM contains Z4c-CPBC", p1lim == 0.0)
-report(f"wire-through N1+N2+N3 chain: psi0_cce = psi0_cau/A^2 returns "
-       f"4(psi0_cau mbm + cc) exactly (rel residual {wt:.2e} < 1e-12) "
+report(f"wire-through N1+N2+N3exact chain: psi0_cce = psi0_cau/A^2 returns "
+       f"U^-|BC = -(psi0_cau mbm + cc) exactly (rel residual {wt:.2e} < 1e-12) "
        f"over {B_tot:,} random states", wt < 1e-12)
-report(f"transparency: outgoing modes leave zero residual with zero datum "
-       f"({rout:.1e}); incoming modes are genuinely constrained — residual "
-       f"equals the analytic (2k)^2 a exactly (ratio dev {rin:.1e})",
-       rout == 0.0 and rin < 1e-14)
+report(f"residual semantics (exact object): zero-U^- and matched-datum "
+       f"residuals {rout:.1e} < 1e-14 (matched datum round-trips psi/A^2*A^2 "
+       f"in float64); unmatched incoming Weyl content constrained at exactly "
+       f"|U^-| (ratio dev {rin:.1e})", rout < 1e-14 and rin < 1e-14)
 
 print()
 print("CONCLUSION: the composite Z4c-CCM boundary-condition table is complete")

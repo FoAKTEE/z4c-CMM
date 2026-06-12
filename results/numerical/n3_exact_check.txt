@@ -1,0 +1,21 @@
+[PASS] generic Weyl tensor constructed: 10 independent components (cyclic + 10 trace conditions imposed)  (t=0.2s)
+[PASS] E_ij symmetric & traceless; B_ij symmetric & traceless (Weyl algebra)  (t=0.3s)
+[PASS] EXACT identity (E + sigma*eps(s)B)(m,m) = kappa*psi0 with (sigma, kappa) = (1, -1), generic Weyl (all 10 dof)  (t=0.4s)
+[PASS] opposite sign pairs with the outgoing scalar: (E - sigma*eps(s)B)(m,m) = -1*conj(psi4)  (t=0.4s)
+[PASS] dyad completeness: U_AB = U(m,m) mbar_A mbar_B + cc for any TT U (scalar identity <=> tensor identity)  (t=0.5s)
+[PASS] linearized ON-SHELL limit reproduces superseded eqs. 16-17: (E + sigma eps(s)B)(m,m) = (kappa/4)(d_t+d_s)^2 h_mm with Codazzi sign sigma_B = 1  (t=0.5s)
+JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
+[PASS] Schwarzschild (Kerr-Schild, M=1, r in [3,12]M, random frames, 1024 pts): |E_3+1 - E_4D| rel 7.68e-17 < 1e-8  (t=20.8s)
+[PASS] Schwarzschild: |B_3+1(Codazzi, sigma_B) - B_4D| rel 3.93e-17 < 1e-8  (t=20.8s)
+[PASS] Schwarzschild NONPERTURBATIVE identity: |(E + sigma eps(s)B)(m,m) - kappa psi0| rel 8.46e-16 < 1e-8  (t=20.8s)
+
+CONCLUSION: the EXACT dictionary is (E + (1)*eps(s)B)(m,m) = (-1)*psi0 as pure
+Weyl algebra (generic 10-dof tensor), with E, B realized from the Z4c
+state via Gauss-Codazzi (on-shell vacuum, Codazzi sign sigma_B=1) and
+verified nonperturbatively on Schwarzschild; the superseded linearized
+eqs. 16-17 are its on-shell flat limit. Physical BC rows become
+conditions on U^-_AB = TT2[E + sigma eps(s)B]_AB driven to
+kappa (psi0' mbar mbar + cc).
+
+wall clock: 20.8s
+OVERALL: PASS

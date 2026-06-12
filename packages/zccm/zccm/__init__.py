@@ -13,5 +13,5 @@ jax.config.update("jax_enable_x64", True)
 
 from .z4c_vars import (  # noqa: E402,F401
     Z4cState, to_adm, from_adm, four_metric, four_metric_inverse,
-    boost_factor, psi0_to_physical_datum,
+    boost_factor, psi0_to_physical_datum, psi0_to_u_minus, u_minus_scalar,
 )

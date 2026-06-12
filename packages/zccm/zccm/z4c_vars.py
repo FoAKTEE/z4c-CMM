@@ -91,15 +91,53 @@ def boost_factor(s: Z4cState, s_unit, beta_char):
     return (alpha - bs) * jnp.exp(-2.0 * beta_char)
 
 
-def psi0_to_physical_datum(psi0_prime):
-    """N3 (verified): physical boundary datum from the boosted psi0'.
+def psi0_to_u_minus(psi0_prime):
+    """N3-EXACT (verified): the exact physical boundary target from psi0'.
 
     Returns the TT 2x2 tangential matrix
-        w-_AB = 4 (psi0' mbar_A mbar_B + conj(psi0') m_A m_B),
-    with the tangential dyad m_A = (1, i)/sqrt(2) in the (e_y, e_z) basis of
-    the boundary-adapted frame; equals (d_t + d_s)^2 gamma_AB^TF, the datum
-    driving paper-1's eq:BCs_lastII physical slot (L=0 Bjorhus form).
-    Verifier: scripts/verify_n3_dictionary.py (identity exact, off-shell).
+        U^-_AB|_BC = -(psi0' mbar_A mbar_B + conj(psi0') m_A m_B)
+                   = [[-Re psi0', -Im psi0'], [-Im psi0', +Re psi0']],
+    the target for the incoming Weyl object
+        U^-_AB = TT2[ E + eps(s) B ]_AB,
+        E_ij = R_ij + K K_ij - K_ik K^k_j,   B_ij = eps_i^{kl} D_k K_{lj},
+    (exact tetrad algebra on the full Weyl tensor; Gauss-Codazzi realization,
+    on-shell vacuum). Verifier: scripts/verify_n3_exact.py — generic-Weyl
+    exact identity (sigma, kappa) = (1, -1), Codazzi sign +1, Schwarzschild
+    nonperturbative residual 8.5e-16.
+    """
+    re, im = jnp.real(psi0_prime), jnp.imag(psi0_prime)
+    return jnp.stack([jnp.stack([-re, -im], -1),
+                      jnp.stack([-im, re], -1)], -2)
+
+
+def u_minus_scalar(E, B, gam, s_up, m3):
+    """U^-(m,m) = (E + eps(s)B)(m,m) computed from 3+1 data (batched).
+
+    E, B: (...,3,3); gam: (...,3,3); s_up unit normal (...,3); m3 complex
+    dyad vector (...,3). eps_i^{kl} carries sqrt(det gam); equals -psi0
+    exactly (verify_n3_exact.py).
+    """
+    import numpy as _np
+    lc = _np.zeros((3, 3, 3))
+    for a, b, c, sgn in [(0, 1, 2, 1), (1, 2, 0, 1), (2, 0, 1, 1),
+                         (0, 2, 1, -1), (2, 1, 0, -1), (1, 0, 2, -1)]:
+        lc[a, b, c] = sgn
+    gami = jnp.linalg.inv(gam)
+    sq3 = jnp.sqrt(jnp.linalg.det(gam))
+    epsmix = jnp.einsum("...,ikl,...km,...ln->...imn",
+                        sq3, jnp.asarray(lc), gami, gami)
+    s_dn = jnp.einsum("...ij,...j->...i", gam, s_up)
+    sxB = jnp.einsum("...ikl,...k,...lj->...ij", epsmix, s_dn, B)
+    sxB = 0.5 * (sxB + jnp.swapaxes(sxB, -1, -2))
+    T = (E + sxB).astype(jnp.complex128)
+    return jnp.einsum("...ij,...i,...j->...", T, m3, m3)
+
+
+def psi0_to_physical_datum(psi0_prime):
+    """LINEARIZED-LIMIT operator form (superseded as the defining statement
+    by psi0_to_u_minus; retained for the model problem and the flat-frame
+    second-order operator (d_t + d_s)^2 gamma_AB^TF = 4(psi0' mbm + cc)).
+    Verifier: scripts/verify_n3_dictionary.py (linear, off-shell).
     """
     # mbar⊗mbar = 0.5*[[1, -i], [-i, -1]] => (psi0' mbm + cc)_11 = Re psi0',
     # _12 = Im psi0'; with the verified K = 4:

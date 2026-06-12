@@ -140,33 +140,58 @@ $\psi_0$ on the characteristic grid \cite{Moxon:2020gha,Ma:2023qjn}:
 \label{eq:psi0cce}
 \end{equation}
 
-\subsection{Physical-mode dictionary (node N3)}
+\subsection{Physical-mode dictionary (node N3, exact)}
 \label{sec:n3}
 
-Linear TT perturbation on the frame \eqref{eq:normal},
-$\gamma_{AB} = \delta_{AB} + h_{AB}(t,x_s)$,
-$h_{22}=-h_{33}\equiv F_1$, $h_{23}\equiv F_2$, $h_{mm} = F_1 + iF_2$;
-$\psi_0 \equiv -C_{abcd}\,l^a m^b l^c m^d$ on
-$l = \mathring l$, $m = m^A$. Direct evaluation of the linearized Riemann
-tensor gives, off shell (no field equations used),
-\begin{nfblock}
+Electric/magnetic Weyl decomposition w.r.t.\ $n^\mu$ (vacuum):
 \begin{equation}
-\psi_0 = \tfrac{1}{4}\,(\partial_t + \partial_s)^2\,h_{mm}
-\qquad\text{[V2: exact for arbitrary }F_1,F_2\text{]},
-\label{eq:psi0lin}
-\end{equation}
-\begin{equation}
-(\partial_t+\partial_s)^2\,\gamma_{AB}^{\rm TF}
- = 4\Big(\psi_0\,\bar m_A \bar m_B + \bar\psi_0\, m_A m_B\Big),
+E_{\mu\nu} = C_{\mu\alpha\nu\beta}\,n^\alpha n^\beta,
 \qquad
-(\mathring l\!\cdot\!\partial)^2\gamma_{AB}^{\rm TF}
- = 2\Big(\psi_0'\,\bar m_A \bar m_B + \bar\psi_0'\, m_A m_B\Big)
-\label{eq:dictionary}
+B_{\mu\nu} = \tfrac12\,\epsilon_{\mu\alpha}{}^{\gamma\delta}
+             C_{\gamma\delta\nu\beta}\,n^\alpha n^\beta,
+\qquad
+\epsilon_{\mu\nu\rho\sigma}=\sqrt{-g}\,[\mu\nu\rho\sigma].
+\label{eq:ebdef}
+\end{equation}
+\begin{nfblock}
+EXACT identity (pure Weyl algebra, generic 10-component tensor; no
+perturbation, no field equations) [V2a]:
+\begin{equation}
+\big(E_{\mu\nu} + \epsilon_{\mu}{}^{\kappa\lambda}s_\kappa
+ B_{\lambda\nu}\big)\,m^\mu m^\nu \;=\; -\,\psi_0,
+\qquad
+\big(E_{\mu\nu} - \epsilon_{\mu}{}^{\kappa\lambda}s_\kappa
+ B_{\lambda\nu}\big)\,m^\mu m^\nu \;=\; -\,\bar\psi_4,
+\label{eq:exact-dictionary}
+\end{equation}
+with $\psi_0 = -C_{abcd}\,l^a m^b l^c m^d$ on the frame \eqref{eq:nullvecs};
+dyad completeness ($U_{AB} = U(m,m)\,\bar m_A \bar m_B + \mathrm{c.c.}$ for
+tangential trace-free $U$) gives the tensor form of the incoming Weyl object
+\begin{equation}
+U^-_{AB} \;\equiv\; \mathrm{TT}_2\big[E + \epsilon(s)B\big]_{AB}
+ \;=\; -\big(\psi_0\,\bar m_A \bar m_B + \bar\psi_0\, m_A m_B\big).
+\label{eq:uminus}
+\end{equation}
+Realization from the Z4c state (Gauss--Codazzi, on-shell vacuum;
+$\gamma_{ij}, K_{ij}$ from \eqref{eq:z4cvars}) [V2c]:
+\begin{equation}
+E_{ij} = R_{ij}[\gamma] + K\,K_{ij} - K_{ik}K^k{}_j,
+\qquad
+B_{ij} = \epsilon_i{}^{kl}\,D_k K_{lj}\big|_{\rm sym},
+\qquad
+\epsilon_{ikl} = \sqrt{\det\gamma}\,[ikl].
+\label{eq:gausscodazzi}
 \end{equation}
 \end{nfblock}
-[V2: GPU residual $0.0$ over $4{,}194{,}304$ off-shell Fourier modes].
-$(\mathring l\!\cdot\!\partial)$ annihilates outgoing waves $f(t-x_s)$:
-\eqref{eq:dictionary} is transparent to them.
+Nonperturbative verification (Kerr--Schild Schwarzschild, autodiff, both
+routes; Table~\ref{tab:static} V2c): $|E^{3+1}{-}E^{4D}|$ rel.\
+$7.7{\times}10^{-17}$, $|B^{3+1}{-}B^{4D}|$ rel.\ $3.9{\times}10^{-17}$,
+identity residual $8.5{\times}10^{-16}$. Linearized on-shell flat limit
+(superseded defining form, now a corollary [V2b]): for TT $h_{AB}(t,x_s)$,
+$\psi_0 = \tfrac14(\partial_t+\partial_s)^2 h_{mm}$ and
+$U^-_{AB}\to -\tfrac14 (\partial_t + \partial_s)^2 \gamma^{\rm TF}_{AB}$,
+i.e.\ $(\partial_t+\partial_s)^2\gamma^{\rm TF}_{AB}
+ = 4(\psi_0 \bar m_A\bar m_B + \mathrm{c.c.})$.
 
 \subsection{The Z4c-CCM boundary conditions (node N6)}
 \label{sec:n6}
@@ -176,10 +201,10 @@ Ten incoming modes at the worldtube; $X^{\mathring{}}{}^\mu_v =
 \begin{nfblock}
 \begin{align}
 \text{physical (2):}\qquad &
-(\mathring l\!\cdot\!\partial)^2\,\gamma^{\rm TF}_{AB}
-\;\hat=\;
-2\Big(\psi_0'\,\bar m_A\bar m_B + \bar\psi_0'\,m_A m_B\Big),
-\qquad \psi_0' = A^2\,\psi_0^{\rm CCE},
+U^-_{AB} \;\hat=\;
+-\Big(\psi_0'\,\bar m_A\bar m_B + \bar\psi_0'\,m_A m_B\Big),
+\qquad \psi_0' = A^2\,\psi_0^{\rm CCE}
+\quad\text{(exact, \eqref{eq:uminus}--\eqref{eq:gausscodazzi})},
 \label{eq:bc-phys}\\
 \text{constraint (4):}\qquad &
 \big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,\Theta \;\hat=\; 0,
@@ -196,11 +221,14 @@ Ten incoming modes at the worldtube; $X^{\mathring{}}{}^\mu_v =
 \big(r^2\,\mathring j\!\cdot\!\partial\big)^{L+1}\beta_A \;\hat=\; 0 .
 \label{eq:bc-gauge}
 \end{align}
-Bj{\o}rhus form of \eqref{eq:bc-phys}, with
-$V_{AB}\equiv(\mathring l\!\cdot\!\partial)\,\gamma^{\rm TF}_{AB}$:
+Bj{\o}rhus form of \eqref{eq:bc-phys} (the correction drives the
+incoming Weyl object to its CCM value, the Z4c analog of
+Ref.~\cite{Ma:2023qjn}):
 \begin{equation}
-(\mathring l\!\cdot\!\partial)\,V_{AB}\big|_{\partial\Omega}
- = 2\Big(\psi_0'\,\bar m_A\bar m_B + \bar\psi_0'\,m_A m_B\Big);
+U^-_{AB} - U^-_{AB}\big|_{\rm BC} \to 0,
+\qquad
+U^-_{AB}\big|_{\rm BC} = -\Big(\psi_0'\,\bar m_A\bar m_B
+ + \bar\psi_0'\,m_A m_B\Big);
 \qquad
 \psi_0^{\rm CCE}\!\to 0 \;\Longrightarrow\; \text{CPBC scheme of
 Ref.~\cite{Ruiz:2010qj}}
@@ -281,7 +309,8 @@ All runs: JAX float64, $4\times$ NVIDIA A100-80GB
 \caption{Symbolic and sampling verification of
 \eqref{eq:divbeta}--\eqref{eq:kreiss}. ``Exact'' = sympy identity on
 arbitrary functions or exact rationals (zero float error).
-Files: \texttt{n2\_boost\_check.txt}, \texttt{n3\_dictionary\_check.txt},
+Files: \texttt{n2\_boost\_check.txt}, \texttt{n3\_exact\_check.txt},
+\texttt{n3\_dictionary\_check.txt},
 \texttt{n1\_varmap\_check.txt}, \texttt{n4\_cpbc\_compat\_check.txt},
 \texttt{n5\_gauge\_check.txt}, \texttt{n6\_composite\_check.txt},
 \texttt{n7\_lf\_sketch\_check.txt}.}
@@ -293,9 +322,14 @@ Files: \texttt{n2\_boost\_check.txt}, \texttt{n3\_dictionary\_check.txt},
 \hline
 V1 & boost identity \eqref{eq:boost-identity}, factor $\sqrt2/2$ &
  12/12 rational points & $9.34\times10^{-16}$ over $4{,}194{,}304$ samples \\
-V2 & dictionary \eqref{eq:psi0lin}--\eqref{eq:dictionary},
- $c=\tfrac14$, $K=4$ & arbitrary $F_1,F_2$, off shell &
- $0.0$ over $4{,}194{,}304$ off-shell modes \\
+V2a & EXACT identity \eqref{eq:exact-dictionary}--\eqref{eq:uminus},
+ $(\sigma,\kappa)=(1,-1)$, $\bar\psi_4$ partner & generic Weyl, all 10 dof &
+ --- \\
+V2b & linearized on-shell limit (corollary) & arbitrary $F_1,F_2$ &
+ $0.0$ over $4{,}194{,}304$ modes (prior form) \\
+V2c & Gauss--Codazzi realization \eqref{eq:gausscodazzi}, Schwarzschild &
+ Codazzi sign $+1$ derived & $E$: $7.7{\times}10^{-17}$, $B$:
+ $3.9{\times}10^{-17}$, identity $8.5{\times}10^{-16}$ (1024 pts) \\
 V3 & maps \eqref{eq:fourmetric}, closure \eqref{eq:divbeta} &
  full-symbol identities & round trip $4.10{\times}10^{-16}$, $gg^{-1}$ $8.88{\times}10^{-16}$ \\
 V4 & orthogonality \eqref{eq:orthogonality} + controls &
@@ -304,8 +338,8 @@ V4 & orthogonality \eqref{eq:orthogonality} + controls &
 V5 & reflection \eqref{eq:reflection} &
  exact $R$ algebra & $|R_{\rm Som}|\ge0.023$ on
  $\mathring\beta\in[0.05,0.6]$; $R=0$ exact \\
-V6 & 10-mode count, $\psi_0\to0$ reduction, wire-through &
- structural & reduction $0.0$; chain residual $2.92{\times}10^{-16}$ \\
+V6 & 10-mode count, $\psi_0\to0$ reduction, wire-through (exact targets) &
+ structural & reduction $0.0$; chain residual $1.47{\times}10^{-16}$ \\
 V7 & Kreiss condition \eqref{eq:kreiss}, $L=0..3$ &
  $D_L=(2s)^{L+1}$ exact & ratio deviation $3.2\times10^{-14}$
  ($4{,}194{,}304$ samples) \\

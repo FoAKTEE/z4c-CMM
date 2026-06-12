@@ -20,7 +20,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import jax, jax.numpy as jnp
 from zccm import (Z4cState, to_adm, from_adm, four_metric,
-                  four_metric_inverse, boost_factor, psi0_to_physical_datum)
+                  four_metric_inverse, boost_factor, psi0_to_physical_datum,
+                  psi0_to_u_minus)
 
 OK = True
 def report(name, cond):
@@ -74,7 +75,11 @@ def device_checks(key):
     w = psi0_to_physical_datum(psi0)
     tt = jnp.max(jnp.abs(w[:, 0, 0] + w[:, 1, 1]))           # traceless
     sym = jnp.max(jnp.abs(w[:, 0, 1] - w[:, 1, 0]))          # symmetric
-    k4 = jnp.max(jnp.abs(w[:, 0, 0] - 4 * jnp.real(psi0)))   # K = 4
+    k4 = jnp.max(jnp.abs(w[:, 0, 0] - 4 * jnp.real(psi0)))   # K = 4 (lin limit)
+    u = psi0_to_u_minus(psi0)                                # exact target
+    tt = jnp.maximum(tt, jnp.max(jnp.abs(u[:, 0, 0] + u[:, 1, 1])))
+    sym = jnp.maximum(sym, jnp.max(jnp.abs(u[:, 0, 1] - u[:, 1, 0])))
+    k4 = jnp.maximum(k4, jnp.max(jnp.abs(u[:, 0, 0] + jnp.real(psi0))))
     return rt, inv, bres, bpos, tt, sym, k4
 
 res = [jax.jit(device_checks, device=d)(jax.random.PRNGKey(31 + i))
@@ -93,8 +98,9 @@ report(f"round trip from_adm(to_adm(s)) == s: max rel residual {rt:.2e} < 1e-12 
 report(f"g4 * g4inv == identity: max abs residual {inv:.2e} < 1e-11", inv < 1e-11)
 report(f"boost factor matches closed form (residual {bres:.2e}) and is positive "
        f"({bpos}) for subluminal shift", bres < 1e-14 and bpos)
-report(f"physical datum TT (trace {tt:.1e}, asym {sym:.1e}) with K = 4 "
-       f"(residual {k4:.1e})", tt < 1e-14 and sym < 1e-14 and k4 < 1e-14)
+report(f"physical targets TT (trace {tt:.1e}, asym {sym:.1e}); linearized-limit "
+       f"K = 4 and EXACT kappa = -1 constructors (residual {k4:.1e})",
+       tt < 1e-14 and sym < 1e-14 and k4 < 1e-14)
 
 print(f"\nwall clock: {time.time()-T0:.1f}s")
 print(f"OVERALL: {'PASS' if OK else 'FAIL'}")

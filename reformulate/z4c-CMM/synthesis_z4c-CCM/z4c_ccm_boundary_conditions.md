@@ -15,7 +15,7 @@ vector, tangential trace = constraint-scalar):
 
 | # | sector | incoming field | speed | boundary condition | datum source |
 |---|---|---|---|---|---|
-| 1–2 | physical | γ_AB^TF (TT tangential metric) | 1 | (l̊·∂)² γ_AB^TF ≐ 2(ψ₀′ m̄_A m̄_B + ψ̄₀′ m_A m_B) | **CCM: ψ₀′ = A² ψ₀_CCE** |
+| 1–2 | physical | U⁻_AB = TT₂[E + ε(s)B]_AB (incoming Weyl object, EXACT) | 1 | U⁻_AB ≐ −(ψ₀′ m̄_A m̄_B + ψ̄₀′ m_A m_B) | **CCM: ψ₀′ = A² ψ₀_CCE** |
 | 3 | constraint | Θ | 1 | (r² l̊·∂)^{L+1} Θ ≐ 0 | CPBC (P1 eq:general_CPBCs) |
 | 4 | constraint | Z_s | 1 | (r² l̊·∂)^{L+1} Z_s ≐ 0 | CPBC |
 | 5–6 | constraint | Z_A | 1 | (r² l̊·∂)^{L+1} Z_A ≐ 0 | CPBC |
@@ -42,18 +42,25 @@ Chain (all three links verified):
    the tetrad correspondence `l̊ ∝ l̂` holds for arbitrary (α, β^i, γ_ij)
    with exact factor √2/2·e^{2β̂}/(α − γ_ij β^i s^j)
    (`results/numerical/n2_boost_check.txt`).
-3. **Injection dictionary (N3, verified off-shell):**
-   `(∂_t + ∂_s)² γ_AB^TF = 4(ψ₀ m̄_A m̄_B + c.c.)` with
-   `ψ₀ = ¼ (∂_t + ∂_s)² h_mm`; since `(l̊·∂)² = ½(∂_t + ∂_s)²` on the flat
-   frame, the BC row reads `(l̊·∂)²γ_AB^TF ≐ 2(ψ₀′ m̄m̄ + c.c.)`
+3. **Injection dictionary (N3, EXACT — upgraded after user review):**
+   `(E + ε(s)B)(m,m) = −ψ₀` as pure Weyl algebra on the generic tensor
+   (partner: `(E − ε(s)B)(m,m) = −ψ̄₄`), with the Z4c realization
+   `E_ij = R_ij + K K_ij − K_ik K^k_j`, `B_ij = ε_i^{kl} D_k K_{lj}`
+   (Gauss–Codazzi, on-shell vacuum, Codazzi sign derived) — verified
+   nonperturbatively on Kerr–Schild Schwarzschild via autodiff
+   (`results/numerical/n3_exact_check.txt`). The BC row drives
+   `U⁻_AB = TT₂[E + ε(s)B]_AB` to `−(ψ₀′ m̄m̄ + c.c.)`. The old linearized
+   form `(∂_t+∂_s)²γ^TF = 4(ψ₀m̄m̄+c.c.)` is its on-shell flat limit
    (`results/numerical/n3_dictionary_check.txt`).
 
-**Bjørhus replacement form (implementation):** with the first-order incoming
-field `V_AB := (l̊·∂) γ_AB^TF`, the boundary update is
-`(l̊·∂) V_AB |_boundary = 2(ψ₀′ m̄_A m̄_B + c.c.)` — the Z4c analog of
-P3 eq:bc_bjorhus, with GH's `−γ₂ s^i c³` constraint-damping addition replaced
-by nothing at linear order (the CCM channel is constraint-orthogonal, N4);
-the nonlinear analog (κ-weighted Θ, Z terms) is obligation O-N6-2.
+**Bjørhus replacement form (implementation):** drive the incoming Weyl
+object to its CCM value, `U⁻_AB − U⁻_AB|_BC → 0` with
+`U⁻_AB|_BC = −(ψ₀′ m̄_A m̄_B + c.c.)` — the exact Z4c analog of
+P3 eq:bc_bjorhus (E, B evaluated from the Z4c state and its spatial
+derivatives; helpers `zccm.u_minus_scalar`, `zccm.psi0_to_u_minus`); GH's
+`−γ₂ s^i c³` constraint-damping addition is replaced by nothing at linear
+order (the CCM channel is constraint-orthogonal, N4); the nonlinear analog
+(κ-weighted Θ, Z terms) is obligation O-N6-2.
 
 ## Limits and consistency (verified in scripts/verify_n6_composite.py)
 

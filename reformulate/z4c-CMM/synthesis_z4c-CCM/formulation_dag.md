@@ -77,7 +77,7 @@ end
 subgraph SGN["NEW: Z4c-CCM formulation — mission 2 work program"]
   N1["N1 SOLID (verified iter 10) worldtube data\nfrom Z4c: exact variable maps + kinematic\nclosure (D_i beta^i = full covariant divergence,\nresolved); packages/zccm z4c_vars (4-GPU tested)"]
   N2["N2 SOLID (verified iter 8) Z4c boundary tetrad\n<-> CCE tetrad: Choice-2 boost A holds verbatim;\nfactor sqrt(2)/2 exact; 4-GPU sweep residual 9e-16\n(scripts/verify_n2_boost.py)"]
-  N3["N3 SOLID (verified iter 9) physical-mode\ninjection: (d_t + d_s)^2 gamma_AB^TF =\n4(psi0 mbar mbar + cc), psi0 = (1/4)(d_t+d_s)^2 h_mm,\nOFF-SHELL; CCE psi0' -> h_AB^TF datum of B5;\nL=0 Bjorhus form (scripts/verify_n3_dictionary.py)"]
+  N3["N3 SOLID EXACT (iter 16, user-review upgrade):\nU^-_AB = TT2[E + eps(s)B]_AB = -(psi0 mbm + cc),\npure Weyl algebra; E = R + KK - KK, B = eps DK from\nthe Z4c state (Gauss-Codazzi); Schwarzschild\nnonperturbative 8.5e-16; linearized form = corollary"]
   N4["N4 SOLID (verified iter 11) constraint sector:\norder-L CPBCs retained VERBATIM — TT injection\nchannel is constraint-orthogonal (H = M_i = 0\noff-shell, negative controls pass); channel\ntaxonomy: TT/gauge/vector/trace"]
   N5["N5 SOLID (verified iter 12) gauge sector:\npaper-1 gauge BCs replace Sommerfeld; CCM channel\nsources no gauge mode (exact); model reflection\nR_Sommerfeld = -b(1-b)/((1+b)(2-b)) vs R_P1 = 0"]
   N6["N6 SOLID (verified iter 13) composite scheme:\nexplicit 10-mode BC table (z4c_ccm_boundary_\nconditions.md) + zccm.boundary GPU module;\npsi0->0 reduces to P1; wire-through exact"]
@@ -191,7 +191,7 @@ Every cited label below is a `node_id` in the corresponding
 | E5 | 2308.10361 | eq:bondi_violation_psi3, eq:im_psi2, eq:gauge_constraint, eq:three_constraint | [SOLID] transcription |
 | N1 | z4c-CCM | new; consumes A2 variables, feeds C2; verifiers scripts/verify_n1_varmap.py + packages/zccm/tests/test_z4c_vars.py → results/numerical/n1_varmap_{check,gpu_test}.txt | [SOLID] verified |
 | N2 | z4c-CCM | new; reuse of D4 with B1 frame; verifier scripts/verify_n2_boost.py → results/numerical/n2_boost_check.txt | [SOLID] verified |
-| N3 | z4c-CCM | new; E2/E3 pattern into B5 slot; verifier scripts/verify_n3_dictionary.py → results/numerical/n3_dictionary_check.txt | [SOLID] verified |
+| N3 | z4c-CCM | new; E2/E3 pattern made Z4c-native (exact Weyl object); verifiers scripts/verify_n3_exact.py (exact + Schwarzschild) and scripts/verify_n3_dictionary.py (linearized corollary) → results/numerical/n3_exact_check.txt, n3_dictionary_check.txt | [SOLID] verified exact |
 | N4 | z4c-CCM | new; B3 + A4 reuse argument; verifier scripts/verify_n4_cpbc_compat.py → results/numerical/n4_cpbc_compat_check.txt | [SOLID] verified |
 | N5 | z4c-CCM | new; B4 replacing E4; verifier scripts/verify_n5_gauge.py → results/numerical/n5_gauge_check.txt | [SOLID] verified |
 | N6 | z4c-CCM | new; composite of N3, N4, N5 + D5; BC table z4c_ccm_boundary_conditions.md; verifier scripts/verify_n6_composite.py → results/numerical/n6_composite_check.txt | [SOLID] verified |

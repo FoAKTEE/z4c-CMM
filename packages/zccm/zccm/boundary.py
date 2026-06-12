@@ -15,14 +15,14 @@ from typing import NamedTuple
 
 import jax.numpy as jnp
 
-from .z4c_vars import Z4cState, boost_factor, psi0_to_physical_datum
+from .z4c_vars import Z4cState, boost_factor, psi0_to_u_minus
 
 
 class BCTargets(NamedTuple):
     """Targets for the 10 incoming modes (leading batch shape ...).
 
-    physical : (..., 2, 2) TT matrix — target for (d_t + d_s)^2 gamma_AB^TF
-               (= 2 * (l.d)^2 target; rows 1-2, the CCM-driven datum)
+    physical : (..., 2, 2) TT matrix — EXACT target for the incoming Weyl
+               object U^-_AB = TT2[E + eps(s)B]_AB (rows 1-2, CCM datum)
     theta    : (...,)      target for (r^2 l.d)^(L+1) Theta      (row 3)
     z_s      : (...,)      target for (r^2 l.d)^(L+1) Z_s        (row 4)
     z_A      : (..., 2)    target for (r^2 l.d)^(L+1) Z_A        (rows 5-6)
@@ -46,14 +46,16 @@ def n_incoming_modes(t: BCTargets) -> int:
 
 
 def physical_target(psi0_cce, state: Z4cState, s_unit, beta_char):
-    """Rows 1-2: w-|_BC = 4(psi0' mbar mbar + cc), psi0' = A^2 psi0_CCE.
-
-    Chains N2 (boost_factor) and N3 (psi0_to_physical_datum); this is the
-    target for (d_t + d_s)^2 gamma_AB^TF. psi0_cce -> 0 recovers paper-1's
-    freezing-psi0 absorbing scheme (verified limit).
+    """Rows 1-2 (EXACT): U^-_AB|_BC = -(psi0' mbar mbar + cc),
+    psi0' = A^2 psi0_CCE, where U^-_AB = TT2[E + eps(s)B]_AB is the incoming
+    Weyl object built from the Z4c state via Gauss-Codazzi
+    (E = R + KK - KK, B = eps DK; scripts/verify_n3_exact.py — exact,
+    nonperturbative). Chains N2 (boost_factor) and N3-exact
+    (psi0_to_u_minus). psi0_cce -> 0 recovers paper-1's freezing-psi0
+    absorbing scheme (verified limit).
     """
     A = boost_factor(state, s_unit, beta_char)
-    return psi0_to_physical_datum(A**2 * psi0_cce)
+    return psi0_to_u_minus(A**2 * psi0_cce)
 
 
 def bc_targets(state: Z4cState, psi0_cce, s_unit, beta_char,
@@ -71,12 +73,15 @@ def bc_targets(state: Z4cState, psi0_cce, s_unit, beta_char,
         shift_A=zero2 if h_A is None else h_A)
 
 
-def physical_residual(d2_gamma_TF, targets: BCTargets):
-    """Residual of rows 1-2: (d_t + d_s)^2 gamma_AB^TF - w-|_BC.
+def physical_residual(u_minus_measured, targets: BCTargets):
+    """Residual of rows 1-2 (EXACT): U^-_AB(E, B) - U^-_AB|_BC.
 
-    d2_gamma_TF: (..., 2, 2) — the double outgoing-null-direction derivative
-    of the TT tangential metric, supplied by the host code's boundary stencil.
-    Zero for (a) pure outgoing waves with psi0_cce = 0 (transparency) and
-    (b) any exact solution whose psi0 matches the injected datum (wire-through).
+    u_minus_measured: (..., 2, 2) — the incoming Weyl object
+    TT2[E + eps(s)B]_AB evaluated from the Z4c state and its spatial
+    derivatives at the boundary (helpers: zccm.u_minus_scalar). Zero for any
+    exact solution whose psi0 matches the injected datum (wire-through;
+    nonperturbative). In the linearized flat limit this reduces to the
+    superseded operator form (d_t+d_s)^2 gamma^TF = 4(psi0' mbm+cc) via
+    U^- -> -(1/4)(d_t+d_s)^2 gamma^TF (on shell).
     """
-    return d2_gamma_TF - targets.physical
+    return u_minus_measured - targets.physical
