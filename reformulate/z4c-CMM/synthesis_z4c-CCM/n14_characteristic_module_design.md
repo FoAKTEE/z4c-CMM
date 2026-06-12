@@ -62,3 +62,32 @@ K = sqrt(1 + J Jbar). Compactified radius y = 1 - 2 r_wt/r maps
 ## Status
 
 Design committed iter 21. Implementation begins iter 22 (stage A).
+
+## Stage-A linearization state (iter 23 hand-off)
+
+Linear forms derived by inspection (to be GATED by the sympy transcription,
+not trusted):
+- beta: dr beta = 0 (RHS of eq:HypersurfaceBeta is quadratic in J).
+- Q: dr(r^2 Q) = -r^2 dr(ethbar J) - 4 r eth beta (using dr beta = 0).
+- U: dr U = Q / r^2.
+- W: eq:HypersurfaceW transcribed verbatim gives a NONZERO Minkowski
+  background residual under my naive reading (the (2 + J Jbar)/(2K) term in
+  Lambda_W gives +1, plus the standalone +1, while flat space needs
+  dr(r^2 W) = 0 since V = r). Either a sign/term is misread or the source
+  groups terms differently — the verifier MUST include gate G0: the
+  Minkowski background (J = beta = Q = U = W = 0) satisfies the transcribed
+  full hierarchy identically; localize the discrepancy against
+  eq:Wnumeric's -1/(2R) constant before linearizing.
+- H: linear LHS dr(r H); linear RHS contains -eth U + (1/2) r dr^2 J + dr J
+  + [eth eth beta - (1/2) eth Q + (constant)*J]/r where the constant comes
+  from the +3/(4K) term inside script-A_H — transcription decides the
+  exact coefficient.
+- Conventions (eth normalization, spin-weighted ladder factors) are FIXED
+  a posteriori by the end-to-end gate: the linear chain driven by analytic
+  Teukolsky worldtube data must reproduce the N12-exact psi0 datum
+  -sqrt(27pi/10) F2(t-r)/r^5 * 2Y20 and the scri strain chain. Do not
+  hand-pick conventions; let the gate select them.
+
+Next window: implement scripts/verify_n14_linear_hierarchy.py (transcribe,
+G0 background gate, linearize, l=2 reduce), scripts/bondi_linear.py,
+results/numerical/n14_linear_check.txt.
