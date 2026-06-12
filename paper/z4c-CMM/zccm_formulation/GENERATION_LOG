@@ -1,1 +1,2 @@
 2026-06-12T02:51:20Z iter=15 git=18729de 9 solid nodes (method-only render, user-directed)
+2026-06-12T06:54:45Z iter=17 git=0eac498 +sec:teuktest self-contained exact-parameter Teukolsky test (eqs teuk-F..teuk-numbers, nf-blocks for the discrete injection + protocol/result) + Fig.1 zccm_teuk_paper.pdf (generator scripts/plot_paper_figure_teuk.py, data results/numerical/athenak_teuk_paper/, ledger N11); refs Teukolsky:1982nz, Zhu:2024utz added

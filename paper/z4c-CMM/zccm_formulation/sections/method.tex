@@ -383,3 +383,182 @@ $(\partial_t + c_+\partial_x)$ [P1/CCM op., $N{=}16385$] &
 \hline\hline
 \end{tabular}
 \end{table}
+
+\subsection{Dynamical test at the parameters of Ref.~\cite{Ma:2023qjn}
+(nodes N10--N11)}
+\label{sec:teuktest}
+
+Full 3+1 evolution: AthenaK Z4c \cite{Zhu:2024utz} (vendored, pinned;
+RK4, CFL $0.25$, second-order stencils, $\kappa_1=0.02$), with
+\eqref{eq:bc-phys} realized at the Cauchy outer boundary as described below.
+This subsection is self-contained: every symbol used by the test is defined
+here or in Secs.~\ref{sec:frame}--\ref{sec:n6}.
+
+\paragraph{Exact solution injected.}
+Even-parity $(\ell,m)=(2,0)$ Teukolsky wave \cite{Teukolsky:1982nz} with the
+Gaussian profile of Ref.~\cite{Ma:2023qjn}, written with physicists' Hermite
+polynomials $H_n$ and the origin-regular retarded/advanced combinations:
+\begin{equation}
+F(u) = X\,e^{-(u-r_c)^2/\tau^2},
+\qquad
+F^{(n)}(u) = X\,\Big(\!-\frac{1}{\tau}\Big)^{\!n}
+ H_n\!\Big(\frac{u-r_c}{\tau}\Big)\,e^{-(u-r_c)^2/\tau^2},
+\label{eq:teuk-F}
+\end{equation}
+\begin{equation}
+Q^{(n)}(t,r) = F^{(n)}(t-r) - (-1)^n F^{(n)}(t+r),
+\qquad
+R^{(n)}(t,r) = F^{(n)}(t-r) + (-1)^n F^{(n)}(t+r),
+\qquad
+\partial_t Q^{(n)} = R^{(n+1)} .
+\label{eq:teuk-QR}
+\end{equation}
+Radial functions (regular at $r=0$ by \eqref{eq:teuk-QR}; calligraphic to
+keep $A$ for the boost \eqref{eq:boost}):
+\begin{align}
+\mathcal A &= 3\Big[\frac{Q^{(2)}}{r^3} + \frac{3Q^{(1)}}{r^4}
+ + \frac{3Q^{(0)}}{r^5}\Big],
+\qquad
+\mathcal B = -\Big[\frac{Q^{(3)}}{r^2} + \frac{3Q^{(2)}}{r^3}
+ + \frac{6Q^{(1)}}{r^4} + \frac{6Q^{(0)}}{r^5}\Big],
+\nonumber\\
+\mathcal C &= \frac14\Big[\frac{Q^{(4)}}{r} + \frac{2Q^{(3)}}{r^2}
+ + \frac{9Q^{(2)}}{r^3} + \frac{21Q^{(1)}}{r^4} + \frac{21Q^{(0)}}{r^5}\Big],
+\label{eq:teuk-ABC}
+\end{align}
+orthonormal-frame metric perturbation ($\dot h_{ij}$ from
+$Q^{(n)}\!\to\!R^{(n+1)}$ termwise):
+\begin{equation}
+h_{\hat r\hat r} = \mathcal A\,\frac{1+3\cos 2\theta}{2},
+\quad
+h_{\hat r\hat\theta} = -3\mathcal B\sin\theta\cos\theta,
+\quad
+h_{\hat\theta\hat\theta} = 3\mathcal C\sin^2\theta - \mathcal A,
+\quad
+h_{\hat\phi\hat\phi} = -3\mathcal C\sin^2\theta
+ + \mathcal A\,(3\sin^2\theta - 1),
+\label{eq:teuk-metric}
+\end{equation}
+\begin{equation}
+\gamma_{ij}(0,x) = \delta_{ij} + h_{ij}(0,x),
+\qquad
+K_{ij}(0,x) = -\tfrac12\,\dot h_{ij}(0,x)
+\qquad
+(\text{linear order; Ref.~\cite{Ma:2023qjn} solves XCTS}).
+\label{eq:teuk-id}
+\end{equation}
+Weyl scalars of the solution at linear order (the self-datum and the
+extraction reference):
+\begin{equation}
+r^5\,\psi_0(t,r,\theta) = -\sqrt{\tfrac{27\pi}{10}}\;F^{(2)}(t-r)\;
+ {}_{2}Y_{20}(\theta),
+\qquad
+{}_{2}Y_{20} = \tfrac14\sqrt{\tfrac{15}{2\pi}}\,\sin^2\theta,
+\qquad
+r\,\psi_4\big|_{(2,0)} \;\to\; -\sqrt{\tfrac{6\pi}{5}}\,F^{(6)}(t-r).
+\label{eq:teuk-psi0}
+\end{equation}
+
+\begin{nfblock}
+\paragraph{Discrete realization of \eqref{eq:bc-phys}.}
+At every Cauchy-boundary point, after the CPBC/gauge rows
+\eqref{eq:bc-cpbc}--\eqref{eq:bc-gauge} (Sommerfeld task of
+Ref.~\cite{Zhu:2024utz}), the two physical rows are driven through
+$\tilde A_{ij}$:
+\begin{equation}
+s^a = \frac{x^a/r}{\sqrt{\gamma_{bc}\,x^b x^c}/r},
+\qquad
+e_\phi \propto \hat z\times s,\quad e_\theta = s\times e_\phi,
+\qquad
+\bar m = \tfrac{1}{\sqrt 2}\,(e_\theta - i\,e_\phi),
+\label{eq:teuk-dyad}
+\end{equation}
+\begin{equation}
+\boxed{\;
+\partial_t \tilde A_{ab}\big|_{\partial\Omega}
+\;\mathrel{+}=\;
+-\frac{2\chi}{\alpha}\,
+\Big(\psi_0'\,\bar m_a \bar m_b + \bar\psi_0'\,m_a m_b\Big),
+\qquad
+\psi_0' = A^2\,\psi_0^{\rm datum},
+\quad A = \big(\alpha-\gamma_{ij}\beta^i s^j\big)e^{-2\hat\beta}
+\;}
+\label{eq:teuk-inject}
+\end{equation}
+with $\psi_0^{\rm datum}$ the right-hand member of \eqref{eq:teuk-psi0}
+evaluated at the boundary point ($\hat\beta=0$ on the flat background);
+$\psi_0^{\rm datum}\to0$ reduces \eqref{eq:teuk-inject} to the unmodified
+scheme exactly (V6; machine-zero reduction in Table~\ref{tab:dynamic}
+methodology, AthenaK battery: Minkowski preserved to $2.6\times10^{-33}$).
+
+\paragraph{Protocol and result.}
+Parameters of Ref.~\cite{Ma:2023qjn}: $r_c=20$, $\tau=2$,
+$X\in\{10^{-5}, 2\}$, Cauchy boundary (worldtube analog) at $41$,
+$t\in[0,80]$; extraction of $r\psi_4^{(2,0)}$ at $r=36$; grids $164^3$
+($h=1/2$) with $132^3$, $104^3$ error-estimate companions; reference run
+with boundary at $104$ ($416^3$, same $h$) — causally disconnected, since
+contamination reaching $r=36$ by $t=80$ requires boundary data at
+$t_b < 12$, where the solution \eqref{eq:teuk-F} is bounded by
+$X e^{-[(104-40)/\tau]^2} = X e^{-1024}$. Error norm on the common output
+grid:
+\begin{equation}
+E[\mathrm{run}] =
+\frac{\big\| r\psi_4^{(2,0)}[\mathrm{run}] -
+ r\psi_4^{(2,0)}[\mathrm{ref}]\big\|_{2}}
+{\big\| r\psi_4^{(2,0)}[\mathrm{ref}]\big\|_{2}},
+\qquad
+E_{h}[\mathrm{run}] =
+\frac{\big\| r\psi_4^{(2,0)}\big|_{164^3} -
+ r\psi_4^{(2,0)}\big|_{132^3}\big\|_{2}}
+{\big\| r\psi_4^{(2,0)}[\mathrm{ref}]\big\|_{2}} .
+\label{eq:teuk-E}
+\end{equation}
+Measured (Fig.~\ref{fig:teuk}; 4$\times$A100, every run $<600$\,s):
+\begin{align}
+X=10^{-5}&:&
+E[\text{Somm}] &= E[\text{CCM}] = 2.732\times10^{-4}
+&&\ll\; E_h = 0.70,
+\nonumber\\
+X=2&:&
+E[\text{Somm}] &= E[\text{CCM}] = 8.87\times10^{-2}
+&&\ll\; E_h = 0.69,
+\label{eq:teuk-numbers}
+\end{align}
+reproducing the boundary-error $\ll$ truncation-error hierarchy and the
+perturbative indistinguishability of Ref.~\cite{Ma:2023qjn} (their
+Sec.~V.A). The CCM$-$Sommerfeld waveform difference switches on exactly at
+the boundary$\to$extraction causal time ($t \ge 64.5$) at relative
+amplitude $5\times10^{-10}$--$4\times10^{-9}$: the self-datum
+\eqref{eq:teuk-psi0} obeys peeling, $\psi_0\sim r^{-5}$, so a purely
+outgoing pulse supplies an incoming correction suppressed by $41^{-5}$ at
+this worldtube — resolving CCM from Sommerfeld at figure level requires
+the CCE-fed datum (nonlinear backscatter), the documented successor of the
+$\psi_0^{\rm datum}$ provider. The deficit of the measured peak against the
+scri formula \eqref{eq:teuk-psi0} is finite-difference truncation, not the
+finite extraction radius: peak ratio $0.292/0.465/0.612$ at
+$104^3/132^3/164^3$ ($\sim\!4$ points per $\tau$ at second order).
+Constraints stay bounded on all runs ($X=2$: $\|H\|_{L_2}$
+$3.5\times10^{-3}\to5.4\times10^{-3}$, damped after $t\approx35$, with the
+$O(X^2)$ violation of the linear data \eqref{eq:teuk-id} absorbed by the
+$\kappa_1$ damping).
+\end{nfblock}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{zccm_teuk_paper.pdf}
+\caption{Exact-parameter Teukolsky test of Sec.~\ref{sec:teuktest}
+($r_c{=}20$, $\tau{=}2$, boundary $41$, extraction $r{=}36$; amplitudes
+normalized by $X$). Top: $(\ell,m){=}(2,0)$ mode of $r\psi_4$ for the
+causally disconnected reference, Sommerfeld, and Z4c-CCM
+\eqref{eq:teuk-inject} runs; at $X{=}10^{-5}$ the linear scri formula
+\eqref{eq:teuk-psi0} is overlaid (its excess is the second-order truncation
+deficit quoted in the text). Bottom: differences \eqref{eq:teuk-E};
+$|\mathrm{CCM}-\mathrm{ref}|$ and $|\mathrm{Somm}-\mathrm{ref}|$ coincide,
+both sit below the two-resolution error estimates (dashed), and
+$|\mathrm{CCM}-\mathrm{Somm}|$ (green) activates only after the
+boundary$\to$extraction causal time with the $r^{-5}$ peeling suppression
+of the self-datum. Generator:
+\texttt{scripts/plot\_paper\_figure\_teuk.py}; data:
+\texttt{results/numerical/athenak\_teuk\_paper/} (ledger node N11).}
+\label{fig:teuk}
+\end{figure}
