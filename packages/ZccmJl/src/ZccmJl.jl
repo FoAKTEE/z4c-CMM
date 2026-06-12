@@ -27,5 +27,7 @@ include("hierarchy.jl")
 include("bondisolver.jl")
 include("bondisolver_reg.jl")
 include("bondisolver_cheb.jl")
+include("anchored_series.jl")
+include("worldtubemap.jl")
 
 end # module

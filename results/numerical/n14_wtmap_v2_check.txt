@@ -27,3 +27,14 @@ U_c at wt: Pair{Tuple{Int64, Int64, Int64}, Rational{BigInt}}[(0, 1, 1) => -27//
 J_c at wt == naive hTT at wt: true
 U_c fit: dth_trace*(-1//164)
 W_c fit: hrr*(3//164) + dr_trace*(-1//4)
+
+=== iter 42: stage B COMPLETE ===
+[PASS] Q_wt local form derived: Q_wt = -dth(trace)/4 - (rwt/4) dth dr trace
+       - 3 hrth/rwt + dt hrth (exact fit, corrected gauge)
+[PASS] worldtube_map(...) implemented (src/worldtubemap.jl): all six rows
+       (J, H, U, Q, beta, W) from the local data contract
+[PASS] identity gates vs the consistent anchored-gauge series:
+       Float64 at the cancellation-conditioned tolerance (W ~ 1e-11 from
+       1e-9-scale terms) and EXACT in BigFloat-192 (< 1e-35 all rows)
+Open (scheduled): r_wt-generality spot-check at a second radius;
+anchored-gauge evolution + BigFloat psi0 end-to-end gate.

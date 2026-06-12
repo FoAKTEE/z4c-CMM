@@ -232,3 +232,74 @@ end
         @test relB < 5e-3
     end
 end
+
+@testset "worldtube map (stage B): identity + anchored evolution + psi0" begin
+    X, rc, tau = 1.0e-5, 20.0, 2.0
+    rwt = 41.0
+    # identity gate: map outputs == anchored-gauge series values at wt
+    for u in (18.0, 20.0, 23.0)
+        # analytic 'live' Cauchy data scalars at the worldtube
+        A(n) = teuk_F(n, u, X, rc, tau)
+        Aser = 3*(A(2)/rwt^3 + 3A(1)/rwt^4 + 3A(0)/rwt^5)
+        drA = 3*(-3A(2)/rwt^4 - 12A(1)/rwt^5 - 15A(0)/rwt^6)
+        Bser = -(A(3)/rwt^2 + 3A(2)/rwt^3 + 6A(1)/rwt^4 + 6A(0)/rwt^5)
+        Cser = (A(4)/rwt + 2A(3)/rwt^2 + 9A(2)/rwt^3 + 21A(1)/rwt^4 + 21A(0)/rwt^5)/4
+        dtB = -(A(4)/rwt^2 + 3A(3)/rwt^3 + 6A(2)/rwt^4 + 6A(1)/rwt^5)
+        hTT = 3*(2Cser - Aser)/4 * 2     # (3/2)(2C-A): s^2-scalar
+        hTT = (3/2)*(2Cser - Aser)
+        dtC = (A(5)/rwt + 2A(4)/rwt^2 + 9A(3)/rwt^3 + 21A(2)/rwt^4 + 21A(1)/rwt^5)/4
+        dtA = 3*(A(3)/rwt^3 + 3A(2)/rwt^4 + 3A(1)/rwt^5)
+        dt_hTT = (3/2)*(2dtC - dtA)
+        hrr = Aser                        # P-scalar of A(3c^2-1)
+        trace = -Aser
+        dr_trace = -drA
+        dth_trace_sc = 6Aser              # d_theta(-A P) -> sc: +6A
+        dth_dr_trace_sc = 6drA
+        hrth = -3*Bser*rwt / (-3)         # h_rth = -3 B r sc: sc-scalar = -3 B r
+        hrth = -3*Bser*rwt
+        dt_hrth = -3*dtB*rwt
+        ethb_hrth_P = -3*Bser*rwt         # ethbar(sc X) = P X: scalar = -3 B r
+        m = worldtube_map(rwt; hTT=hTT, dt_hTT=dt_hTT, hrr=hrr, trace=trace,
+            dr_trace=dr_trace, dth_trace_sc=dth_trace_sc,
+            dth_dr_trace_sc=dth_dr_trace_sc, hrth=hrth, dt_hrth=dt_hrth,
+            ethb_hrth_P=ethb_hrth_P)
+        # gate vs the anchored series at wt
+        # the identity is exact; Float64 evaluation differs only by
+        # cancellation roundoff (W ~ 1e-11 from 1e-9-scale terms) — gate
+        # at the cancellation-conditioned tolerance and EXACTLY in BigFloat
+        for (got, ser, kind, w) in ((m.jr, J_ANCH, :s2, rwt),
+                                    (m.ur, U_ANCH, :sc, rwt^2),
+                                    (m.wr, W_ANCH, :P, rwt^2),
+                                    (m.beta, BETA_ANCH, :P, 1.0))
+            want = w*series_scalar(ser, kind, u, rwt, X, rc, tau)
+            @test isapprox(got, want; rtol=1e-9, atol=1e-30)
+        end
+    end
+end
+
+@testset "worldtube map identity in BigFloat (exact)" begin
+    setprecision(BigFloat, 192) do
+        X, rc, tau = big"1.0e-5", big"20.0", big"2.0"
+        rwt = big"41.0"
+        u = big"20.0"
+        A(n) = teuk_F(n, u, X, rc, tau)
+        Aser = 3*(A(2)/rwt^3 + 3A(1)/rwt^4 + 3A(0)/rwt^5)
+        drA = 3*(-3A(2)/rwt^4 - 12A(1)/rwt^5 - 15A(0)/rwt^6)
+        Bser = -(A(3)/rwt^2 + 3A(2)/rwt^3 + 6A(1)/rwt^4 + 6A(0)/rwt^5)
+        Cser = (A(4)/rwt + 2A(3)/rwt^2 + 9A(2)/rwt^3 + 21A(1)/rwt^4 + 21A(0)/rwt^5)/4
+        dtB = -(A(4)/rwt^2 + 3A(3)/rwt^3 + 6A(2)/rwt^4 + 6A(1)/rwt^5)
+        dtC = (A(5)/rwt + 2A(4)/rwt^2 + 9A(3)/rwt^3 + 21A(2)/rwt^4 + 21A(1)/rwt^5)/4
+        dtA = 3*(A(3)/rwt^3 + 3A(2)/rwt^4 + 3A(1)/rwt^5)
+        m = worldtube_map(rwt; hTT=big(3)/2*(2Cser-Aser), dt_hTT=big(3)/2*(2dtC-dtA),
+            hrr=Aser, trace=-Aser, dr_trace=-drA, dth_trace_sc=6Aser,
+            dth_dr_trace_sc=6drA, hrth=-3*Bser*rwt, dt_hrth=-3*dtB*rwt,
+            ethb_hrth_P=-3*Bser*rwt)
+        for (got, ser, kind, w) in ((m.jr, J_ANCH, :s2, rwt),
+                                    (m.ur, U_ANCH, :sc, rwt^2),
+                                    (m.wr, W_ANCH, :P, rwt^2),
+                                    (m.beta, BETA_ANCH, :P, big"1.0"))
+            want = w*series_scalar(ser, kind, u, rwt, X, rc, tau)
+            @test Float64(abs(got - want)/max(abs(want), big"1e-60")) < 1e-35
+        end
+    end
+end
