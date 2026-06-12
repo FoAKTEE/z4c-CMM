@@ -22,5 +22,6 @@ module ZccmJl
 include("teukolsky.jl")
 include("linseries.jl")
 include("psi0chain.jl")
+include("bonditransform.jl")
 
 end # module

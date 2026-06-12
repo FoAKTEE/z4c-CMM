@@ -1,10 +1,9 @@
-# psi0chain.jl — port of scripts/verify_n14_linear_psi0_chain.py (stage A1).
-# NOTE (honest-admission): the A1 J_full gauge shift is UNDER RE-EXAMINATION
-# (iter-27 error-DB row: the d_theta T term was dropped; the machine
-# re-derivation verify_n14_bondi_transform.py adjudicates). This port
-# reproduces the A1 ledgered numbers as the migration baseline; if A1 is
-# amended, the J_FULL constant here is amended in the same commit as the
-# ledger row.
+# psi0chain.jl — historical port of the stage-A1 chain. A1 WAS AMENDED at
+# iter 30: the complete Bondi transformation (bonditransform.jl, all gates
+# exact) gives J = (3/4)s^2[F4/r + F2/r^3] and psi0 = -(9/8)s^2 F2/r^5
+# EXACTLY (= the paper datum, sign included, no tails). J_FULL_A1 below is
+# retained as the ledgered-amended historical value so the A1 transcript
+# remains reproducible; use bondi_transform_teukolsky() for the truth.
 
 export J_FULL_A1, psi0_lin_series, psi0_chain_gates
 
