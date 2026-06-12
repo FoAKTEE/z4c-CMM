@@ -77,6 +77,33 @@ scripts/                verifiers (one per DAG node) + DAG checkers + renderers
 progress/               three-timescale mission notes (iteration/nodal/project)
 ```
 
+## AthenaK production implementation (`athenak/`)
+
+The formulation is implemented in a vendored, SHA-pinned copy of
+[AthenaK](https://github.com/IAS-Astrophysics/athenak) (arXiv:2409.10383;
+`athenak/PROVENANCE.md`), tracked in this repository by design:
+
+- `athenak/src/z4c/z4c_ccm.hpp` — device-inline (Kokkos, CPU+GPU) CCM
+  injection: the Bjorhus-style physical-mode datum
+  `rhs(Ã_ab) += −(2χ/α)(ψ₀′ m̄_a m̄_b + c.c.)^TT`, with the Type-II boost
+  `ψ₀′ = A²ψ₀`, `A = (α − γ_ij β^i s^j)e^{−2β̂}`, evaluated from the local Z4c
+  state; applied inside the existing `Z4c_SomBC` task at all 12
+  outer-boundary call sites (`z4c_Sbc.cpp`). `ccm_amp = 0` reduces exactly to
+  the stock Sommerfeld scheme.
+- Options (`<z4c>` input block): `ccm, ccm_amp, ccm_t0, ccm_sigma,
+  ccm_betahat`. The analytic Gaussian ψ₀ provider exercises the full
+  machinery; a CCE-coupled provider replaces one function
+  (`Z4cCCMDatumPsi0`) — the `src/z4c/cce/` worldtube infrastructure is the
+  documented coupling hook.
+- Test battery (`scripts/test_athenak_ccm.sh` + `check_athenak_ccm.py`,
+  input `athenak/inputs/z4c/ccm/z4c_ccm_test.athinput`): T1 reduction
+  (Minkowski preserved with zero datum), T2 causal injection through the
+  boundary, T3 linear response. Runs on CPU (OpenMP) and GPU (CUDA/A100)
+  builds; outputs under `results/numerical/athenak_ccm/`.
+- Build note: with CUDA 13 the vendored kokkos `nvcc_wrapper` default arch is
+  patched to `sm_80`; the snapshot needs a CUDA-12.x toolkit
+  (`PATH=/usr/local/cuda-12.9/bin:$PATH`) — both ledgered.
+
 ## The GPU package (`packages/zccm/`)
 
 ```python

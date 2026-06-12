@@ -11,3 +11,5 @@ __pycache__/
 .claude/HUMAN_REVIEW_REQUIRED.md
 .claude/runs/
 .claude/settings.local.json
+athenak/build_cpu/
+athenak/build_gpu/

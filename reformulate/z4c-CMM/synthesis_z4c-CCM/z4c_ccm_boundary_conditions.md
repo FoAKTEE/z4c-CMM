@@ -81,6 +81,23 @@ Initialization: first CCE step uses the previous Cauchy slice's worldtube
 data; ψ₀ injection starts one step delayed (P3's ordering carries over; the
 β̂-circularity check is obligation O-N6-3).
 
+## Production implementation (node N10 — AthenaK)
+
+The physical rows are implemented in the vendored AthenaK tree
+(`athenak/src/z4c/z4c_ccm.hpp`, wired into the `Z4c_SomBC` boundary task in
+`z4c_Sbc.cpp`): the Bjørhus-style datum enters the boundary RHS of Ã as
+`rhs(Ã_ab) += −(2χ/α)(ψ₀′ m̄_a m̄_b + c.c.)` on top of the stock Sommerfeld
+advection (which supplies the homogeneous "no incoming content" part), with
+the Type-II boost evaluated from the local (α, β^i, γ_ij). `ccm_amp = 0`
+reduces exactly to the unmodified scheme. The analytic Gaussian ψ₀ provider
+(`Z4cCCMDatumPsi0`) is the single replacement point for a CCE-coupled datum
+(the `src/z4c/cce/` worldtube-output infrastructure is the natural coupling
+partner). Test battery: `scripts/test_athenak_ccm.sh` (reduction, causal
+injection, linearity) on CPU and GPU builds. Caveats inherited from the
+formulation: the coordinate-frame dyad and the linearized-dictionary
+normalization of the injection coefficient are the far-field/leading forms;
+the exact U⁻(E,B)-measured Bjørhus correction is the N9/full-GR successor.
+
 ## Open obligations (N7/N8/N9 program)
 
 - O-N6-1: oblique incidence + curvature corrections to rows 1–2, 7–10

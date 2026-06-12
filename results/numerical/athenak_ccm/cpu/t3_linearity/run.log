@@ -1,0 +1,26 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=1.085077e+00 cycle=0 time=0.000000e+00 dt=1.562500e-01
+elapsed=1.417007e+02 cycle=50 time=7.812500e+00 dt=1.562500e-01
+
+Terminating on time limit
+time=1.200000e+01 cycle=77
+tlim=1.200000e+01 nlim=-1
+
+MeshBlock-cycles = 616
+cpu time used  = 2.046146e+02
+zone-cycles/cpu_second = 1.233116e+04
+particle-updates/cpu_second = 0.000000e+00

@@ -1,0 +1,8 @@
+done: t1_reduction (amp=0.0)
+done: t2_injection (amp=1.0e-3)
+done: t3_linearity (amp=2.0e-3)
+[PASS] T1 reduction: ccm_amp=0 preserves Minkowski — max LINF deviation 2.58e-33 < 1e-12
+[PASS] T2 injection: pulse enters the domain — max RMS 2.477e-02 >= 100x flatness level (2.6e-33); pre-pulse (t<1) response 2.8e-10 <= 1e-6 of peak (datum tail is exp(-((t-t0)/sigma)^2): the early response IS the physical tail)
+[PASS] T3 linearity: max-RMS ratio (amp 2e-3 / 1e-3) = 2.005536 within 2% of 2
+
+OVERALL: PASS

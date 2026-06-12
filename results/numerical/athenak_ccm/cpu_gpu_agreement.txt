@@ -1,0 +1,6 @@
+CPU vs GPU agreement (t2_injection RMS-Err time series, 32^3, rk4):
+  .hst output precision: ~6 significant digits (the comparison floor)
+  signal samples (RMS > 1e-4): 35; max rel diff 0.000e+00
+  small-amplitude samples: max rel diff 1.267e-05 (= print-precision floor at tiny values)
+  final RMS: cpu 2.476580e-02 | gpu 2.476580e-02
+  AGREEMENT: PASS (signal samples agree to full printed precision)

@@ -84,6 +84,7 @@ subgraph SGN["NEW: Z4c-CCM formulation — mission 2 work program"]
   N7["N7 SOLID sketch (iter 14): CCM changes data,\nnot operator — D_L(s) = (2s)^(L+1) uniform Kreiss,\ndatum-independent; P1 stability transfers.\nFull proof FUTURE (coupled system, oblique,\ncorners, nonlinear feedback)"]
   N8["N8 SOLID (iter 15) FINAL PRODUCT: packages/zccm\n(JAX float64, 4 GPUs) — z4c_vars + boundary + model1d;\nSommerfeld R matches analytic (0.03%), P1/CCM op\nabsorbs at 3e-15, injection transparent to 1e-4;\nfull-GR 3D tests remain future"]
   N9["N9 FUTURE damping-parameter interplay:\nkappa1, kappa2 vs injected-data error\n(Z4c analog of gamma2 c^3 term in eq:bc_bjorhus)"]
+  N10["N10 SOLID (iter 18) AthenaK implementation:\nCCM injection in the Z4c_SomBC task (z4c_ccm.hpp);\nCPU + GPU(A100) batteries pass: flatness preserved,\ncausal injection, linearity 2.0055; CPU=GPU to\nfull hst precision"]
 end
 
 A1 --> A2
@@ -143,6 +144,8 @@ N7 --> N8
 B7 --> N8
 E5 --> N8
 N9 --> N8
+N6 --> N10
+N8 --> N10
 
 classDef p1 fill:#dbeafe,stroke:#1d4ed8,color:#111
 classDef p2 fill:#dcfce7,stroke:#15803d,color:#111
@@ -198,6 +201,7 @@ Every cited label below is a `node_id` in the corresponding
 | N7 | z4c-CCM | new; B6 machinery, inhomogeneous data; sketch n7_wellposedness_sketch.md; verifier scripts/verify_n7_lf_sketch.py → results/numerical/n7_lf_sketch_check.txt | [SOLID] sketch (full proof future) |
 | N8 | z4c-CCM | new; P3 test suite + B7/E5/A4 diagnostics; packages/zccm + tests → results/numerical/n8_model1d_test.txt, n1_varmap_gpu_test.txt | [SOLID] model-level (full-GR 3D tests future) |
 | N9 | z4c-CCM | new; A2 damping vs injected error | [FUTURE] |
+| N10 | z4c-CCM | new; AthenaK (arXiv:2409.10383) production implementation; athenak/src/z4c/z4c_ccm.hpp; battery scripts/test_athenak_ccm.sh → results/numerical/athenak_ccm/ | [SOLID] (CPU + GPU pass; CPU=GPU to hst precision) |
 
 ## Why this formulation is new (delta over each paper)
 
