@@ -1,13 +1,17 @@
-N14 stage B part 1 (iter 39; packages/ZccmJl/test/derive_wtmap.jl):
-[PASS] G0 psi0 IDENTICAL in the worldtube-anchored gauge (end-to-end exact
-       series check on the anchored fields — the matching datum is gauge-
-       invariant in practice, not just in principle)
-[PASS] J row LOCAL with unit coefficient: J_wt = hTT
-       (hTT = (h_thth^ - h_phph^)/(2 s^2)-scalar; exact over all channels)
-[PASS] H row LOCAL with unit coefficient: H_wt = dt hTT
-[OPEN] U/beta/W rows: the exact fit failed because the candidate
-       scalarization mixed shape sectors (the sc-sector target needs the
-       sc-projections of angular-derivative candidates, e.g.
-       d_theta(trace) -> -6 s c X, not the P-scalars). Precisely diagnosed;
-       fit correction queued (iter 40). The two admitted rows are the
-       J-Dirichlet and its rate — the evolution-critical pair.
+G0 psi0 identical in anchored gauge: true
+-- map fits (coefficients exact rationals; r_wt = 41 absorbed) --
+J: LOCAL MAP hTT*(1//1)
+H: LOCAL MAP dt_hTT*(1//1)
+U: LOCAL MAP dth_trace_sc*(-1//164)
+beta: NOT representable with [:hrr, :trace, :dr_trace, :ethb_hrth_P, :dr_hrr]
+W: NOT representable with [:hrr, :trace, :dr_trace, :dt_trace, :ethb_hrth_P, :dt_ethb_hrth_P, :dr_hrr, :dt_hrr]
+beta target channels: Pair{Int64, Rational{BigInt}}[0 => 9//1853699216, 1 => 9//22606088, 2 => 9//551368, 3 => 3//6724]
+  cand hrr: Pair{Int64, Rational{BigInt}}[0 => 9//115856201, 1 => 9//2825761, 2 => 3//68921]
+  cand trace: Pair{Int64, Rational{BigInt}}[0 => -9//115856201, 1 => -9//2825761, 2 => -3//68921]
+  cand dr_trace: Pair{Int64, Rational{BigInt}}[0 => 45//4750104241, 1 => 36//115856201, 2 => 9//2825761]
+  cand ethb_hrth_P: Pair{Int64, Rational{BigInt}}[0 => 18//2825761, 1 => 18//68921, 2 => 9//1681, 3 => 3//41]
+  cand dr_hrr: Pair{Int64, Rational{BigInt}}[0 => -45//4750104241, 1 => -36//115856201, 2 => -9//2825761]
+W target channels: Pair{Int64, Rational{BigInt}}[0 => -9//38000833928, 1 => 9//463424804, 2 => 9//11303044]
+-- minimal-set retries --
+beta: NOT representable with [:ethb_hrth_P, :hrr, :dr_hrr]
+W: NOT representable with [:ethb_hrth_P, :hrr, :dr_hrr, :dt_hrr, :dt_ethb_hrth_P]

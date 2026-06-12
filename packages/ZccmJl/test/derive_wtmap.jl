@@ -70,7 +70,10 @@ function scal(d, kind)
     Dict(k => v for (k, v) in out if v != 0)
 end
 
-# local data candidates at wt (scalarized)
+# local data candidates at wt — SECTOR-PROJECTED: apply angular operators
+# to the series FIRST, then scalarize in the TARGET's sector (the iter-39
+# fit failure was cross-sector mixing)
+hTT_s = Z.ascale(Z.aadd(h_T, Z.ascale(h_P, -1)), 1//2)
 cand = Dict(
  :hTT => scal(at_wt(Z.ascale(Z.aadd(h_T, Z.ascale(h_P, -1)), 1//2)), :s2),
  :hrr => scal(at_wt(h_rr), :P),
@@ -82,6 +85,23 @@ cand = Dict(
  :dt_hTT => scal(at_wt(Z.ang_du(Z.ascale(Z.aadd(h_T, Z.ascale(h_P, -1)), 1//2))), :s2),
  :dt_hrth => scal(at_wt(Z.ang_du(h_rth)), :sc),
  :dt_trace => scal(at_wt(Z.ang_du(trace)), :P),
+ # sc-sector projections (for U): angular derivatives of P/s2-shaped data
+ :dth_trace_sc => scal(at_wt(Z.ang_dtheta(trace)), :sc),
+ :dth_hrr_sc => scal(at_wt(Z.ang_dtheta(h_rr)), :sc),
+ :dth_hTT_sc => scal(at_wt(Z.ang_dtheta(hTT_s)), :sc),
+ :dt_dth_trace_sc => scal(at_wt(Z.ang_du(Z.ang_dtheta(trace))), :sc),
+ # P-sector projections (for beta/W): eth-type combos of sc-shaped data
+ :ethb_hrth_P => scal(at_wt(Z.aadd(Z.ang_dtheta(h_rth),
+                                   Z.ang_cot_mul(h_rth))), :P),
+ :dr_ethb_hrth_P => scal(at_wt(Z.ang_dr(Z.aadd(Z.ang_dtheta(h_rth),
+                                   Z.ang_cot_mul(h_rth)))), :P),
+ :dt_ethb_hrth_P => scal(at_wt(Z.ang_du(Z.aadd(Z.ang_dtheta(h_rth),
+                                   Z.ang_cot_mul(h_rth)))), :P),
+ :dr_hrr => scal(at_wt(Z.ang_dr(h_rr)), :P),
+ :dt_hrr => scal(at_wt(Z.ang_du(h_rr)), :P),
+ :dr_hTT_P_via_ethb2 => scal(at_wt(Z.aadd(Z.ang_dtheta(Z.aadd(
+     Z.ang_dtheta(hTT_s), Z.ascale(Z.ang_cot_mul(Z.ang_dtheta(hTT_s)), 0))),
+     Z.ascale(hTT_s, 0))), :P),
 )
 targets = Dict(:J => scal(at_wt(J_a), :s2), :H => scal(at_wt(Z.ang_du(J_a)), :s2),
                :U => scal(at_wt(U_a), :sc), :beta => scal(at_wt(beta_a), :P),
@@ -102,6 +122,19 @@ end
 println("-- map fits (coefficients exact rationals; r_wt = 41 absorbed) --")
 fitmap(:J, [:hTT])
 fitmap(:H, [:dt_hTT])
-fitmap(:U, [:hrth, :dr_hrth, :dt_hrth])
-fitmap(:beta, [:hrr, :trace, :dr_trace, :hrth])
-fitmap(:W, [:hrr, :trace, :dr_trace, :dt_trace, :hrth, :dt_hrth])
+fitmap(:U, [:hrth, :dr_hrth, :dt_hrth, :dth_trace_sc, :dth_hrr_sc,
+            :dth_hTT_sc, :dt_dth_trace_sc])
+fitmap(:beta, [:hrr, :trace, :dr_trace, :ethb_hrth_P, :dr_hrr])
+fitmap(:W, [:hrr, :trace, :dr_trace, :dt_trace, :ethb_hrth_P,
+            :dt_ethb_hrth_P, :dr_hrr, :dt_hrr])
+
+# diagnostic dump for the beta/W fits (iter-40 hand-off)
+println("beta target channels: ", sort(collect(targets[:beta])))
+for nm in (:hrr, :trace, :dr_trace, :ethb_hrth_P, :dr_hrr)
+    println("  cand $nm: ", sort(collect(cand[nm])))
+end
+println("W target channels: ", sort(collect(targets[:W])))
+
+println("-- minimal-set retries --")
+fitmap(:beta, [:ethb_hrth_P, :hrr, :dr_hrr])
+fitmap(:W, [:ethb_hrth_P, :hrr, :dr_hrr, :dt_hrr, :dt_ethb_hrth_P])
