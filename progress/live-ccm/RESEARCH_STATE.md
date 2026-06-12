@@ -123,3 +123,16 @@ mode 4 (live), lockstep du = Cauchy dt. Verifiers: standalone linear
 Teukolsky characteristic solve vs the N12 exact module; SpECTRE
 CharacteristicExtract cross-oracle on identical worldtube data; live-CCM
 battery vs the N12 analytic truth.
+
+## Binding directive added (iter 29, 2026-06-12)
+
+FULL MIGRATION of the Python toolchain to Julia (packages/ZccmJl): GPU via
+CUDA.jl, symbolic/exact via Rational{BigInt} series + Symbolics.jl,
+arbitrary precision via BigFloat. Further development Julia-only once each
+ported component passes honest unit tests reproducing the admitted
+Python-verified numbers. Python artifacts stay as provenance baseline;
+AthenaK (C++) unaffected. N15 [PRELIMINARY]: v0.1.0 baseline admitted
+(teukolsky/linseries/psi0chain, all tests pass, refs auto-generated from
+the N12 module). Sympy hit its kernel_timeout wall on the Bondi-transform
+derivation (error-db iter 28) — that derivation is the next Julia unit
+(LinSeries x angular-shape exact algebra).
