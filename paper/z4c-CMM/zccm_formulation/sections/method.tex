@@ -349,24 +349,37 @@ V7 & Kreiss condition \eqref{eq:kreiss}, $L=0..3$ &
 
 \begin{table}[htbp]
 \centering
-\caption{Dynamical model evolution (FD2+RK4, shift $\mathring\beta=0.3$,
-outgoing Gaussian pulse onto the boundary; one configuration per GPU;
-\texttt{n8\_model1d\_test.txt}). The orientation of the discrete model gives
-the $\mathring\beta\to-\mathring\beta$ mirror of \eqref{eq:reflection}; the
-exact characteristic ratio at the boundary is
-$q_{\rm in}/q_{\rm out}=\mathring\beta/(2+\mathring\beta)$.}
+\caption{Dynamical model evolution (6th-order interior stencils with a
+GKS-stable mixed closure — 4th-order Fornberg rows at three edge nodes;
+fully one-sided 6th-order closures are RK4-unstable (error ledger) — RK4,
+CFL $0.2$, shift $\mathring\beta=0.3$, outgoing Gaussian pulse onto the
+boundary; one configuration per GPU; \texttt{n8\_model1d\_test.txt}).
+Reflection is measured in the $L_2$ (energy) norm — trapezoid sums of
+Gaussian pulses converge exponentially, so the deviation column is limited by
+machine arithmetic, not by measurement or truncation. Analytic $L_2$
+relation: $\|q_{\rm in}\|_{L_2}/\|q_{\rm out}\|_{L_2}
+ = \tfrac{\mathring\beta}{2+\mathring\beta}
+   \sqrt{\tfrac{1+\mathring\beta}{1-\mathring\beta}}$.
+Each row sits at its float64 floor: rows 1--3 at the per-sample roundoff
+floor (deviation saturates between $N{=}8193$ and $N{=}16385$: $1.9$ vs
+$2.1\times10^{-14}$); the injection row at the linear roundoff-accumulation
+optimum ($\sim\mathrm{steps}\times\varepsilon$; ladder
+$N{=}16385/32769/65537/131073 \Rightarrow 5.4/2.4/5.9/30\times10^{-11}$,
+non-monotone and insensitive to CFL $0.2$ vs $0.05$).}
 \label{tab:dynamic}
 \footnotesize
 \begin{tabular}{llll}
 \hline\hline
 boundary condition & measured & exact & deviation \\
 \hline
-Sommerfeld, $q$-ratio & $0.1305$ & $0.1304$ & $0.03\%$ \\
-Sommerfeld, $R_u$ & $0.2423$ & $0.2422$ & $0.04\%$ \\
-$(\partial_t + c_+\partial_x)$ [P1/CCM op., $N{=}4097$] &
- $R = 3.24\times10^{-15}$ & $0$ & machine precision \\
-\nf{CCM injection \eqref{eq:bjorhus}, rel.\ $L_2$ vs exact pulse} &
- \nf{$1.09\times10^{-4}$} & \nf{$0$} & \nf{two-way transparent} \\
+Sommerfeld, $L_2$ ratio ($N{=}16385$) & $0.177752646227$ & $0.177752646227$ &
+ $2.1\times10^{-14}$ (float64 floor) \\
+Sommerfeld, $L_2$ ratio ($N{=}8193$) & --- & --- &
+ $1.9\times10^{-14}$ (saturated) \\
+$(\partial_t + c_+\partial_x)$ [P1/CCM op., $N{=}16385$] &
+ $R_{L_2} = 1.9\times10^{-14}$ & $0$ & machine precision \\
+\nf{CCM injection \eqref{eq:bjorhus}, rel.\ $L_2$ ($N{=}32769$)} &
+ \nf{$2.4\times10^{-11}$} & \nf{$0$} & \nf{roundoff-accumulation optimum} \\
 \hline\hline
 \end{tabular}
 \end{table}

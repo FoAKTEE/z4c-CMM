@@ -27,30 +27,114 @@ the N5 formula: R = b(1+b)/((1-b)(2+b)) (both forms vanish iff b = 0).
 For an exact incoming solution u = G(t + x/(1+b)) the CCM datum is
 g(t) = q_in|_{x=0} = (1 + (1-b)/(1+b)) G'(t) = 2 G'(t)/(1+b).
 
-Discretization: 2nd-order centered FD interior, one-sided at edges, RK4;
-BC enforced by overwriting Pi at the boundary node from the BC relation
-after each substage (outgoing content Phi from the interior stencil).
+Discretization: centered FD interior of selectable order (2/4/6; Fornberg
+one-sided closures at the edges), RK4; BC enforced by characteristic
+(Bjorhus-style) replacement at the boundary nodes after each substage.
 float64, jit-safe, batched-free (single config per call — tests fan configs
 across devices).
 """
 from functools import partial
 
+import numpy as _np
 import jax
 import jax.numpy as jnp
 
 
-def _dx(f, h):
+def _fornberg(z, x):
+    """Fornberg weights for the 1st derivative at z from nodes x."""
+    n = len(x)
+    c = _np.zeros((n, 2))
+    c1, c4 = 1.0, x[0] - z
+    c[0, 0] = 1.0
+    for i in range(1, n):
+        mn = min(i, 1)
+        c2, c5 = 1.0, c4
+        c4 = x[i] - z
+        for j in range(i):
+            c3 = x[i] - x[j]
+            c2 *= c3
+            if j == i - 1:
+                for k in range(mn, 0, -1):
+                    c[i, k] = c1 * (k * c[i - 1, k - 1]
+                                    - c5 * c[i - 1, k]) / c2
+                c[i, 0] = -c1 * c5 * c[i - 1, 0] / c2
+            for k in range(mn, 0, -1):
+                c[j, k] = (c4 * c[j, k] - k * c[j, k - 1]) / c3
+            c[j, 0] = c4 * c[j, 0] / c3
+        c1 = c2
+    return c[:, 1]
+
+
+_CENTERED = {2: _np.array([-0.5, 0.0, 0.5]),
+             4: _np.array([1, -8, 0, 8, -1]) / 12.0,
+             6: _np.array([-1, 9, -45, 0, 45, -9, 1]) / 60.0}
+
+
+def _edge_weights(order):
+    """Edge-row weights (rows i = 0..w-1, each over the first `win` nodes).
+
+    Orders 2/4: one-sided/biased Fornberg rows on (order+1)-node windows.
+    Order 6: GKS-stable MIXED closure — fully one-sided 6th-order rows are
+    unstable under RK4 (ledgered), so rows 0..2 use 4th-order 5-node
+    windows (one-sided, biased, centered), an O(h^4) closure localized at
+    3 nodes (global accuracy ~ 5th order, Gustafsson).
+    """
+    if order < 6:
+        w = order // 2
+        nodes = _np.arange(order + 1, dtype=float)
+        rows = [_fornberg(float(i), nodes) for i in range(w)]
+        win = order + 1
+    else:
+        nodes = _np.arange(5, dtype=float)
+        rows = [_fornberg(float(i), nodes) for i in range(3)]
+        win = 5
+    W = _np.zeros((len(rows), win))
+    for i, r in enumerate(rows):
+        W[i, :] = r
+    return W, win
+
+
+def _dx(f, h, order=2):
+    w = order // 2
+    cen = jnp.asarray(_CENTERED[order])
+    interior = sum(cen[k + w] * f[w + k: f.shape[0] - w + k or None]
+                   for k in range(-w, w + 1))
     d = jnp.zeros_like(f)
-    d = d.at[1:-1].set((f[2:] - f[:-2]) / (2 * h))
-    d = d.at[0].set((-3 * f[0] + 4 * f[1] - f[2]) / (2 * h))
-    d = d.at[-1].set((3 * f[-1] - 4 * f[-2] + f[-3]) / (2 * h))
-    return d
+    d = d.at[w:-w].set(interior)
+    ew_np, win = _edge_weights(order)
+    ew = jnp.asarray(ew_np)
+    d = d.at[:w].set(ew @ f[:win])
+    d = d.at[-w:].set(-(ew @ f[-1: -(win + 1): -1])[::-1] * 1.0)
+    return d / h
 
 
-def _rhs(state, b, h):
+_KO = {6: _np.array([1, -6, 15, -20, 15, -6, 1]) / 64.0,
+       8: _np.array([-1, 8, -28, 56, -70, 56, -28, 8, -1]) / 256.0}
+# signs chosen so the operator DAMPS the highest mode: Fourier symbol of the
+# applied term is -(sigma/h) sin^(2p)(kh/2) for both rows above.
+
+
+def _ko(f, h, sigma, p2):
+    """Kreiss-Oliger dissipation of order p2 (6 or 8): an O(h^(p2-1)) term,
+    below the truncation of the matching interior stencil; applied only where
+    the centered stencil fits (tapered to zero at the edges)."""
+    if sigma == 0.0:
+        return jnp.zeros_like(f)
+    w = p2 // 2
+    cko = jnp.asarray(_KO[p2])
+    interior = sum(cko[k + w] * f[w + k: f.shape[0] - w + k or None]
+                   for k in range(-w, w + 1))
+    d = jnp.zeros_like(f)
+    return d.at[w:-w].set(sigma / h * interior)
+
+
+def _rhs(state, b, h, order, ko_sigma=0.0):
     u, Pi, Phi = state
-    dPi, dPhi = _dx(Pi, h), _dx(Phi, h)
-    return (Pi, 2 * b * dPi + (1 - b**2) * dPhi, dPi)
+    dPi, dPhi = _dx(Pi, h, order), _dx(Phi, h, order)
+    p2 = 8 if order >= 6 else 6
+    return (Pi + _ko(u, h, ko_sigma, p2),
+            2 * b * dPi + (1 - b**2) * dPhi + _ko(Pi, h, ko_sigma, p2),
+            dPi + _ko(Phi, h, ko_sigma, p2))
 
 
 def _apply_bc(state, b, kind, gval):
@@ -80,9 +164,9 @@ def _apply_bc(state, b, kind, gval):
     return (u, Pi, Phi)
 
 
-@partial(jax.jit, static_argnames=("n_steps", "n_grid"))
+@partial(jax.jit, static_argnames=("n_steps", "n_grid", "order", "ko_sigma"))
 def evolve(b, kind, n_grid: int, n_steps: int, dt, h, x, t0, pulse_w,
-           datum_amp):
+           datum_amp, order: int = 2, ko_sigma: float = 0.0):
     """Evolve an outgoing Gaussian pulse (and, for kind==2, a CCM-injected
     incoming pulse). Returns (u, Pi, Phi, t_final, R_metrics).
 
@@ -117,7 +201,7 @@ def evolve(b, kind, n_grid: int, n_steps: int, dt, h, x, t0, pulse_w,
     def step(carry, i):
         st, t = carry
         def f(s):
-            return _rhs(s, b, h)
+            return _rhs(s, b, h, order, ko_sigma)
         k1 = f(st)
         s2 = tuple(a + 0.5 * dt * k for a, k in zip(st, k1))
         s2 = _apply_bc(s2, b, kind, datum(t + 0.5 * dt))

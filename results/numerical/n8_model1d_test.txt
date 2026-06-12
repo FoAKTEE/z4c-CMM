@@ -1,8 +1,8 @@
 JAX devices used (4): ['gpu:0', 'gpu:1', 'gpu:2', 'gpu:3']
-[PASS] sanity: pure outgoing initial data has q_in == 0 exactly (max 0.0e+00)  (t=18.0s)
-[PASS] Sommerfeld: measured q-ratio = 0.1305 vs exact b/(2+b) = 0.1304 (dev 0.03% < 3%); u-amplitude R = 0.2423 vs mirror formula 0.2422  (t=18.0s)
-[PASS] P1/CCM operator: R = 3.24e-15 (fine) < q-ratio_Sommerfeld/100 = 1.30e-03 (absorbing at machine precision; coarse 1.86e-15)  (t=18.1s)
-[PASS] CCM injection: interior reproduces the exact incoming pulse, rel L2 = 1.09e-04 < 1% (two-way transparency)  (t=18.8s)
+[PASS] sanity: pure outgoing initial data has q_in == 0 exactly (max 0.0e+00)  (t=38.5s)
+[PASS] Sommerfeld L2 ratio = 0.177752646227 vs analytic b/(2+b)*sqrt((1+b)/(1-b)) = 0.177752646227: rel dev 2.06e-14 < 1e-12 (coarse 1.86e-14; at the float64 accumulation floor — convergence saturates by design)  (t=39.8s)
+[PASS] P1/CCM operator: L2 absorption ratio = 1.88e-14 < 1e-12 (machine precision)  (t=40.1s)
+[PASS] CCM injection: rel L2 vs exact incoming pulse = 2.44e-11 < 1e-10 (two-way transparency at the float64 roundoff-accumulation optimum, N = 32769)  (t=40.8s)
 
-wall clock: 18.8s
+wall clock: 40.8s
 OVERALL: PASS
