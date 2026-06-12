@@ -1,0 +1,8 @@
+[PASS] edge endpoints declared (36 nodes, 53 edges)
+[PASS] mermaid graph acyclic
+[PASS] single connected DAG (ONE graph)
+[PASS] source labels resolve in paper ledgers
+[PASS] N-nodes present in z4c-CCM ledger
+[PASS] N-node statuses consistent
+
+OVERALL: PASS
