@@ -87,3 +87,13 @@ end
         @test all(k >= 0 for ((n, k, p, q), v) in f)
     end
 end
+
+@testset "hierarchy closure on derived fields (Q1/Q2/Q3)" begin
+    hc = hierarchy_closure()
+    @info "Q-eq residual: $(sort(collect(hc.q_res)))"
+    @info "W-eq residual: $(sort(collect(hc.w_res)))"
+    @info hc.h_report
+    @test isempty(hc.q_res)            # Q1
+    @test isempty(hc.w_res)            # Q2
+    @test hc.h_consistent              # Q3
+end
