@@ -28,6 +28,19 @@ set -u
 [ -n "${CLAUDE_OBSERVER:-}" ] && exit 0
 [ -n "${RALPH_GUARD_BYPASS:-}" ] && exit 0
 
+# Capture the Stop-hook payload (JSON on stdin) and extract the transcript path.
+# loop_gate uses it for the token-window cadence: the verbose short prompt fires
+# once per ~1M-token context window instead of on every Stop event. Guard
+# against a tty (manual runs) so `cat` never blocks.
+HOOK_INPUT=""
+if [ ! -t 0 ]; then HOOK_INPUT="$(cat 2>/dev/null || true)"; fi
+TRANSCRIPT=""
+if [ -n "$HOOK_INPUT" ] && command -v python3 >/dev/null 2>&1; then
+    TRANSCRIPT="$(printf '%s' "$HOOK_INPUT" | python3 -c 'import json,sys
+try: print(json.load(sys.stdin).get("transcript_path","") or "")
+except Exception: pass' 2>/dev/null)"
+fi
+
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || printf '%s' "$(cd "$(dirname "$0")/.." && pwd)")"
 STATE="$REPO_ROOT/.claude/ralph-loop.local.md"
 
@@ -83,7 +96,11 @@ if [ -z "$GATE" ] || ! command -v python3 >/dev/null 2>&1; then
     legacy_guard
 fi
 
-out="$(python3 "$GATE" decide --repo-root "$REPO_ROOT" --state-file "$STATE" --write-gate 2>/dev/null)"
+if [ -n "$TRANSCRIPT" ]; then
+    out="$(python3 "$GATE" decide --repo-root "$REPO_ROOT" --state-file "$STATE" --write-gate --transcript "$TRANSCRIPT" 2>/dev/null)"
+else
+    out="$(python3 "$GATE" decide --repo-root "$REPO_ROOT" --state-file "$STATE" --write-gate 2>/dev/null)"
+fi
 decision="$(printf '%s' "$out" | python3 -c 'import json,sys
 try: print(json.load(sys.stdin)["decision"])
 except Exception: pass' 2>/dev/null)"
@@ -99,12 +116,23 @@ case "$decision" in
 import json, sys
 d = json.load(sys.stdin)
 parts = []
-parts.append(
-    "Ralph loop progress gate: %s. Advance the counter in "
-    ".claude/ralph-loop.local.md, ship the next verified step (append a "
-    "result/knowledge-ledger row; use error rows for trial activity), then "
-    "continue. The gate halts the loop automatically if progress stalls."
-    % d.get("reason", ""))
+# Token-window cadence: emit the VERBOSE short prompt only once per ~1M-token
+# context window (when emit_short_prompt is set); on every other Stop fire emit
+# a terse one-line nudge so the loop stays alive without re-prompting itself in
+# full on every turn.
+if d.get("emit_short_prompt", True):
+    parts.append(
+        "Ralph loop progress gate: %s. Advance the counter in "
+        ".claude/ralph-loop.local.md, ship the next verified step (append a "
+        "result/knowledge-ledger row; use error rows for trial activity), then "
+        "continue. The gate halts the loop automatically if progress stalls."
+        % d.get("reason", ""))
+else:
+    parts.append(
+        "Ralph loop active (continuing within the current ~1M-token context "
+        "window). Keep working the current step; advance the counter in "
+        ".claude/ralph-loop.local.md as steps complete. The full protocol "
+        "re-grounds at the next context window.")
 if "escalation_required" in d:
     parts.insert(0, "*** ESCALATION REQUIRED (forced): %s ***" % d["escalation_required"])
 if "escalation_suggested" in d:
