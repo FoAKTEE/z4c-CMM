@@ -50,6 +50,35 @@ live - localizes our O(dt)/geometry coupling artifacts (iter-45 reading
 amended); actionable for the linear-in-time BC refinement. Transcript
 ccm_repro_p2c_check.txt.
 
+## Iteration 5 (P2b/P2d/P2e + exit): DONE — M4-P2bde [SOLID]
+X=2: stability ACHIEVED (two t=80 batteries; the mission-3 NaN note
+resolved); quantitative overlay blocked by the linear-ID constraint
+violation (delay +6.6/+17.6 scaling with dissipation vs their +0.7;
+XCTS out of scope) — limit documented, feasible slice delivered. BH:
+out-of-resource documented (1000M excision = O(days); characteristic
+side already validated on their binary). P2e: C_psi4 Bondi relation
+verified on our oracle at 5.3e-4 of peak; C_psi3/psi2 eth conventions
+queued. Transcript ccm_repro_p2bde_check.txt.
+
+## MISSION 4 EXIT STATUS (iter 5): ALL CONDITIONS HOLD
+1. P1 complete [SOLID iter 2]: 20/20 reproducible figures from their
+   data via their scripts; absent-data panels + illustrations documented.
+2. P2 overlays admitted: X=1e-5 [SOLID iter 3, 1.92e-3 of peak,
+   attributed]; pulse [SOLID iter 4, 1.4% t1 amplitude]; X=2 limit
+   documented with stable feasible slice [iter 5]; BH out-of-resource
+   documented with the validated characteristic slice [iter 5].
+3. Per-figure provenance + delta tables: ccm_repro_p1_check.txt,
+   ccm_repro_p2a_check.txt, ccm_repro_p2c_check.txt,
+   ccm_repro_p2bde_check.txt.
+4. Ledger (M4-P1, M4-P2a, M4-P2c, M4-P2bde) + RESEARCH_STATE consistent;
+   all commits pushed.
+
+## Post-exit quality items (documented, not exit conditions)
+- O(dt) live-coupling refinement with the P2c-localized O(30%) target.
+- C_psi3/C_psi2/C_Im psi2 eth-convention bookkeeping for our outputs.
+- psi4 finite-r-vs-scri 5.4% residual factor derivation.
+- XCTS-class constraint-solved ID for quantitative X=2.
+
 ## Queue
 - iter 3+: P2a X=1e-5 overlays (our mode3-5 batteries vs their ccm/cce
   Psi4 data; matched cadence; deltas + formulation differences).

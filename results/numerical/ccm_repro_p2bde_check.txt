@@ -1,0 +1,51 @@
+Mission 4 P2b/P2d/P2e (iter 5).
+
+P2b — X=2 Teukolsky (their Sec V.A.2):
+[PASS] STABILITY achieved (the ledgered mission-3 config note reported
+       NaN ~t=50 at production settings): two stable t=80 batteries at
+       nghost=4, 164^3, 4 GPUs:
+         att1 diss=0.5,  kappa1=0.2  (49 s GPU)
+         att2 diss=0.1,  kappa1=0.1  (49 s GPU)
+[MEAS] structural comparison vs their reference/lev6 Psi4 (XCTS ID,
+       boundary 900, scri): their primary peak t=21.66 = linear phase
+       +0.7; their junk burst 0.247 of peak at t=63.3; no reflection.
+       OURS (linear ID + damping): single dominant burst, peak at
+       t=62.6 (att2) / 73.6 (att1) vs the linear phase 56 at r=36 —
+       delays +6.6 / +17.6, SCALING WITH DISSIPATION.
+[LIMIT] quantitative X=2 waveform reproduction requires
+       constraint-SOLVED initial data: our linear ID carries an O(X^2)=4
+       constraint violation whose damping-driven cleanup distorts the
+       early dynamics (the measured dissipation-dependent delay is the
+       signature; the paper used XCTS exactly for this). An XCTS-class
+       elliptic solver is outside this mission's scope/budget. The
+       feasible slice delivered: stable X=2 evolutions + the measured
+       structural deviations + their attribution.
+       Figure: results/figures/ccm_paper_repro_p2/x2/x2_structural.pdf.
+
+P2d — BH/Kerr test (their Sec V.B):
+[LIMIT] their configuration: chi=0.5 Kerr, horizon excision at r=1.8,
+       worldtube at 150, evolutions beyond 1000M, GH + XCTS, 3
+       resolutions. Our budget caps runs at 10 GPU-minutes (~t=80-180 at
+       164^3); a 1000M excision evolution at their resolution is O(days)
+       on 4 GPUs, and AthenaK Z4c here runs puncture-style without their
+       excision/XCTS infrastructure. OUT OF RESOURCE - documented. The
+       feasible slice ALREADY delivered: the characteristic side of
+       their BH pipeline is the same CharacteristicExtract binary we
+       validated end-to-end on exact worldtube data (M4-P2a: strain to
+       1.16e-4 of the closed form; their own regression test passes
+       in-environment, iter 46 of mission 3).
+
+P2e — Bondi-violation norms for OUR runs:
+[DONE] single-mode (2,0) C_psi4 = |psi4 + h''| computed on our
+       tight-tolerance X=1e-5 oracle reduction (cubic-spline du):
+       max 1.93e-8 = 5.30e-4 of the psi4 peak — the Bondi relation
+       psi4 = -h'' holds on our oracle output at the tolerance class
+       (no scri package needed for this norm; their convention
+       C_psi4 = psi4 + hdd confirmed by the sign test: the opposite
+       sign gives 2.1 of peak).
+[QUEUED] C_psi3/C_psi2/C_Im psi2 need the eth-convention bookkeeping for
+       their (l,m) normalization (our first attempt at C_psi3 left a
+       0.41-of-peak residual = wrong eth factor, not admitted);
+       post-exit quality item. Their published violation.dat made the
+       BondiViolationMin* FIGURES reproducible without any of this
+       (M4-P1, iter 2).
