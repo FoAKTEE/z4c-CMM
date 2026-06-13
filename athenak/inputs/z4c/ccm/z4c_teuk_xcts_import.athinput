@@ -1,0 +1,95 @@
+# M6 S3: X=2 Teukolsky CCM run on a LARGE Cauchy domain (boundary r >= 100,
+# per the mission directive, vs the 36/41 of the linear-ID campaign), with
+# CONSTRAINT-SATISFYING initial data IMPORTED from the SpECTRE XCTS solve
+# (S1: SolveXctsVacuum on the TeukolskyWave free data; X=2, r_c=20, tau=2).
+#
+# Pipeline: SpECTRE XCTS volume H5  --interp-->  AthenaK ADM (g_ij,K_ij,alpha)
+#   via pgen z4c_spectre_bbh (spectre::Exporter::interpolate_to_points<3>),
+#   then ADMToZ4c + ADMConstraints. The imported ID has H/M constraints at the
+#   discretization floor (NOT the O(X^2)=O(4) of the linear analytic ID), which
+#   is the whole point of S1->S2.
+#
+# VALUES MARKED [TUNE AFTER S1/S2] are finalized once the XCTS volume exists
+# (resolution to match the XCTS spectral accuracy near the pulse; tlim/radii to
+# place the two-pulse feature per arXiv:2308.10361 Sec. V.A.2 with r_out>=100).
+
+<comment>
+problem   = Z4c-CCM Teukolsky X=2, XCTS-imported ID, large domain (r>=100)
+
+<job>
+basename  = teuk_xcts
+
+<mesh>
+nghost    = 4              # X=2 stable config (matches the campaign's 6th-order, nghost 4)
+# Large cubic domain: face at 128 > 100 (inscribed sphere r=128 satisfies r>=100).
+nx1       = 512            # [TUNE AFTER S1/S2] dx = 0.5 over [-128,128]; raise for the X=2 pulse
+x1min     = -128.0
+x1max     = 128.0
+ix1_bc    = outflow
+ox1_bc    = outflow
+
+nx2       = 512
+x2min     = -128.0
+x2max     = 128.0
+ix2_bc    = outflow
+ox2_bc    = outflow
+
+nx3       = 512
+x3min     = -128.0
+x3max     = 128.0
+ix3_bc    = outflow
+ox3_bc    = outflow
+
+<meshblock>
+nx1       = 64            # [TUNE] 512/64 = 8 blocks/dim; distribute over 8 GPUs
+nx2       = 64
+nx3       = 64
+
+<time>
+evolution  = dynamic
+integrator = rk4
+cfl_number = 0.25
+nlim       = -1
+tlim       = 250.0        # [TUNE AFTER S1/S2] long enough for the two-pulse window
+                          # with r_out~100+ (primary ~ r_out-r_c, secondary ~ r_out+r_c)
+ndiag      = 100
+
+<z4c>
+diss            = 0.1     # X=2 stable config (summary: diss 0.1, kappa1 0.1, nghost 4)
+lapse_harmonic  = 0.0
+lapse_oplog     = 2.0
+shift_eta       = 2.0
+chi_div_floor   = 0.00001
+damp_kappa1     = 0.1
+damp_kappa2     = 0.0
+cpbc            = 0
+# CCM live worldtube (mode 5/6); ccm_rwt = live tube radius (<=0: x1max - 2 dx).
+ccm             = true
+ccm_mode        = 5       # [TUNE AFTER S2] live worldtube map (transparent boundary)
+ccm_amp         = 2.0
+ccm_t0          = 20.0
+ccm_sigma       = 2.0
+ccm_betahat     = 0.0
+ccm_rwt         = 100.0   # [TUNE] live worldtube radius (>=100 per the directive)
+# psi4 extraction
+nrad_wave_extraction = 1
+extraction_radius_0  = 100.0   # [TUNE AFTER S1/S2] extraction/scri-analog radius
+extraction_nlev      = 10
+waveform_dt          = 0.25
+
+<problem>
+pgen_name = z4c_spectre_bbh
+user_hist = true
+# SpECTRE XCTS volume to import (written by S1 SolveXctsVacuum). Filled after S1:
+id_filename_glob   = /data/haiyangw/nr/spectre/x2_xcts_run/XctsTeukolskyX2Volume*.h5
+id_subfile_name    = VolumeData
+id_observation_step = -1
+
+<output1>
+file_type   = hst
+dt          = 0.25
+
+<output2>
+file_type   = bin
+variable    = z4c
+dt          = 5.0

@@ -2,7 +2,7 @@
 # Solves the XCTS equations for the constraint-satisfying ID of the
 # even-parity (l=2,m=0) Teukolsky wave (arXiv:2308.10361 Sec V.A.2),
 # free data gammabar = delta + h (X=2, rc=20, tau=2), K=0, dt gammabar = hdot.
-Executable: SolveXcts
+Executable: SolveXctsVacuum
 
 ---
 
