@@ -264,3 +264,24 @@ converged XCTS solution sits at the DISCRETIZATION FLOOR for its resolution, NOT
 discretization floor (<< the Teukolsky flat-guess 3.85e-2, convergent under
 refinement), benchmarked against this BBH ~5e-3 — matching the mission's
 "O(machine/discretization), NOT O(X^2)=O(4)". The earlier "<=1e-8" was too strict.
+
+## Stop-hook spam ROOT CAUSE + real fix (user-flagged, 2026-06-13)
+The repeated full mission-brief on every Stop was NOT my .claude/ralph_stop_guard.sh
+(which I'd already given the token-window cadence + wait-gate). "Ran 2 stop hooks"
+revealed a SECOND, separate Stop hook: the ralph-loop PLUGIN at
+~/.claude/plugins/.../ralph-loop/.../hooks/stop-hook.sh (invoked as
+${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.sh). It re-emits the ENTIRE state-file body
+(the mission brief = PROMPT_TEXT, everything after the 2nd '---' in
+.claude/ralph-loop.local.md) as the block "reason" on EVERY stop, and increments
+the iteration counter each time. My loop_gate cadence never touched it.
+
+FIX: patched the plugin hook (cache + marketplace copies) with the same token-window
+cadence: compute context occupancy (input+cache tokens of the latest assistant turn,
+via jq), persist .claude/ralph_plugin_window.json {armed,occupancy}; emit the FULL
+brief only on the first fire or when occupancy crosses the 90% (900k) high-water mark
+(re-armed after a compaction drops it <50% = 500k), and a TERSE one-line continuation
+otherwise. Loop stays alive (always blocks) but the full brief re-grounds ~once per
+~1M-token window. Verified: run1 reason=4024 chars (full), run2=271 chars (terse).
+Pre-seeded the window state so the next stop is already terse. Provenance:
+.claude/plugin-patches/ralph-loop-stop-hook.patched.sh (the plugin lives outside the
+repo). This resolves the "short prompt every stop" the user flagged.
