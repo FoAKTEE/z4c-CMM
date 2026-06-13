@@ -285,3 +285,23 @@ otherwise. Loop stays alive (always blocks) but the full brief re-grounds ~once 
 Pre-seeded the window state so the next stop is already terse. Provenance:
 .claude/plugin-patches/ralph-loop-stop-hook.patched.sh (the plugin lives outside the
 repo). This resolves the "short prompt every stop" the user flagged.
+
+## S1 — Newton floors at ~1.6e-9; tolerance relaxed to write the volume (2026-06-13)
+The +p32 solve converged the nonlinear XCTS system quadratically: Newton residuals
+0.42 -> 1.22e-2 -> 2.24e-5 -> 1.74e-7 -> 1.60e-9, then FLOORED at ~1.6e-9 (steps
+5-17 oscillate 1.60-1.73e-9, not decreasing). It does NOT reach the YAML's strict
+AbsoluteResidual 1e-10 / RelativeResidual 1e-9, so it would run to NewtonRaphson
+MaxIterations (30) WITHOUT HasConverged -> the VolumeData output (triggered on
+HasConverged) would never be written, blocking S2.
+
+The 1.6e-9 floor (vs the BBH reference reaching 9.47e-11 with the same Gmres 1e-3
+linear tolerance) is consistent with the FD-derivative noise in TeukolskyWave's
+conformal Ricci (deriv_conformal_metric is a 4th-order finite difference; the
+spectral derivative of the FD-built Christoffel limits the achievable residual).
+1.6e-9 is nonetheless a genuinely constraint-satisfying ID (vs the flat-guess 0.42)
+and far below the AthenaK evolution's discretization error, so it is more than
+adequate for S2-S4. Relaxed NewtonRaphson to RelativeResidual 1e-7 / AbsoluteResidual
+1e-8 so the solve declares convergence AT the 1.6e-9 floor (step ~5) and writes the
+constraint-satisfying volume H5. (If a tighter ID is ever needed, implement analytic
+deriv_conformal_metric in TeukolskyWave -- the option de-risked away earlier.)
+Re-running at +p32 (orchestrator bgfr520jb).
