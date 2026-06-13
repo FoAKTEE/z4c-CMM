@@ -1,0 +1,76 @@
+# M6 S2 GATE: import the SpECTRE XCTS X=2 Teukolsky initial data into AthenaK
+# and verify it on the AthenaK grid WITHOUT evolving (nlim=0). The pgen
+# z4c_spectre_bbh interpolates g_ij, K_ij from the XCTS volume H5
+# (spectre::Exporter::interpolate_to_points<3>), sets the pre-collapsed lapse,
+# does ADMToZ4c, then ADMConstraints on the initial slice. The S2 gate is:
+# the imported Hamiltonian/Momentum constraints are SMALL (discretization-level,
+# convergent under refinement) -- NOT the O(X^2)=O(4) of the linear analytic ID.
+#
+# This is a fast single-slice check (no time stepping); the full r>=100 CCM
+# evolution is z4c_teuk_xcts_import.athinput. id_filename_glob is filled from
+# the S1 output. [TUNE] resolution/extent after the XCTS volume exists.
+
+<comment>
+problem = Z4c-CCM Teukolsky X=2 XCTS-import constraint check (no evolution)
+
+<job>
+basename = teuk_xcts_check
+
+<mesh>
+nghost = 4
+# Modest box covering the pulse (r_c=20) and a margin; the XCTS volume is valid
+# far beyond this, so interpolation is interior (no extrapolation).
+nx1 = 128
+x1min = -64.0
+x1max = 64.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 128
+x2min = -64.0
+x2max = 64.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 128
+x3min = -64.0
+x3max = 64.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 64
+nx2 = 64
+nx3 = 64
+
+<time>
+evolution  = dynamic
+integrator = rk4
+cfl_number = 0.25
+nlim       = 0          # import + constraints only; no time stepping
+tlim       = 0.0
+ndiag      = 1
+
+<z4c>
+nghost          = 4
+chi_div_floor   = 0.00001
+# constraints only; damping/gauge irrelevant at t=0
+diss            = 0.0
+damp_kappa1     = 0.0
+damp_kappa2     = 0.0
+ccm             = false
+
+<problem>
+pgen_name = z4c_spectre_bbh
+user_hist = true
+# SpECTRE XCTS volume from S1 (SolveXctsVacuum). Filled after S1 converges:
+id_filename_glob    = /data/haiyangw/nr/spectre/x2_xcts_run/XctsTeukolskyX2Volume*.h5
+id_subfile_name     = VolumeData
+id_observation_step = -1
+
+<output1>
+file_type = hst
+dt        = 1.0
+
+<output2>
+file_type = bin
+variable  = z4c
+dt        = 1.0

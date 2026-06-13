@@ -246,3 +246,21 @@ PIDs 1224285-1224292). 8 GPUs freed for the S3 large-domain (r>=100) run.
 Deployed a background agent to reproduce the SpECTRE BBH XCTS ID
 (tests/InputFiles/Xcts/BinaryBlackHole.yaml, same MKL env + charmrun, +p24)
 as the comparison reference -> progress/x2-xcts/bbh_ref/.
+
+## BBH XCTS reference reproduction (user-directed, 2026-06-13) — CONVERGED
+Agent reproduced the standard SpECTRE BBH XCTS ID (tests/InputFiles/Xcts/
+BinaryBlackHole.yaml) with the SAME env+launch as our case (spectre_xcts_env.sh
+MKL shim + charmrun +p24), stock SolveXcts. NewtonRaphson CONVERGED in 5 iters
+(RelRes 1e-10) in 10:14, reproducing the reference YAML's expected Newton
+residuals EXACTLY (9.588365, 2.567448, 6.93e-3, 1.22e-3). Outputs BbhReductions.h5
++ BbhVolume0-23.h5. Provenance: progress/x2-xcts/bbh_ref/ (yaml, report, log).
+Only deviation: inserted the YAML '---' metadata separator the test harness
+normally strips (no physics changed). Our Teukolsky yaml already has it.
+
+RECALIBRATION of the S1 gate: the CONVERGED BBH XCTS has Hamiltonian L2 = 5.10e-3
+(initial guess 1.75e-2; only 3.4x drop) and |Momentum| L2 2.21e-3 — i.e. a fully
+converged XCTS solution sits at the DISCRETIZATION FLOOR for its resolution, NOT
+1e-8. So the S1 gate is: Newton converged (RelRes ~1e-10) AND constraint L2 at the
+discretization floor (<< the Teukolsky flat-guess 3.85e-2, convergent under
+refinement), benchmarked against this BBH ~5e-3 — matching the mission's
+"O(machine/discretization), NOT O(X^2)=O(4)". The earlier "<=1e-8" was too strict.

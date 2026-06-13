@@ -1,0 +1,195 @@
+start: Sat Jun 13 04:50:04 AM UTC 2026
+
+Running as 24 OS processes: /data/haiyangw/nr/spectre/build/bin/SolveXcts --input-file BinaryBlackHole.yaml
+charmrun> /usr/bin/setarch x86_64 -R mpirun -np 24 /data/haiyangw/nr/spectre/build/bin/SolveXcts --input-file BinaryBlackHole.yaml
+Charm++> Running on MPI library: Open MPI v5.0.7, package: Open MPI emost@perseus Distribution, ident: 5.0.7, repo rev: v5.0.7, Feb 14, 2025 (MPI standard: 3.1)
+Charm++> Level of thread support used: MPI_THREAD_SINGLE (desired: MPI_THREAD_SINGLE)
+Charm++> Running in non-SMP mode: 24 processes (PEs)
+Converse/Charm++ Commit ID: v8.0.0
+Isomalloc> Synchronized global address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 1 hosts (2 sockets x 64 cores x 2 PUs = 256-way SMP)
+Charm++> cpu topology info is gathered in 0.075 seconds.
+
+Executing 'SolveXcts' using 24 processors.
+Launch command line: /data/haiyangw/nr/spectre/build/bin/SolveXcts --input-file BinaryBlackHole.yaml
+Charm++ startup time in seconds: 0.475815
+Date and time at startup: Sat Jun 13 04:50:19 2026
+
+SpECTRE Build Information:
+Version:                      2025.08.19
+Compiled on host:             perseus
+Compiled in directory:        /data/haiyangw/nr/spectre/build
+Source directory is:          /data/haiyangw/nr/spectre
+Compiled on git branch:       develop
+Compiled on git revision:     9f98d9fdd
+Linked on:                    2026-04-01T03:57:17+00:00
+Build type:                   Release
+
+The following options differ from their suggested values:
+
+Option parsing completed.
+
+Allocating Singletons:
+ResidualMonitor on node 0, global proc 0, exclusive = false
+ResidualMonitor on node 1, global proc 1, exclusive = false
+BuildMatrixSingleton on node 2, global proc 2, exclusive = false
+Component on node 3, global proc 3, exclusive = false
+
+NOTE: Phase::Restart is in the phase dependent action list of
+component DgElementArray,
+but not in the default_phase_order specified by the metavariables.
+This means that phase will not be executed unless chosen by PhaseControl.
+
+NOTE: Phase::Restart is in the phase dependent action list of
+component DgElementArray,
+but not in the default_phase_order specified by the metavariables.
+This means that phase will not be executed unless chosen by PhaseControl.
+
+NOTE: Phase::Restart is in the phase dependent action list of
+component DgElementArray,
+but not in the default_phase_order specified by the metavariables.
+This means that phase will not be executed unless chosen by PhaseControl.
+
+Entering phase: Register at time 00:00:00
+Entering phase: UpdateSections at time 00:00:00
+Entering phase: CheckDomain at time 00:00:00
+AMR level 0:
+Number of elements: 44
+Number of grid points: 11664
+Average refinement levels: (0,0,0)
+Average grid points: (6,6,7.36364)
+
+AMR level 1:
+Number of elements: 54
+Number of grid points: 13824
+Average refinement levels: (0,0,0.37037)
+Average grid points: (6,6,7.11111)
+
+AMR level 2:
+Number of elements: 84
+Number of grid points: 20304
+Average refinement levels: (0,0,1.19048)
+Average grid points: (6,6,6.71429)
+
+Entering phase: Solve at time 00:00:00
+NewtonRaphson initialized with residual: 9.588365e+00
+Gmres initialized with residual: 9.588365e+00
+Gmres(1) iteration complete. Remaining residual: 9.572254e+00
+Gmres(2) iteration complete. Remaining residual: 9.530661e+00
+Gmres(3) iteration complete. Remaining residual: 9.433666e+00
+Gmres(4) iteration complete. Remaining residual: 9.286317e+00
+Gmres(5) iteration complete. Remaining residual: 8.478594e+00
+Gmres(6) iteration complete. Remaining residual: 1.450418e+00
+Gmres(7) iteration complete. Remaining residual: 3.767916e-01
+Gmres(8) iteration complete. Remaining residual: 2.346002e-01
+Gmres(9) iteration complete. Remaining residual: 4.936542e-02
+Gmres(10) iteration complete. Remaining residual: 7.420247e-03
+Gmres has converged in 10 iterations: RelativeResidual - The residual magnitude has decreased to a fraction of 0.001 of its initial value or below (0.00077388).
+NewtonRaphson(1) iteration complete (0 globalization steps, step length 1). Remaining residual: 2.567448e+00
+Gmres initialized with residual: 2.567448e+00
+Gmres(1) iteration complete. Remaining residual: 2.567409e+00
+Gmres(2) iteration complete. Remaining residual: 2.566690e+00
+Gmres(3) iteration complete. Remaining residual: 2.506349e+00
+Gmres(4) iteration complete. Remaining residual: 2.496790e+00
+Gmres(5) iteration complete. Remaining residual: 2.443698e+00
+Gmres(6) iteration complete. Remaining residual: 2.290785e+00
+Gmres(7) iteration complete. Remaining residual: 1.560316e+00
+Gmres(8) iteration complete. Remaining residual: 1.205075e+00
+Gmres(9) iteration complete. Remaining residual: 3.111348e-01
+Gmres(10) iteration complete. Remaining residual: 1.320163e-01
+Gmres(11) iteration complete. Remaining residual: 6.822496e-02
+Gmres(12) iteration complete. Remaining residual: 1.217799e-02
+Gmres(13) iteration complete. Remaining residual: 1.093618e-02
+Gmres(14) iteration complete. Remaining residual: 1.071440e-02
+Gmres(15) iteration complete. Remaining residual: 7.716386e-03
+Gmres(16) iteration complete. Remaining residual: 2.014343e-03
+Gmres has converged in 16 iterations: RelativeResidual - The residual magnitude has decreased to a fraction of 0.001 of its initial value or below (0.00078457).
+NewtonRaphson(2) iteration complete (0 globalization steps, step length 1). Remaining residual: 6.927921e-03
+Gmres initialized with residual: 6.927921e-03
+Gmres(1) iteration complete. Remaining residual: 6.927767e-03
+Gmres(2) iteration complete. Remaining residual: 6.913289e-03
+Gmres(3) iteration complete. Remaining residual: 6.911173e-03
+Gmres(4) iteration complete. Remaining residual: 6.910530e-03
+Gmres(5) iteration complete. Remaining residual: 6.910486e-03
+Gmres(6) iteration complete. Remaining residual: 6.909380e-03
+Gmres(7) iteration complete. Remaining residual: 6.908261e-03
+Gmres(8) iteration complete. Remaining residual: 6.902870e-03
+Gmres(9) iteration complete. Remaining residual: 6.902856e-03
+Gmres(10) iteration complete. Remaining residual: 6.895423e-03
+Gmres(11) iteration complete. Remaining residual: 6.869329e-03
+Gmres(12) iteration complete. Remaining residual: 6.860874e-03
+Gmres(13) iteration complete. Remaining residual: 6.860874e-03
+Gmres(14) iteration complete. Remaining residual: 6.806590e-03
+Gmres(15) iteration complete. Remaining residual: 6.769096e-03
+Gmres(16) iteration complete. Remaining residual: 5.278050e-03
+Gmres(17) iteration complete. Remaining residual: 2.233546e-03
+Gmres(18) iteration complete. Remaining residual: 6.762447e-04
+Gmres(19) iteration complete. Remaining residual: 4.141090e-04
+Gmres(20) iteration complete. Remaining residual: 1.493868e-04
+Gmres(21) iteration complete. Remaining residual: 2.551875e-05
+Gmres(22) iteration complete. Remaining residual: 1.084460e-05
+Gmres(23) iteration complete. Remaining residual: 4.836469e-06
+Gmres has converged in 23 iterations: RelativeResidual - The residual magnitude has decreased to a fraction of 0.001 of its initial value or below (0.000698113).
+NewtonRaphson(3) iteration complete (0 globalization steps, step length 1). Remaining residual: 1.218999e-03
+Gmres initialized with residual: 1.218999e-03
+Gmres(1) iteration complete. Remaining residual: 1.124071e-03
+Gmres(2) iteration complete. Remaining residual: 6.982726e-04
+Gmres(3) iteration complete. Remaining residual: 6.975611e-04
+Gmres(4) iteration complete. Remaining residual: 6.872569e-04
+Gmres(5) iteration complete. Remaining residual: 6.812390e-04
+Gmres(6) iteration complete. Remaining residual: 5.898736e-04
+Gmres(7) iteration complete. Remaining residual: 5.813716e-04
+Gmres(8) iteration complete. Remaining residual: 3.492126e-04
+Gmres(9) iteration complete. Remaining residual: 2.665790e-04
+Gmres(10) iteration complete. Remaining residual: 1.843286e-04
+Gmres(11) iteration complete. Remaining residual: 6.375136e-05
+Gmres(12) iteration complete. Remaining residual: 7.517285e-06
+Gmres(13) iteration complete. Remaining residual: 1.077619e-06
+Gmres has converged in 13 iterations: RelativeResidual - The residual magnitude has decreased to a fraction of 0.001 of its initial value or below (0.00088402).
+NewtonRaphson(4) iteration complete (0 globalization steps, step length 1). Remaining residual: 1.081882e-06
+Gmres initialized with residual: 1.081882e-06
+Gmres(1) iteration complete. Remaining residual: 1.075423e-06
+Gmres(2) iteration complete. Remaining residual: 1.074732e-06
+Gmres(3) iteration complete. Remaining residual: 1.010999e-06
+Gmres(4) iteration complete. Remaining residual: 3.749225e-07
+Gmres(5) iteration complete. Remaining residual: 2.365262e-07
+Gmres(6) iteration complete. Remaining residual: 6.515152e-08
+Gmres(7) iteration complete. Remaining residual: 1.832751e-08
+Gmres(8) iteration complete. Remaining residual: 1.021321e-08
+Gmres(9) iteration complete. Remaining residual: 9.954906e-09
+Gmres(10) iteration complete. Remaining residual: 9.435559e-09
+Gmres(11) iteration complete. Remaining residual: 9.042435e-09
+Gmres(12) iteration complete. Remaining residual: 8.985777e-09
+Gmres(13) iteration complete. Remaining residual: 8.899706e-09
+Gmres(14) iteration complete. Remaining residual: 8.858753e-09
+Gmres(15) iteration complete. Remaining residual: 8.856121e-09
+Gmres(16) iteration complete. Remaining residual: 8.841047e-09
+Gmres(17) iteration complete. Remaining residual: 8.836167e-09
+Gmres(18) iteration complete. Remaining residual: 8.820172e-09
+Gmres(19) iteration complete. Remaining residual: 8.781894e-09
+Gmres(20) iteration complete. Remaining residual: 8.749876e-09
+Gmres(21) iteration complete. Remaining residual: 8.691747e-09
+Gmres(22) iteration complete. Remaining residual: 8.689375e-09
+Gmres(23) iteration complete. Remaining residual: 8.689131e-09
+Gmres(24) iteration complete. Remaining residual: 8.678380e-09
+Gmres(25) iteration complete. Remaining residual: 8.678172e-09
+Gmres(26) iteration complete. Remaining residual: 8.675166e-09
+Gmres(27) iteration complete. Remaining residual: 8.664677e-09
+Gmres(28) iteration complete. Remaining residual: 8.655497e-09
+Gmres(29) iteration complete. Remaining residual: 8.655497e-09
+Gmres(30) iteration complete. Remaining residual: 8.648740e-09
+Gmres(31) iteration complete. Remaining residual: 8.347776e-09
+Gmres(32) iteration complete. Remaining residual: 7.194116e-09
+Gmres(33) iteration complete. Remaining residual: 2.484188e-09
+Gmres(34) iteration complete. Remaining residual: 9.088129e-10
+Gmres has converged in 34 iterations: RelativeResidual - The residual magnitude has decreased to a fraction of 0.001 of its initial value or below (0.00084003).
+NewtonRaphson(5) iteration complete (0 globalization steps, step length 1). Remaining residual: 9.081706e-10
+NewtonRaphson has converged in 5 iterations: RelativeResidual - The residual magnitude has decreased to a fraction of 1e-10 of its initial value or below (9.47159e-11).
+Entering phase: Exit at time 00:10:14
+
+Done!
+Wall time: 00:10:14
+Date and time at completion: Sat Jun 13 05:00:32 2026
+
+[Partition 0][Node 0] End of program
