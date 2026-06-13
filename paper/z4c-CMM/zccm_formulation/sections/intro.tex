@@ -1,0 +1,24 @@
+\section{Introduction}
+\label{sec:intro}
+
+Cauchy--characteristic matching (CCM) couples a strongly hyperbolic
+interior (Cauchy) evolution to a characteristic evolution reaching future
+null infinity, so that the worldtube supplying characteristic boundary
+data simultaneously receives the incoming radiative content computed on
+the characteristic grid; the interface becomes transparent rather than
+approximately absorbing \cite{Ma:2023qjn,Moxon:2020gha}. The present
+paper formulates and verifies CCM for the Z4c formulation of the Einstein
+equations \cite{Bernuzzi:2009ex,Hilditch:2012fp,Ruiz:2010qj}: the
+constraint-damped conformal decomposition in production use across
+finite-difference numerical-relativity codes, here the AthenaK
+implementation \cite{Zhu:2024utz}. The presentation follows the
+organization of Ref.~\cite{Ma:2023qjn}: the Cauchy system and its
+boundary sector (Sec.~\ref{sec:cauchy}), the characteristic system
+(Sec.~\ref{sec:characteristic}), the matching algorithm
+(Sec.~\ref{sec:matching}), and numerical verification
+(Sec.~\ref{sec:tests}). Every equation is one of: (a) a machine-verified
+result of this program (dark blue; verification labels [V$n$] and the
+ledger nodes N$1$--N$16$); (b) standard literature content, cited at the
+equation; (c) an explicitly open obligation (labels O-N$x$-$y$). The
+derivation chain is summarized as a directed acyclic graph in
+Fig.~\ref{fig:dag}.

@@ -1,0 +1,257 @@
+\section{Numerical verification}
+\label{sec:tests}
+
+\subsection{Numerical evidence}
+\label{sec:numerics}
+
+All runs: JAX float64, $4\times$ NVIDIA A100-80GB
+(\texttt{CUDA\_VISIBLE\_DEVICES=0,1,2,3}), wall clock $\le 23$\,s each
+(budget 600\,s); outputs under \texttt{results/numerical/}.
+
+\begin{table}[htbp]
+\centering
+\caption{Symbolic and sampling verification of
+\eqref{eq:divbeta}--\eqref{eq:kreiss}. ``Exact'' = sympy identity on
+arbitrary functions or exact rationals (zero float error).
+Files: \texttt{n2\_boost\_check.txt}, \texttt{n3\_exact\_check.txt},
+\texttt{n3\_dictionary\_check.txt},
+\texttt{n1\_varmap\_check.txt}, \texttt{n4\_cpbc\_compat\_check.txt},
+\texttt{n5\_gauge\_check.txt}, \texttt{n6\_composite\_check.txt},
+\texttt{n7\_lf\_sketch\_check.txt}.}
+\label{tab:static}
+\footnotesize
+\begin{tabular}{llll}
+\hline\hline
+ & verified statement & exact part & GPU sweep (4 devices) \\
+\hline
+V1 & boost identity \eqref{eq:boost-identity}, factor $\sqrt2/2$ &
+ 12/12 rational points & $9.34\times10^{-16}$ over $4{,}194{,}304$ samples \\
+V2a & EXACT identity \eqref{eq:exact-dictionary}--\eqref{eq:uminus},
+ $(\sigma,\kappa)=(1,-1)$, $\bar\psi_4$ partner & generic Weyl, all 10 dof &
+ --- \\
+V2b & linearized on-shell limit (corollary) & arbitrary $F_1,F_2$ &
+ $0.0$ over $4{,}194{,}304$ modes (prior form) \\
+V2c & Gauss--Codazzi realization \eqref{eq:gausscodazzi}, Schwarzschild &
+ Codazzi sign $+1$ derived & $E$: $7.7{\times}10^{-17}$, $B$:
+ $3.9{\times}10^{-17}$, identity $8.5{\times}10^{-16}$ (1024 pts) \\
+V3 & maps \eqref{eq:fourmetric}, closure \eqref{eq:divbeta} &
+ full-symbol identities & round trip $4.10{\times}10^{-16}$, $gg^{-1}$ $8.88{\times}10^{-16}$ \\
+V4 & orthogonality \eqref{eq:orthogonality} + controls &
+ identities and non-vanishing controls & TT residual $0.0$ vs control
+ $12.3$ \\
+V5 & reflection \eqref{eq:reflection} &
+ exact $R$ algebra & $|R_{\rm Som}|\ge0.023$ on
+ $\mathring\beta\in[0.05,0.6]$; $R=0$ exact \\
+V6 & 10-mode count, $\psi_0\to0$ reduction, wire-through (exact targets) &
+ structural & reduction $0.0$; chain residual $1.47{\times}10^{-16}$ \\
+V7 & Kreiss condition \eqref{eq:kreiss}, $L=0..3$ &
+ $D_L=(2s)^{L+1}$ exact & ratio deviation $3.2\times10^{-14}$
+ ($4{,}194{,}304$ samples) \\
+\hline\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Dynamical model evolution (6th-order interior stencils with a
+GKS-stable mixed closure — 4th-order Fornberg rows at three edge nodes;
+fully one-sided 6th-order closures are RK4-unstable (error ledger) — RK4,
+CFL $0.2$, shift $\mathring\beta=0.3$, outgoing Gaussian pulse onto the
+boundary; one configuration per GPU; \texttt{n8\_model1d\_test.txt}).
+Reflection is measured in the $L_2$ (energy) norm — trapezoid sums of
+Gaussian pulses converge exponentially, so the deviation column is limited by
+machine arithmetic, not by measurement or truncation. Analytic $L_2$
+relation: $\|q_{\rm in}\|_{L_2}/\|q_{\rm out}\|_{L_2}
+ = \tfrac{\mathring\beta}{2+\mathring\beta}
+   \sqrt{\tfrac{1+\mathring\beta}{1-\mathring\beta}}$.
+Each row sits at its float64 floor: rows 1--3 at the per-sample roundoff
+floor (deviation saturates between $N{=}8193$ and $N{=}16385$: $1.9$ vs
+$2.1\times10^{-14}$); the injection row at the linear roundoff-accumulation
+optimum ($\sim\mathrm{steps}\times\varepsilon$; ladder
+$N{=}16385/32769/65537/131073 \Rightarrow 5.4/2.4/5.9/30\times10^{-11}$,
+non-monotone and insensitive to CFL $0.2$ vs $0.05$).}
+\label{tab:dynamic}
+\footnotesize
+\begin{tabular}{llll}
+\hline\hline
+boundary condition & measured & exact & deviation \\
+\hline
+Sommerfeld, $L_2$ ratio ($N{=}16385$) & $0.177752646227$ & $0.177752646227$ &
+ $2.1\times10^{-14}$ (float64 floor) \\
+Sommerfeld, $L_2$ ratio ($N{=}8193$) & --- & --- &
+ $1.9\times10^{-14}$ (saturated) \\
+$(\partial_t + c_+\partial_x)$ [P1/CCM op., $N{=}16385$] &
+ $R_{L_2} = 1.9\times10^{-14}$ & $0$ & machine precision \\
+\nf{CCM injection \eqref{eq:bjorhus}, rel.\ $L_2$ ($N{=}32769$)} &
+ \nf{$2.4\times10^{-11}$} & \nf{$0$} & \nf{roundoff-accumulation optimum} \\
+\hline\hline
+\end{tabular}
+\end{table}
+
+\subsection{Dynamical test at the parameters of Ref.~\cite{Ma:2023qjn}
+(nodes N10--N11)}
+\label{sec:teuktest}
+
+Full 3+1 evolution: AthenaK Z4c \cite{Zhu:2024utz} (vendored, pinned;
+RK4, CFL $0.25$, sixth-order stencils at \texttt{nghost}${}=4$,
+$\kappa_1=0.02$), with \eqref{eq:bc-phys} realized at the Cauchy outer
+boundary as described below.
+This subsection is self-contained: every symbol used by the test is defined
+here or in Secs.~\ref{sec:frame}--\ref{sec:n6}.
+
+\paragraph{Exact solution injected.}
+Even-parity $(\ell,m)=(2,0)$ Teukolsky wave \cite{Teukolsky:1982nz} with the
+Gaussian profile of Ref.~\cite{Ma:2023qjn}, written with physicists' Hermite
+polynomials $H_n$ and the origin-regular retarded/advanced combinations:
+\begin{equation}
+F(u) = X\,e^{-(u-r_c)^2/\tau^2},
+\qquad
+F^{(n)}(u) = X\,\Big(\!-\frac{1}{\tau}\Big)^{\!n}
+ H_n\!\Big(\frac{u-r_c}{\tau}\Big)\,e^{-(u-r_c)^2/\tau^2},
+\label{eq:teuk-F}
+\end{equation}
+\begin{equation}
+Q^{(n)}(t,r) = F^{(n)}(t-r) - (-1)^n F^{(n)}(t+r),
+\qquad
+R^{(n)}(t,r) = F^{(n)}(t-r) + (-1)^n F^{(n)}(t+r),
+\qquad
+\partial_t Q^{(n)} = R^{(n+1)} .
+\label{eq:teuk-QR}
+\end{equation}
+Radial functions (regular at $r=0$ by \eqref{eq:teuk-QR}; calligraphic to
+keep $A$ for the boost \eqref{eq:boost}):
+\begin{align}
+\mathcal A &= 3\Big[\frac{Q^{(2)}}{r^3} + \frac{3Q^{(1)}}{r^4}
+ + \frac{3Q^{(0)}}{r^5}\Big],
+\qquad
+\mathcal B = -\Big[\frac{Q^{(3)}}{r^2} + \frac{3Q^{(2)}}{r^3}
+ + \frac{6Q^{(1)}}{r^4} + \frac{6Q^{(0)}}{r^5}\Big],
+\nonumber\\
+\mathcal C &= \frac14\Big[\frac{Q^{(4)}}{r} + \frac{2Q^{(3)}}{r^2}
+ + \frac{9Q^{(2)}}{r^3} + \frac{21Q^{(1)}}{r^4} + \frac{21Q^{(0)}}{r^5}\Big],
+\label{eq:teuk-ABC}
+\end{align}
+orthonormal-frame metric perturbation ($\dot h_{ij}$ from
+$Q^{(n)}\!\to\!R^{(n+1)}$ termwise):
+\begin{equation}
+h_{\hat r\hat r} = \mathcal A\,\frac{1+3\cos 2\theta}{2},
+\quad
+h_{\hat r\hat\theta} = -3\mathcal B\sin\theta\cos\theta,
+\quad
+h_{\hat\theta\hat\theta} = 3\mathcal C\sin^2\theta - \mathcal A,
+\quad
+h_{\hat\phi\hat\phi} = -3\mathcal C\sin^2\theta
+ + \mathcal A\,(3\sin^2\theta - 1),
+\label{eq:teuk-metric}
+\end{equation}
+\begin{equation}
+\gamma_{ij}(0,x) = \delta_{ij} + h_{ij}(0,x),
+\qquad
+K_{ij}(0,x) = -\tfrac12\,\dot h_{ij}(0,x)
+\qquad
+(\text{linear order; Ref.~\cite{Ma:2023qjn} solves XCTS}).
+\label{eq:teuk-id}
+\end{equation}
+Weyl scalars of the solution at linear order (the self-datum and the
+extraction reference):
+\begin{equation}
+r^5\,\psi_0(t,r,\theta) = -\sqrt{\tfrac{27\pi}{10}}\;F^{(2)}(t-r)\;
+ {}_{2}Y_{20}(\theta),
+\qquad
+{}_{2}Y_{20} = \tfrac14\sqrt{\tfrac{15}{2\pi}}\,\sin^2\theta,
+\qquad
+r\,\psi_4\big|_{(2,0)} \;\to\; -\sqrt{\tfrac{6\pi}{5}}\,F^{(6)}(t-r).
+\label{eq:teuk-psi0}
+\end{equation}
+
+\begin{nfblock}
+\paragraph{Discrete realization of \eqref{eq:bc-phys}.}
+At every Cauchy-boundary point, after the CPBC/gauge rows
+\eqref{eq:bc-cpbc}--\eqref{eq:bc-gauge} (Sommerfeld task of
+Ref.~\cite{Zhu:2024utz}), the two physical rows are driven through
+$\tilde A_{ij}$:
+\begin{equation}
+s^a = \frac{x^a/r}{\sqrt{\gamma_{bc}\,x^b x^c}/r},
+\qquad
+e_\phi \propto \hat z\times s,\quad e_\theta = s\times e_\phi,
+\qquad
+\bar m = \tfrac{1}{\sqrt 2}\,(e_\theta - i\,e_\phi),
+\label{eq:teuk-dyad}
+\end{equation}
+\begin{equation}
+\boxed{\;
+\partial_t \tilde A_{ab}\big|_{\partial\Omega}
+\;\mathrel{+}=\;
+-\frac{2\chi}{\alpha}\,
+\Big(\psi_0'\,\bar m_a \bar m_b + \bar\psi_0'\,m_a m_b\Big),
+\qquad
+\psi_0' = A^2\,\psi_0^{\rm datum},
+\quad A = \big(\alpha-\gamma_{ij}\beta^i s^j\big)e^{-2\hat\beta}
+\;}
+\label{eq:teuk-inject}
+\end{equation}
+with $\psi_0^{\rm datum}$ the right-hand member of \eqref{eq:teuk-psi0}
+evaluated at the boundary point ($\hat\beta=0$ on the flat background);
+$\psi_0^{\rm datum}\to0$ reduces \eqref{eq:teuk-inject} to the unmodified
+scheme exactly (V6; machine-zero reduction in Table~\ref{tab:dynamic}
+methodology, AthenaK battery: Minkowski preserved to $2.6\times10^{-33}$).
+
+\paragraph{Exact finite-radius reference (node N12).}
+The extraction reference is the \emph{analytic} waveform at the
+extraction radius itself (no auxiliary reference run): in the AthenaK
+extraction convention ($=-1\times$ the scri member of
+\eqref{eq:teuk-psi0} continued to finite $r$),
+\begin{equation}
+r\,\psi_4^{(2,0)}(t,r) =
+\sqrt{\tfrac{6\pi}{5}}\Big[F^{(6)} + \frac{2F^{(5)}}{r}
+ + \frac{3F^{(4)}}{r^{2}} + \frac{3F^{(3)}}{r^{3}}
+ + \frac{3F^{(2)}}{2\,r^{4}}\Big](t-r)
+\;-\; \sqrt{\tfrac{6\pi}{5}}\,\frac{3F^{(2)}}{2\,r^{4}}(t+r),
+\label{eq:teuk-exact-psi4}
+\end{equation}
+verified by seven symbolic gates (tracelessness, coefficient-exact
+linearized vacuum, $\sin^2\theta$ factorization, peeling, scri limit,
+independent $30$-digit finite-difference cross-check at $10^{-40}$) and
+— independently — by the SpECTRE \texttt{CharacteristicExtract} cross
+oracle below.
+
+\paragraph{Protocol and result.}
+Parameters of Ref.~\cite{Ma:2023qjn}: $r_c=20$, $\tau=2$, $X=10^{-5}$,
+Cauchy boundary (worldtube analog) at $41$, $t\in[0,80]$; extraction of
+$r\psi_4^{(2,0)}$ at $r=36$; resolution ladder $h = 0.5,\ 0.331,\ 0.277$
+(4$\times$A100, every run $<600$\,s). Error against
+\eqref{eq:teuk-exact-psi4} at each rung's own output times:
+\begin{equation}
+E(h) =
+\frac{\big\| r\psi_4^{(2,0)}[h] - r\psi_4^{(2,0)}[\text{exact}]\big\|_2}
+     {\big\| r\psi_4^{(2,0)}[\text{exact}]\big\|_2}
+= 4.99\times10^{-2},\ \ 5.36\times10^{-3},\ \ 2.02\times10^{-3},
+\label{eq:teuk-E}
+\end{equation}
+with measured convergence order $5.39$ (first pair) and $5.52$ (second
+pair), finest-rung amplitude $1\pm2\times10^{-4}$ and time shift $0.000$
+(Fig.~\ref{fig:teuk}). Two production defects were found \emph{only} by
+this exact-reference program and are corrected in all data shown: a
+frame-orientation error in the initial data ($\hat e_\theta$ flipped;
+linearized vacuum violated at $5\%$ of $|R_{ij}|$, invisible to
+constraint monitors and to run-vs-reference protocols since it sat on
+both sides) and a one-step offset in the waveform time labels. The
+self-datum CCM$-$Sommerfeld difference remains peeling-suppressed
+($\psi_0\sim r^{-5}$, relative imprint $\sim10^{-9}$ of peak at this
+worldtube), as in Ref.~\cite{Ma:2023qjn} Sec.~V.A.
+\end{nfblock}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{zccm_teuk_exact.pdf}
+\caption{Exact-reference Teukolsky test of Sec.~\ref{sec:teuktest}
+($r_c{=}20$, $\tau{=}2$, boundary $41$, extraction $r{=}36$,
+$X{=}10^{-5}$). Top: $(\ell,m){=}(2,0)$ mode of $r\psi_4$ — the exact
+finite-radius waveform \eqref{eq:teuk-exact-psi4} (solid) and the
+three-rung sixth-order ladder. Bottom: pointwise errors against the
+exact reference; measured order $5.39/5.52$, finest-rung relative $L_2$
+error $2.02\times10^{-3}$ \eqref{eq:teuk-E}. Generator:
+\texttt{scripts/plot\_paper\_figures\_v2.py}; data:
+\texttt{results/numerical/athenak\_teuk\_ana/gpu6/} (ledger node N12).}
+\label{fig:teuk}
+\end{figure}

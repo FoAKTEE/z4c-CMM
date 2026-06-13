@@ -1,0 +1,96 @@
+\section{The characteristic system}
+\label{sec:characteristic}
+
+% iter-2 target: Bondi-Sachs metric + falloffs; the nonlinear
+% hypersurface hierarchy (cited); OUR linear l=2 scalarized chain
+% (ringed + unringed + machine-derived beta sources); spectral
+% solver; psi0 formula + gauge invariance; pulse ID.
+\begin{nfblock}
+\subsection{Live Cauchy--characteristic matching inside AthenaK
+(nodes N13--N14)}
+\label{sec:liveccm}
+
+The $\psi_0^{\rm datum}$ provider of \eqref{eq:teuk-inject} is replaced
+by a \emph{native, in-process} characteristic solver evolving in
+lockstep with the Cauchy evolution (one process, no file round-trips).
+On the compactified radial coordinate $y = 1 - 2r_{\rm wt}/r$
+(Chebyshev--Gauss--Lobatto collocation, LU-factorized global solves,
+SAT time advance), the solver evolves the \emph{unringed} $\ell{=}2$
+$t$-scalars $(J_t,Q_t,U_t,W_t,H_t)$ of the linearized Bondi--Sachs
+hierarchy with the $\beta$ sources required by live (worldtube-anchored
+gauge) data — machine-derived as exact-rational fits on the anchored
+and plain solution families jointly:
+\begin{align}
+\partial_r(r^2 Q) &= -\,r^2\,\partial_r(\bar\eth J) - 4r\,\eth\beta,
+&
+\partial_r U &= Q/r^2,
+\nonumber\\
+\partial_r(r^2 W) &= \tfrac12\bar\eth\bar\eth J + 2r\,\bar\eth U
+ + \tfrac{r^2}{2}\partial_r(\bar\eth U) - \tfrac43\,\bar\eth\eth\beta,
+&
+\partial_r(rH) &= \tfrac12 r\,\partial_r^2 J + \partial_r J
+ + \frac{\eth^2\beta}{r} - \frac{\eth Q}{2r} - \eth U,
+\label{eq:beta-hierarchy}
+\end{align}
+with $H=\partial_u J$ and $\beta$ $r$-independent at this order. The
+ringed variables ($rJ$, $r^2U$, \dots) diverge at scri on anchored-gauge
+data ($k=0,1$ tails); the unringed system \eqref{eq:beta-hierarchy} is
+regular on $y\in[-1,1]$ in both gauges, and
+$\psi_0^t = -\partial_r J_t/(2r) - \partial_r^2 J_t/4$ is gauge-invariant
+(the anchored tails are exactly $\psi_0$-silent). Worldtube data are
+sampled live from the Cauchy ADM state on three geodesic spheres
+($\ell{=}2$ projections; $\partial_t h = -2K$ at linear order) and mapped
+by a six-row local contract to the anchored boundary scalars
+$(J,Q,U,W,H,\beta)_{\rm wt}$. Cone labeling is retarded, $u = t - r$:
+the boundary datum at Cauchy time $t$ is the $\psi_0$ probe at $r_B$ on
+the earlier cone $u = t - r_B$ (causality lag, served from a per-substep
+history).
+
+\emph{Verification.} (i) Standalone: anchored end-to-end $\psi_0$ probe
+within $8.8\times10^{-5}$ of the exact datum
+($7.1\times10^{-6}$ at halved step; truncation-dominated). (ii) Live
+analytic-stub battery: mode-(solver) vs.\ mode-(self-datum) waveforms
+agree to $4.1\times10^{-9}$ of peak. (iii) For the purely outgoing test
+the live datum is conditioning-limited \emph{by physics}
+($\psi_0/J\sim10^{-8}$ peeling: fidelity would need
+$10^{-11}$-relative tube data); the fidelity demonstration instead uses
+the characteristic-pulse-injection test of Ref.~\cite{Ma:2023qjn}
+Sec.~V.C (ingoing $\ell{=}2$ pulse on the initial null slice, quiescent
+Cauchy data, $\psi_0/J = 7\times10^{-3}$): the live datum matches the
+verified solver to $7\times10^{-8}$ of peak in the causally clean
+window; the transmitted burst exits the Cauchy domain at
+$t_2 = t_1 + 2R$ within $0.12$; a no-datum control shows the entire
+response is datum-attributable ($2.9\times10^{-10}$ of peak)
+[Fig.~\ref{fig:liveccm}(a,b)]. (iv) Cross-oracle: SpECTRE
+\texttt{CharacteristicExtract} (the CCE of Ref.~\cite{Ma:2023qjn}), run
+on a Bondi--Sachs worldtube file generated from the exact solution,
+reproduces $\Psi_4 = -\sqrt{6\pi/5}\,F^{(6)}$ to $6\times10^{-6}$
+relative and the datum normalization
+$\Psi_0 = -\tfrac98 F^{(2)}$ ($s^2$ shape) to $0.1\%$
+[Fig.~\ref{fig:liveccm}(c)]. (v) Constraint rows: a frozen-coefficient
+LF/GKS analysis of the $(\Theta, Z_s)$ boundary realizations shows every
+matched-falloff advection closure is stable and already absorbs the
+constraint pair at $1-O\big((\sigma/2\omega r)^2\big)$; falloff-mismatched
+sink rows self-generate $O(10\%)$ pair reflection — the production
+default remains the matched (stock) realization of the
+\eqref{eq:bc-cpbc} rows.
+\end{nfblock}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{zccm_live_ccm.pdf}
+\caption{Live-CCM results (Sec.~\ref{sec:liveccm}). (a) The
+characteristic-pulse fidelity test: live $\psi_0$ datum at the Cauchy
+boundary vs.\ the quiescent-worldtube (mirror/CCE) reference — the
+early-window agreement is $7\times10^{-8}$ of peak; the later $O(1)$
+separation \emph{is} the matching physics (the live run transmits and
+later re-receives the pulse). (b) The transmitted burst at the
+extraction radius exits at $t_2 = t_1 + 2R$; the no-datum control is
+consistent with zero. (c) SpECTRE \texttt{CharacteristicExtract} on the
+exact worldtube data vs.\ the closed forms (shaded wide: oracle output;
+dashed: $-\sqrt{6\pi/5}F^{(6)}$ and $-\tfrac98 c_2 F^{(2)}$). Generator:
+\texttt{scripts/plot\_paper\_figures\_v2.py}; data:
+\texttt{results/numerical/n14\_native/}, \texttt{n14\_pulse\_ref.csv},
+\texttt{spectre\_oracle/} (ledger nodes N13--N14).}
+\label{fig:liveccm}
+\end{figure}

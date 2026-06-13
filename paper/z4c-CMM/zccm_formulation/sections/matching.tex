@@ -1,0 +1,51 @@
+\section{The matching algorithm}
+\label{sec:matching}
+
+% iter-3 target: worldtube sampling + data contract; six-row
+% anchored map (+beta); gauge tails; retarded cone labeling +
+% causality lag; datum injection; cadence; the derivation DAG.
+\subsection{Worldtube data map (node N1)}
+\label{sec:n1}
+
+\begin{equation}
+g_{00} = -\alpha^2 + \gamma_{ij}\beta^i\beta^j,\qquad
+g_{0i} = \gamma_{ij}\beta^j,\qquad
+g_{ij} = \gamma_{ij};
+\qquad
+g^{00} = -\alpha^{-2},\quad
+g^{0i} = \frac{\beta^i}{\alpha^{2}},\quad
+g^{ij} = \gamma^{ij} - \frac{\beta^i\beta^j}{\alpha^{2}}.
+\label{eq:fourmetric}
+\end{equation}
+ADM kinematics requires
+$\partial_t\gamma_{ij} = -2\alpha K_{ij} + \beta^k\partial_k\gamma_{ij}
+ + \gamma_{kj}\partial_i\beta^k + \gamma_{ik}\partial_j\beta^k$.
+From $\gamma_{ij} = \chi^{-1}\tilde\gamma_{ij}$,
+\begin{equation}
+\partial_t\gamma_{ij}
+ = \chi^{-1}\partial_t\tilde\gamma_{ij}
+ - \chi^{-2}\tilde\gamma_{ij}\,\partial_t\chi ,
+\label{eq:dtg-step1}
+\end{equation}
+and inserting \eqref{eq:dtchi}--\eqref{eq:dtgt} with
+$K_{ij} = \chi^{-1}\big(\tilde A_{ij}+\tfrac13\tilde\gamma_{ij}K\big)$,
+$\beta^k\partial_k\gamma_{ij} = \chi^{-1}\beta^k\partial_k\tilde\gamma_{ij}
+ - \gamma_{ij}\,\beta^k\partial_k\ln\chi$,
+\begin{equation}
+\big[\partial_t\gamma_{ij}\big]_{\rm Z4c}
+ - \big[\partial_t\gamma_{ij}\big]_{\rm ADM}
+ = \gamma_{ij}\Big[\tfrac{2}{3}\,D_k\beta^k
+ - \tfrac{2}{3}\,\partial_k\beta^k
+ + \beta^k\partial_k\ln\chi\Big].
+\label{eq:dtg-step2}
+\end{equation}
+\begin{nfblock}
+\begin{equation}
+\boxed{\;D_i\beta^i = \partial_k\beta^k
+ - \tfrac{3}{2}\,\beta^k\,\partial_k\ln\chi\;}
+\qquad\text{[V3: closure exact; naive }D=\partial_k\beta^k\text{ leaves
+residual }+1\cdot\gamma_{ij}\beta^k\partial_k\ln\chi\text{]}.
+\label{eq:divbeta}
+\end{equation}
+\end{nfblock}
+

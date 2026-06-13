@@ -1,0 +1,373 @@
+\section{The Z4c Cauchy system and its boundary sector}
+\label{sec:cauchy}
+
+Black equations are standard literature content, cited at the equation; \nf{dark blue} equations are the machine-verified new Z4c-CCM content (verification labels [V$n$], Table~\ref{tab:static}; ledger nodes in section titles).
+\subsection{Boundary frame and Z4c variables}
+\label{sec:frame}
+
+\begin{equation}
+ds^2 = -\alpha^2\,dt^2 + \gamma_{ij}\,(dx^i+\beta^i dt)(dx^j+\beta^j dt),
+\qquad
+n^\mu = \alpha^{-1}\,(1,\,-\beta^i),
+\label{eq:adm}
+\end{equation}
+\begin{equation}
+s_i = \frac{\partial_i r}{\sqrt{\gamma^{rr}}},\qquad
+s^i = \frac{\gamma^{ir}}{\sqrt{\gamma^{rr}}},\qquad
+m^A = \tfrac{1}{\sqrt{2}}\big(e_2 + i\,e_3\big)^A,
+\label{eq:normal}
+\end{equation}
+\begin{equation}
+\mathring{l}^\mu = \tfrac{1}{\sqrt{2}}\,(n^\mu + s^\mu),\qquad
+\mathring{k}^\mu = \tfrac{1}{\sqrt{2}}\,(n^\mu - s^\mu)
+\qquad\text{\cite{Ruiz:2010qj}}.
+\label{eq:nullvecs}
+\end{equation}
+Z4c variables \cite{Ruiz:2010qj}:
+\begin{equation}
+\chi = (\det\gamma)^{-1/3},\quad
+\tilde\gamma_{ij} = \chi\,\gamma_{ij},\quad
+K = \hat K + 2\Theta,\quad
+\tilde A_{ij} = \chi\Big(K_{ij}-\tfrac{1}{3}\gamma_{ij}K\Big),
+\label{eq:z4cvars}
+\end{equation}
+\begin{align}
+\partial_t \chi &= \tfrac{2}{3}\,\chi\,\big[\alpha(\hat K + 2\Theta) - D_i\beta^i\big],
+\label{eq:dtchi}\\
+\partial_t \tilde\gamma_{ij} &= -2\alpha \tilde A_{ij}
+ + \beta^k \tilde\gamma_{ij,k}
+ + 2\tilde\gamma_{k(i}\,\beta^k_{,j)}
+ - \tfrac{2}{3}\,\tilde\gamma_{ij}\,\beta^k{}_{,k}
+\qquad\text{\cite{Ruiz:2010qj}}.
+\label{eq:dtgt}
+\end{align}
+
+
+\subsection{The Z4c evolution system}
+\label{sec:z4csys}
+
+The Z4c formulation \cite{Bernuzzi:2009ex,Hilditch:2012fp} evolves the
+conformal variables \eqref{eq:z4cvars} together with
+$\hat K = K - 2\Theta$, the conformal trace-free curvature
+$\tilde A_{ij}$, the constraint pair $(\Theta, Z_i)$ --- with $Z_i$
+carried by $\tilde\Gamma^i = \tilde\gamma^{jk}\tilde\Gamma^i_{jk}
+ + 2\tilde\gamma^{ij}Z_j$ --- and the gauge $(\alpha,\beta^i)$. In
+vacuum, with $D_i$ the $\gamma$-covariant derivative and
+$[\cdot]^{\rm TF}$ the $\gamma$-trace-free part, the evolution equations
+are \cite{Bernuzzi:2009ex}
+\begin{align}
+\partial_t \hat K &= \beta^i\partial_i\hat K - D^iD_i\alpha
+ + \alpha\Big[\tilde A_{ij}\tilde A^{ij}
+ + \tfrac13\big(\hat K + 2\Theta\big)^2\Big]
+ + \alpha\,\kappa_1\big(1-\kappa_2\big)\,\Theta,
+\label{eq:dtKhat}\\
+\partial_t \tilde A_{ij} &= \beta^k\partial_k\tilde A_{ij}
+ + 2\tilde A_{k(i}\partial_{j)}\beta^k
+ - \tfrac23\,\tilde A_{ij}\,\partial_k\beta^k
+ + \chi\big[\alpha\,R_{ij} - D_iD_j\alpha\big]^{\rm TF}
+ + \alpha\Big[\big(\hat K + 2\Theta\big)\tilde A_{ij}
+ - 2\,\tilde A_{ik}\tilde A^k{}_j\Big],
+\label{eq:dtAt}\\
+\partial_t \Theta &= \beta^i\partial_i\Theta
+ + \tfrac{\alpha}{2}\Big[\mathcal R + \tfrac23\big(\hat K+2\Theta\big)^2
+ - \tilde A_{ij}\tilde A^{ij}\Big]
+ - \alpha\,\kappa_1\big(2+\kappa_2\big)\,\Theta,
+\label{eq:dtTheta}\\
+\partial_t \tilde\Gamma^i &= \beta^k\partial_k\tilde\Gamma^i
+ - \tilde\Gamma^k\partial_k\beta^i
+ + \tfrac23\,\tilde\Gamma^i\partial_k\beta^k
+ + \tilde\gamma^{jk}\partial_j\partial_k\beta^i
+ + \tfrac13\,\tilde\gamma^{ij}\partial_j\partial_k\beta^k
+ \nonumber\\&\quad
+ - 2\,\tilde A^{ij}\partial_j\alpha
+ + 2\alpha\Big[\tilde\Gamma^i{}_{jk}\tilde A^{jk}
+ - \tfrac32\,\tilde A^{ij}\partial_j\ln\chi
+ - \tfrac13\,\tilde\gamma^{ij}\partial_j\big(2\hat K+\Theta\big)
+ - \kappa_1\,\tilde\gamma^{ij}Z_j\Big],
+\label{eq:dtGam}
+\end{align}
+with $\mathcal R$ the Ricci scalar of $\gamma_{ij}$ and
+$(\kappa_1,\kappa_2)$ the constraint-damping parameters (production:
+$\kappa_1 = 0.02$, $\kappa_2 = 0$). The gauge is 1+log slicing and the
+gamma-driver shift \cite{Bernuzzi:2009ex,Zhu:2024utz},
+\begin{equation}
+\partial_t\alpha = \beta^i\partial_i\alpha
+ - \mu_L\,\alpha^2\,\hat K,
+\qquad
+\partial_t\beta^i = \mu_S\,\tilde\Gamma^i - \eta\,\beta^i
+ + \beta^j\partial_j\beta^i,
+\label{eq:gauge}
+\end{equation}
+(AthenaK realization: $\mu_L = 2/\alpha$, $\mu_S = 1$, $\eta = 2$
+\cite{Zhu:2024utz}). The constraints are
+\begin{equation}
+\mathcal H = \mathcal R + \tfrac23 K^2 - \tilde A_{ij}\tilde A^{ij},
+\qquad
+\mathcal M_i = D^j\big(K_{ij} - \gamma_{ij}K\big),
+\qquad
+\Theta = 0,\qquad Z_i = 0,
+\label{eq:constraints}
+\end{equation}
+and at the principal level the constraint subsystem propagates as waves,
+$\Box\Theta \simeq 0 \simeq \Box Z_i$ \cite{Ruiz:2010qj}, the fact
+underlying the boundary rows of Sec.~\ref{sec:bcrows} and the stability
+analysis of node N13.
+
+
+\subsection{The ten incoming boundary modes}
+\label{sec:modes}
+
+At a timelike outer boundary with frame
+\eqref{eq:adm}--\eqref{eq:nullvecs}, the linearized Z4c system carries
+ten incoming characteristic fields (taxonomy verified at nodes N4/N5:
+transverse-traceless = physical; $h_{ss}$ = gauge; $h_{sA}$ =
+constraint-vector; tangential trace = constraint-scalar):
+\begin{table}[htbp]
+\centering
+\caption{Incoming boundary modes of Z4c-CCM and their data sources
+(ledger node N6). Per-speed outgoing characteristic vectors
+$\mathring X^a = (\mathring n^a + \sqrt{v}\,\mathring s^a)/\sqrt2$ at
+sector speed $v$ \cite{Ruiz:2010qj}; production order $L \ge 1$.}
+\label{tab:modes}
+\footnotesize
+\begin{tabular}{cllll}
+\hline\hline
+\# & sector & incoming field & speed & boundary condition (datum) \\
+\hline
+1--2 & physical & $U^-_{AB} = {\rm TT}_2[E+\epsilon(s)B]_{AB}$ & $1$ &
+ $U^-_{AB} \hateq -(\psi_0'\,\bar m_A\bar m_B + {\rm c.c.})$
+ \;[CCM: $\psi_0' = A^2\psi_0^{\rm CCE}$] \\
+3 & constraint & $\Theta$ & $1$ &
+ $(r^2\,\mathring l\cdot\partial)^{L+1}\,\Theta \hateq 0$ \\
+4 & constraint & $Z_s$ & $1$ &
+ $(r^2\,\mathring l\cdot\partial)^{L+1}\,Z_s \hateq 0$ \\
+5--6 & constraint & $Z_A$ & $1$ &
+ $(r^2\,\mathring l\cdot\partial)^{L+1}\,Z_A \hateq 0$ \\
+7 & gauge & $\alpha$ & $\sqrt{\mu_L}$ &
+ $(r^2\,\mathring m\cdot\partial)^{L+1}\,\alpha \hateq h_\alpha$ \\
+8 & gauge & $\beta_s$ & $\sqrt{\nu_s}$ &
+ $(r^2\,\mathring k_{\nu_s}\!\cdot\partial)^{L+1}\,\beta_s \hateq h_s$ \\
+9--10 & gauge & $\beta_A$ & $\sqrt{\mu_S}$ &
+ $(r^2\,\mathring j\cdot\partial)^{L+1}\,\beta_A \hateq h_A$ \\
+\hline\hline
+\end{tabular}
+\end{table}
+The constraint and gauge rows are those of Ref.~\cite{Ruiz:2010qj}
+adapted to the Z4c variable set; the physical rows 1--2 carry the CCM
+datum and constitute the new content (Secs.~\ref{sec:n2}--\ref{sec:n3},
+\ref{sec:bcrows}). With $\psi_0'\to0$ the set reduces exactly to the
+absorbing constraint-preserving scheme of Ref.~\cite{Ruiz:2010qj} [V6].
+The frozen-coefficient LF/GKS analysis of the constraint rows (node N13)
+shows that every matched-falloff advection realization of rows 3--6 is
+stable and absorbs the $(\Theta,Z_s)$ pair at
+$1-O\big((\sigma/2\omega r)^2\big)$, that falloff-mismatched sink
+variants self-generate $O(10\%)$ pair reflection, and that the production
+default (the stock matched realization) is the admissible optimum.
+
+\subsection{Tetrad correspondence and Type-II boost (node N2)}
+\label{sec:n2}
+
+Outgoing null label $u$ with $u|_{\partial\Omega}=t$:
+$\partial_\mu u = (1,\,u_r,\,0,\,0)$,
+\begin{equation}
+g^{tt} + 2g^{tr}u_r + g^{rr}u_r^2 = 0
+\quad\Longrightarrow\quad
+u_r = \frac{-g^{tr}-\sqrt{(g^{tr})^2 - g^{tt}g^{rr}}}{g^{rr}},
+\qquad u_r\big|_{\rm flat} = -1 .
+\label{eq:uroot}
+\end{equation}
+Characteristic outgoing null vector \cite{Moxon:2020gha,Ma:2023qjn}:
+\begin{equation}
+\hat l^{\,\mu} = -e^{2\hat\beta}\,g^{\mu\nu}\partial_\nu u .
+\label{eq:lhat}
+\end{equation}
+\begin{nfblock}
+For arbitrary $(\alpha,\beta^i,\gamma_{ij})$,
+\begin{equation}
+\mathring{l}^{\mu}
+ = \frac{\sqrt{2}}{2}\,
+ \big(\alpha-\gamma_{ij}\beta^i s^j\big)\,e^{-2\hat\beta}\;
+ \hat l^{\,\mu}
+\qquad\text{[V1: exact at 12 rational points; GPU residual
+$9.3\times10^{-16}$]},
+\label{eq:boost-identity}
+\end{equation}
+\begin{equation}
+A = \big(\alpha-\gamma_{ij}\beta^i s^j\big)\,e^{-2\hat\beta},
+\qquad
+\psi_0' = A^2\,\psi_0 ,
+\label{eq:boost}
+\end{equation}
+i.e.\ the Choice-2 boost of Ref.~\cite{Ma:2023qjn} holds verbatim on the Z4c
+frame \eqref{eq:nullvecs}: no evolution-system variable enters
+\eqref{eq:boost-identity}.
+\end{nfblock}
+$\psi_0$ on the characteristic grid \cite{Moxon:2020gha,Ma:2023qjn}:
+\begin{equation}
+\psi_0=\Big(\frac{r\partial_{r}\beta-1}{4Kr}\Big)
+\Big[(1{+}K)\partial_{r}J-\frac{J^2\partial_{r}\bar{J}}{1{+}K}\Big]
++\frac{J(1{+}K^2)\,\partial_{r}J\,\partial_{r}\bar{J}}{8K^3}
++\frac{1}{8K}\Big[\frac{J^2\partial^2_{r}\bar{J}}{1{+}K}
+ -(1{+}K)\partial_{r}^2J\Big]
+-\frac{J\bar{J}^2(\partial_{r}J)^2+J^3(\partial_{r}\bar{J})^2}{16K^3}.
+\label{eq:psi0cce}
+\end{equation}
+
+\subsection{Physical-mode dictionary (node N3, exact)}
+\label{sec:n3}
+
+Electric/magnetic Weyl decomposition w.r.t.\ $n^\mu$ (vacuum):
+\begin{equation}
+E_{\mu\nu} = C_{\mu\alpha\nu\beta}\,n^\alpha n^\beta,
+\qquad
+B_{\mu\nu} = \tfrac12\,\epsilon_{\mu\alpha}{}^{\gamma\delta}
+             C_{\gamma\delta\nu\beta}\,n^\alpha n^\beta,
+\qquad
+\epsilon_{\mu\nu\rho\sigma}=\sqrt{-g}\,[\mu\nu\rho\sigma].
+\label{eq:ebdef}
+\end{equation}
+\begin{nfblock}
+EXACT identity (pure Weyl algebra, generic 10-component tensor; no
+perturbation, no field equations) [V2a]:
+\begin{equation}
+\big(E_{\mu\nu} + \epsilon_{\mu}{}^{\kappa\lambda}s_\kappa
+ B_{\lambda\nu}\big)\,m^\mu m^\nu \;=\; -\,\psi_0,
+\qquad
+\big(E_{\mu\nu} - \epsilon_{\mu}{}^{\kappa\lambda}s_\kappa
+ B_{\lambda\nu}\big)\,m^\mu m^\nu \;=\; -\,\bar\psi_4,
+\label{eq:exact-dictionary}
+\end{equation}
+with $\psi_0 = -C_{abcd}\,l^a m^b l^c m^d$ on the frame \eqref{eq:nullvecs};
+dyad completeness ($U_{AB} = U(m,m)\,\bar m_A \bar m_B + \mathrm{c.c.}$ for
+tangential trace-free $U$) gives the tensor form of the incoming Weyl object
+\begin{equation}
+U^-_{AB} \;\equiv\; \mathrm{TT}_2\big[E + \epsilon(s)B\big]_{AB}
+ \;=\; -\big(\psi_0\,\bar m_A \bar m_B + \bar\psi_0\, m_A m_B\big).
+\label{eq:uminus}
+\end{equation}
+Realization from the Z4c state (Gauss--Codazzi, on-shell vacuum;
+$\gamma_{ij}, K_{ij}$ from \eqref{eq:z4cvars}) [V2c]:
+\begin{equation}
+E_{ij} = R_{ij}[\gamma] + K\,K_{ij} - K_{ik}K^k{}_j,
+\qquad
+B_{ij} = \epsilon_i{}^{kl}\,D_k K_{lj}\big|_{\rm sym},
+\qquad
+\epsilon_{ikl} = \sqrt{\det\gamma}\,[ikl].
+\label{eq:gausscodazzi}
+\end{equation}
+\end{nfblock}
+Nonperturbative verification (Kerr--Schild Schwarzschild, autodiff, both
+routes; Table~\ref{tab:static} V2c): $|E^{3+1}{-}E^{4D}|$ rel.\
+$7.7{\times}10^{-17}$, $|B^{3+1}{-}B^{4D}|$ rel.\ $3.9{\times}10^{-17}$,
+identity residual $8.5{\times}10^{-16}$. Linearized on-shell flat limit
+(superseded defining form, now a corollary [V2b]): for TT $h_{AB}(t,x_s)$,
+$\psi_0 = \tfrac14(\partial_t+\partial_s)^2 h_{mm}$ and
+$U^-_{AB}\to -\tfrac14 (\partial_t + \partial_s)^2 \gamma^{\rm TF}_{AB}$,
+i.e.\ $(\partial_t+\partial_s)^2\gamma^{\rm TF}_{AB}
+ = 4(\psi_0 \bar m_A\bar m_B + \mathrm{c.c.})$.
+
+\subsection{The Z4c-CCM boundary conditions (node N6)}
+\label{sec:bcrows}
+\label{sec:n6}
+
+Ten incoming modes at the worldtube; $X^{\mathring{}}{}^\mu_v =
+(n^\mu + \sqrt{v}\,s^\mu)/\sqrt 2$ at sector speed $v$; $L\ge 1$:
+\begin{nfblock}
+\begin{align}
+\text{physical (2):}\qquad &
+U^-_{AB} \;\hat=\;
+-\Big(\psi_0'\,\bar m_A\bar m_B + \bar\psi_0'\,m_A m_B\Big),
+\qquad \psi_0' = A^2\,\psi_0^{\rm CCE}
+\quad\text{(exact, \eqref{eq:uminus}--\eqref{eq:gausscodazzi})},
+\label{eq:bc-phys}\\
+\text{constraint (4):}\qquad &
+\big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,\Theta \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,Z_s \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring l\!\cdot\!\partial\big)^{L+1}\,Z_A \;\hat=\; 0,
+\label{eq:bc-cpbc}\\
+\text{gauge (4):}\qquad &
+\big(r^2\,\mathring m\!\cdot\!\partial\big)^{L+1}\alpha \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring k_{\nu_s}\!\!\cdot\!\partial\big)^{L+1}\beta_s \;\hat=\; 0,
+\qquad
+\big(r^2\,\mathring j\!\cdot\!\partial\big)^{L+1}\beta_A \;\hat=\; 0 .
+\label{eq:bc-gauge}
+\end{align}
+Bj{\o}rhus form of \eqref{eq:bc-phys} (the correction drives the
+incoming Weyl object to its CCM value, the Z4c analog of
+Ref.~\cite{Ma:2023qjn}):
+\begin{equation}
+U^-_{AB} - U^-_{AB}\big|_{\rm BC} \to 0,
+\qquad
+U^-_{AB}\big|_{\rm BC} = -\Big(\psi_0'\,\bar m_A\bar m_B
+ + \bar\psi_0'\,m_A m_B\Big);
+\qquad
+\psi_0^{\rm CCE}\!\to 0 \;\Longrightarrow\; \text{CPBC scheme of
+Ref.~\cite{Ruiz:2010qj}}
+\quad\text{[V6]}.
+\label{eq:bjorhus}
+\end{equation}
+\end{nfblock}
+Equations \eqref{eq:bc-cpbc}--\eqref{eq:bc-gauge} are the order-$L$
+conditions of Ref.~\cite{Ruiz:2010qj}; \eqref{eq:bc-gauge} replaces the
+Sommerfeld gauge placeholder of Ref.~\cite{Ma:2023qjn}.
+
+\subsection{Sector orthogonality (nodes N4, N5)}
+\label{sec:n45}
+
+For arbitrary TT data $h_{AB}(t,x_s)$ [V4]:
+\begin{equation}
+\mathcal H = \partial_i\partial_j h_{ij} - \partial^2 h^k{}_k = 0,
+\qquad
+\mathcal M_i = \partial_j \dot h_{ij} - \partial_i \dot h^j{}_j = 0,
+\qquad
+\gamma^{ij}\partial_t h_{ij} = 0,
+\qquad
+\tilde\Gamma^i = -\partial_j \tilde h^{ij} = 0 ;
+\label{eq:orthogonality}
+\end{equation}
+negative controls:
+$h_{x_s y}=G(t,x_s)\Rightarrow \mathcal M_y = -\tfrac12\,\partial_{x_s}\dot G \neq 0$;
+$h_{yy}=h_{zz}=G \Rightarrow \mathcal H = -2\,\partial_{x_s}^2 G \neq 0$.
+\begin{nfblock}
+Hence the datum \eqref{eq:bc-phys} sources neither
+\eqref{eq:bc-cpbc} nor \eqref{eq:bc-gauge} at linear order: the three
+sectors of \eqref{eq:bc-phys}--\eqref{eq:bc-gauge} commute.
+\end{nfblock}
+On the boundary wave model of Ref.~\cite{Ruiz:2010qj},
+$\big[\partial_t^2 - 2\mathring\beta\,\partial_t\partial_x
+ - (1-\mathring\beta^2)\partial_x^2\big]u = 0$, plane-wave reflection [V5]:
+\begin{equation}
+R_{\rm Sommerfeld}
+ = -\frac{\mathring\beta\,(1-\mathring\beta)}
+        {(1+\mathring\beta)(2-\mathring\beta)} \neq 0,
+\qquad
+R_{(\partial_t + c_+\partial_x)} = 0
+\quad\text{(identically)} .
+\label{eq:reflection}
+\end{equation}
+
+\subsection{Frozen-coefficient boundary stability (node N7)}
+\label{sec:n7}
+
+Laplace--Fourier ansatz $u = \tilde u\,e^{st+\lambda x}$, $\Re s>0$ [V7]:
+\begin{equation}
+\lambda_+ = \frac{s}{1+\mathring\beta}\;(\text{admissible}),
+\qquad
+\lambda_- = -\frac{s}{1-\mathring\beta},
+\qquad
+D_L(s) = \Big(s + (1+\mathring\beta)\,\lambda_+\Big)^{L+1} = (2s)^{L+1},
+\qquad
+\frac{|D_L(s)|}{|s|^{L+1}} = 2^{L+1} .
+\label{eq:kreiss}
+\end{equation}
+\begin{nfblock}
+$D_L$ contains no datum symbol: the injection \eqref{eq:bc-phys} modifies
+only the inhomogeneity, so the boundary-stability results of
+Ref.~\cite{Ruiz:2010qj} (constraint sector: all $L$; gauge+metric sector:
+spherical reduction, asymptotically harmonic shift) transfer verbatim with
+$\|u\| \le C\,\|\psi_0'\text{-datum}\|$.
+\end{nfblock}
+

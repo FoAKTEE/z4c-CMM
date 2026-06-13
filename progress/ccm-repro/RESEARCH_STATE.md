@@ -85,3 +85,13 @@ queued. Transcript ccm_repro_p2bde_check.txt.
 - then: P2c pulse overlays (mode6 + mirror vs their ccm/cce); P2b X=2
   config attempt; P2d BH feasible slice + resource-limit documentation;
   P2e Bondi-violation norms (scri or ported norms).
+
+# Mission 5 (production paper, USER DIRECTIVE 2026-06-13)
+
+Full production-level formulation paper following the CCM paper's
+organization with the complete Z4c-CCM equation chain + derivation DAG.
+Loop state .claude/ralph-loop.local.md; plan: iter 1 skeleton + Sec II
+(DONE: full Z4c system, 10-mode table, N-node content redistributed; 8
+pages, 0 unresolved refs); iter 2 Sec III characteristic; iter 3 Sec IV
+matching + DAG figure; iter 4 Sec V consolidation + I/VI + appendices;
+iter 5 consistency pass + exit.
