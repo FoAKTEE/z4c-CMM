@@ -305,3 +305,26 @@ adequate for S2-S4. Relaxed NewtonRaphson to RelativeResidual 1e-7 / AbsoluteRes
 constraint-satisfying volume H5. (If a tighter ID is ever needed, implement analytic
 deriv_conformal_metric in TeukolskyWave -- the option de-risked away earlier.)
 Re-running at +p32 (orchestrator bgfr520jb).
+
+## S1 CONVERGED (volume written) + constraint anomaly (2026-06-13)
+The +p32 re-run (AbsRes 1e-8) CONVERGED: NewtonRaphson 0.42 -> 1.22e-2 -> 2.25e-5
+-> 2.255e-8 in 4 steps; 32 XctsTeukolskyX2Volume*.h5 written (g_ij, K_ij, psi,
+alpha, beta + constraints). The XCTS elliptic system is solved.
+
+ANOMALY (honest, [PRELIMINARY]): the SpECTRE-observed ADM Hamiltonian L2 did NOT
+decrease across the solve: initial(psi=1)=3.848e-2 -> after-solve(AMR1)=6.768e-2
+(MomL2 also up). The valid BBH reference DECREASED (1.75e-2 -> 5.10e-3). The XCTS
+residual is tiny (2.25e-8), so the equations are solved; the ADM constraint not
+dropping points to FD-derivative noise in TeukolskyWave's conformal Ricci
+(deriv_conformal_metric is a 4th-order finite difference; the spectral derivative
+of the FD-built Christoffel pollutes R_bar, so the constraint the XCTS operator
+nominally enforces is itself noisy). The SpECTRE L2 normalization over the
+4.67e32-volume domain is also ambiguous.
+
+DECISIVE TEST = S2: import the volume into AthenaK (z4c_teuk_xcts_import_check.athinput,
+pgen z4c_spectre_bbh) and recompute H/M on the AthenaK grid (independent FD),
+comparing to the linear-ID baseline. If << linear ID -> S1 genuinely good (the
+SpECTRE Ham was a free-data-Ricci artifact). If comparable -> implement analytic
+deriv_conformal_metric in TeukolskyWave (differentiate the Teukolsky h analytically;
+the option de-risked away in S1) + rebuild + re-solve. S1 NOT declared a clean pass
+until S2 adjudicates.
