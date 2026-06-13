@@ -98,3 +98,12 @@ iter 5 consistency pass + exit.
 m5-iter 3 DONE: Sec IV matching complete (contract, six-row map,
 retarded geometry + O-M5-1, cadence) + the TikZ derivation DAG fig:dag.
 12 pages clean.
+
+## X=2 FULL CAMPAIGN (user-authorized 8 GPUs / 2 days, 2026-06-13)
+Launched detached (scripts/x2_full_campaign.sh): causally-disconnected
+reference 768^3 box +-192 (boundary influence at r=36 only from t=156)
++ boundary-41 Sommerfeld/CCM(mode-3) pairs at h = 0.5/0.25/0.125; all at
+the att2-stable X=2 config (diss=0.1, kappa1=0.1, nghost=4). Goal: the
+paper-protocol X=2 error hierarchy (E[run] vs reference << E_h) with
+shared linear ID (internally consistent; the XCTS difference documented).
+STATUS: results/numerical/ccm_repro_x2_full/STATUS.log; hourly checks.
