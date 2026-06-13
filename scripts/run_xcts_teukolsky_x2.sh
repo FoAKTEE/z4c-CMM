@@ -7,7 +7,8 @@ OUT=/data/haiyangw/nr/spectre/x2_xcts_run
 mkdir -p "$OUT" && cd "$OUT"
 cp /data/haiyangw/nr/spectre/SolveXctsTeukolskyX2.yaml .
 echo "$(date -u +%FT%TZ) XCTS solve START (ncore=$NCORE)"
-"$SPECTRE_BUILD/bin/SolveXcts" --input-file SolveXctsTeukolskyX2.yaml +p"$NCORE" \
+# Vacuum XCTS executable (no hydro observation; registers TeukolskyWave).
+"$SPECTRE_BUILD/bin/SolveXctsVacuum" --input-file SolveXctsTeukolskyX2.yaml +p"$NCORE" \
   > xcts_solve.log 2>&1
 echo "XCTS_EXIT=$? $(date -u +%FT%TZ)"
 ls -la XctsTeukolskyX2Volume*.h5 XctsTeukolskyX2Reductions.h5 2>/dev/null

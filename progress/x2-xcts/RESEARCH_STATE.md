@@ -164,3 +164,46 @@ reuses this pgen with a new athinput pointing at XctsTeukolskyX2Volume*.h5
 compiling, S2 yaml ready, S3 import path reusable. Blocking on the
 SpECTRE rebuild (bnfu6m6yi, final SolveXcts.cpp.o TU); on completion ->
 S1 pointwise gate + S2 XCTS solve.
+
+## S0b — vacuum XCTS executable (no hydro); cadence fix (2026-06-13)
+ROOT CAUSE of the first SolveXcts rebuild failure (BUILD_EXIT=2, 12
+`error:` lines): the general `SolveXcts` metavariables instantiate
+`Xcts::Tags::HydroQuantitiesCompute` for EVERY factory-registered
+background (via `call_with_dynamic_type` over `factory_classes`'s
+Background list), which calls `derived->variables(coords, HydroTags{})`
+for the six hydro primitives (RestMassDensity, SpecificEnthalpy,
+Pressure, SpatialVelocity, LorentzFactor, MagneticField). DuckTovStar
+provides them; the genuinely-vacuum TeukolskyWave does not -> no-match
+compile errors in CachedTempBuffer for each hydro tag.
+
+FIX (user steer: "this is a vacuum solution, you should not call hydro at
+all"): do NOT bolt zero-hydro overloads onto a vacuum class. Instead added
+a dedicated vacuum executable `SolveXctsVacuum` (SolveXctsVacuum.{hpp,cpp}
++ CMake target) = SolveXcts minus the HydroQuantitiesCompute /
+LowerSpatialFourVelocity observation machinery, and registered
+TeukolskyWave there. Reverted TeukolskyWave out of the general SolveXcts
+so it stays buildable. The factory_classes are otherwise IDENTICAL to
+SolveXcts (incl. DuckTovStar + the grmhd InitialMagneticField pair, which
+is required because `all_analytic_solutions` contains
+WrappedGr<MagnetizedTovStar> whose MagneticFields option is creatable
+against that base). A first trim that dropped the MHD pair tripped the
+"List of creatable derived types ... missing from factory_classes" static
+assert (error-DB worthy); restoring the pair fixed it. Provenance copies:
+progress/x2-xcts/spectre_src/{SolveXctsVacuum.hpp,SolveXctsVacuum.cpp,
+SolveXcts.hpp,CMakeLists.txt}. Run scripts now target SolveXctsVacuum.
+
+CADENCE (user steer: "short prompt only after a full 1M-token window; long
+self-injection every 5-10"): re-keyed the Stop-hook prompts on token-window
+consumption read from the session transcript. loop_gate now reads context
+occupancy (input+cache tokens of the latest turn); the verbose short prompt
+fires once per ~1M-token window (90% high-water, re-armed below 50%), the
+long protocol injection every 5-10 windows; terse one-line nudge otherwise;
+iteration-counter fallback when the transcript is unavailable. The guard
+always blocks while active so the loop never dies. Committed:
+phys-agentic-loop 742d83d (submodule) + z4c-CMM 198b576 (guard + pointer).
+
+CONVERGENCE FIGURE (user ask: "render a figure similar to the BBH one in
+SpECTRE for human read"): scripts/plot_xcts_convergence.py written — reads
+the reductions H5 by Legend attributes, renders solver residual vs
+cumulative iteration (log-y) + Hamiltonian/Momentum constraint L2 norms.
+To be populated once the S2 solve writes XctsTeukolskyX2Reductions*.h5.
