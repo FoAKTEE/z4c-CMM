@@ -1,0 +1,53 @@
+Mission 4 P2c (iter 4): Sec V.C characteristic-pulse-injection overlays
+vs the authors' published pulse_on_characteristic_grid data (identical
+pulse: Z=1e-3, yc=0, ymin/max=-+0.8, tauy=0.15).
+
+Geometry differences (documented): their tube = Cauchy boundary = 41,
+full nonlinear CCE, GH spherical Cauchy, psi4 at scri; ours tube 40 /
+datum radius 41, linear l=2 native solver, Z4c cubic Cauchy, rpsi4 at
+r=36. Conversions: psi0 t-scalar -> (2,0) modal by the DERIVED factor
+c2 = 4 sqrt(2pi/15) = 2.5888 (s^2 = c2 * 2Y20); psi4 panel uses a FITTED
+scale (reported, see below).
+
+[MEAS] psi0-at-boundary trough (the paper's t1 feature):
+       theirs -4.5117e-6 at t = 54.83
+       our MIRROR solver x c2: -4.4496e-6 at t = 52.50
+       amplitude ratio 0.9862 (1.4%); time offset +2.33, inside the
+       geometric expectation +1.3..+3.0 (their tube 41 vs ours 40:
+       center feature +3, inner-edge feature +1.3).
+[MEAS] secondary |max|: theirs +6.411e-6 at 78.15; our mirror x c2
+       +7.026e-6 at 75.47 (ratio 1.096; offset +2.7 — same class).
+[FIND] their LIVE (CCM) InnerPsi0 agrees with OUR MIRROR (quiescent-
+       tube) solver at the 1-10% level through the main pulse, while
+       OUR LIVE mode-6 series deviates from the mirror by O(30%) in the
+       trough region (iter-45 Gate-A separation). Reading: the full-CCE
+       two-way coupling keeps the boundary psi0 near the clean
+       characteristic solution at these epochs; our live coupling's
+       O(dt) BC holding + tube-inside-datum geometry inject
+       feedback artifacts at the tens-of-percent level. The authors'
+       published data thus LOCALIZES our coupling error - actionable
+       for the queued O(dt) refinement (linear-in-time BC
+       interpolation). Honest amendment to the iter-45 reading: the
+       live-vs-mirror separation there is partly coupling artifact,
+       not all transparency physics.
+[MEAS] psi4 burst structure maps feature-for-feature with +3..+4
+       offsets (same geometric origin + scri-vs-r=36 mapping):
+       their CCE mirror +peak 1.761e-4 at t1 = 55.07 (we have no psi4
+       mirror analog: our control is flat - documented);
+       their CCM exit +peak 2.579e-4 at 139.27 vs our earlier exit lobe;
+       their exit trough -2.717e-4 at 164.58 vs ours -7.415e-4 at 160.88.
+[MEAS] psi4 amplitude: fitted scale ours/theirs = 2.7295; the derived
+       modal factor c2 = 2.5888 accounts for it within 5.4% (residual
+       1.054 = finite-r-36-vs-scri + convention; flagged unresolved -
+       deriving the exact finite-radius factor through the analytic
+       transport is a queued refinement, not fudged here).
+
+Artifacts: results/figures/ccm_paper_repro_p2/pulse/pulse_overlay.pdf
+(generator scripts/ccm_repro_p2c.py).
+
+VERDICT: timing and structure of the paper's transparency demonstration
+quantitatively reproduced (t1 amplitude 1.4%, offsets at the geometric
+expectation); amplitude conversions derived except the 5.4% psi4
+residual factor (documented); the live-coupling discrepancy is a
+localized, actionable finding. M4-P2c admitted SOLID with the two
+documented gaps (psi4 residual factor; no psi4 mirror analog).

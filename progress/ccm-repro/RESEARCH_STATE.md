@@ -41,6 +41,15 @@ tolerance floor at X=1e-5 (tightening OUR tolerances: 25x improvement to
 (measured). Their CCM-vs-CCE = 3.6e-6 of peak (the matching-term effect,
 quantified from their own data). Transcript ccm_repro_p2a_check.txt.
 
+## Iteration 4 (P2c pulse overlays): DONE — M4-P2c [SOLID]
+Their CCM InnerPsi0 trough vs our mirror x c2 (derived): amplitude ratio
+0.9862, offset +2.33 (geometric expectation +1.3..+3.0). psi4 features
+map 1:1 (+3..+4 offsets); fitted scale 2.73 = c2 within 5.4% (finite-r
+residual documented). KEY: their live data matches our MIRROR, not our
+live - localizes our O(dt)/geometry coupling artifacts (iter-45 reading
+amended); actionable for the linear-in-time BC refinement. Transcript
+ccm_repro_p2c_check.txt.
+
 ## Queue
 - iter 3+: P2a X=1e-5 overlays (our mode3-5 batteries vs their ccm/cce
   Psi4 data; matched cadence; deltas + formulation differences).
