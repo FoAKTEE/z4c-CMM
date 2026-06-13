@@ -62,3 +62,30 @@ KEY plan discovery: the SpECTRE->AthenaK import already exists
 so S3 reuses it. NEXT S1: write Xcts::AnalyticData::TeukolskyWave (model
 DuckTovStar; conformal metric delta+h, K=0, Atilde from -1/2 dt h),
 rebuild SpECTRE, pre-solve pointwise gate vs an independent Python eval.
+
+## S1 IN PROGRESS (2026-06-13) — Xcts::AnalyticData::TeukolskyWave
+Foundations laid this iteration:
+- Interface: the class implements ~20 variables() overloads (modeled on
+  DuckTovStar.hpp): ConformalMetric(+inv,+deriv), Extrinsic/Trace K
+  (+deriv,+dt), ConformalFactor/Lapse(+TimesCF) guesses, Shift
+  background/excess(+deriv) + LongitudinalShiftBackgroundMinusDt
+  ConformalMetric, matter sources = 0 (vacuum).
+- VERIFIED free-data source in hand: athenak/src/pgen/z4c_ccm_teukolsky.cpp
+  TeukolskyMetric() gives the exact Cartesian h[a][b] + hdot[a][b]
+  (z4c::TeukolskyF ladder, Q/R combos, A/B/C radial, l=2 m=0 angular
+  basis, iter-18 frame eth=eph x rh; vacuum-verified 1.9e-34). The XCTS
+  conformal metric = delta + h; K = -1/2 tr(hdot) = 0 (TT); Atilde from
+  -1/2 hdot via the conformal-thin-sandwich Longitudinal...DtConformal
+  term.
+- KEY requirement confirmed: Binary.cpp shows the XCTS elliptic system
+  needs deriv_conformal_metric ANALYTICALLY (feeds ConformalChristoffel),
+  so TeukolskyWave must provide d_k h_ij(x,y,z) analytically. This is the
+  R2-risk crux (sign/normalization).
+- PLAN to manage R2: derive d_k h_ij symbolically (ZccmJl/sympy), codegen
+  or hand-write the C++ and gate it against the symbolic eval to 1e-12 at
+  fixed points; reuse the verified TeukolskyF ladder. Same for the
+  hdot -> Atilde-bar mapping (verify against SpECTRE's XCTS background
+  convention from FirstOrderSystem.hpp / the dt-conformal-metric tag).
+- NEXT: (a) symbolic d_k h_ij + the XCTS Atilde convention; (b) write
+  TeukolskyWave.{hpp,cpp} + factory/CMake edits; (c) rebuild SpECTRE
+  (make -j64 SolveXcts; ~30 min); (d) pre-solve pointwise gate vs Python.
