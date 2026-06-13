@@ -255,3 +255,21 @@ error $2.02\times10^{-3}$ \eqref{eq:teuk-E}. Generator:
 \texttt{results/numerical/athenak\_teuk\_ana/gpu6/} (ledger node N12).}
 \label{fig:teuk}
 \end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{zccm_live_ccm.pdf}
+\caption{Live-CCM verification (Secs.~\ref{sec:betahierarchy}--%
+\ref{sec:solver}, \ref{sec:matching}). (a) The characteristic-pulse
+fidelity test: live $\psi_0$ datum at the Cauchy boundary vs.\ the
+quiescent-worldtube (mirror) reference — early-window agreement
+$7\times10^{-8}$ of peak; the later $O(1)$ separation is the matching
+physics. (b) The transmitted burst at the extraction radius exits at
+$t_2 = t_1 + 2R$; the no-datum control is consistent with zero. (c)
+SpECTRE \texttt{CharacteristicExtract} on the exact worldtube data
+\eqref{eq:teukbondi} vs.\ the closed forms. Generator:
+\texttt{scripts/plot\_paper\_figures\_v2.py}; data:
+\texttt{results/numerical/n14\_native/}, \texttt{n14\_pulse\_ref.csv},
+\texttt{spectre\_oracle/}.}
+\label{fig:liveccm}
+\end{figure}

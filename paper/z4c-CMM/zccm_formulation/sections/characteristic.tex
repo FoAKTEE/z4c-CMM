@@ -1,25 +1,104 @@
 \section{The characteristic system}
 \label{sec:characteristic}
 
-% iter-2 target: Bondi-Sachs metric + falloffs; the nonlinear
-% hypersurface hierarchy (cited); OUR linear l=2 scalarized chain
-% (ringed + unringed + machine-derived beta sources); spectral
-% solver; psi0 formula + gauge invariance; pulse ID.
-\begin{nfblock}
-\subsection{Live Cauchy--characteristic matching inside AthenaK
-(nodes N13--N14)}
-\label{sec:liveccm}
+\subsection{Bondi--Sachs framework}
+\label{sec:bsframe}
 
-The $\psi_0^{\rm datum}$ provider of \eqref{eq:teuk-inject} is replaced
-by a \emph{native, in-process} characteristic solver evolving in
-lockstep with the Cauchy evolution (one process, no file round-trips).
-On the compactified radial coordinate $y = 1 - 2r_{\rm wt}/r$
-(Chebyshev--Gauss--Lobatto collocation, LU-factorized global solves,
-SAT time advance), the solver evolves the \emph{unringed} $\ell{=}2$
-$t$-scalars $(J_t,Q_t,U_t,W_t,H_t)$ of the linearized Bondi--Sachs
-hierarchy with the $\beta$ sources required by live (worldtube-anchored
-gauge) data — machine-derived as exact-rational fits on the anchored
-and plain solution families jointly:
+The exterior of the worldtube $r = r_{\rm wt}$ is evolved on outgoing
+null slices in Bondi--Sachs form
+\cite{Bondi:1962px,Sachs:1962wk,Moxon:2020gha},
+\begin{equation}
+ds^2 = -\Big(e^{2\beta}\tfrac{V}{r} - r^2 h_{AB}U^AU^B\Big)du^2
+ - 2e^{2\beta}\,du\,dr - 2r^2 h_{AB}U^B\,du\,dx^A
+ + r^2 h_{AB}\,dx^A dx^B,
+\label{eq:bsmetric}
+\end{equation}
+with the spin-weighted scalars built from the complex dyad $q^A$
+($q^Aq_A = 0$, $q^A\bar q_A = 2$): the radiative variable
+$J = \tfrac12 q^Aq^Bh_{AB}$, the lapse-like $\beta$, the shift-like
+$U = q_AU^A$ with its radial momentum
+$Q = r^2 e^{-2\beta} q^A h_{AB}\,\partial_r U^B$, the mass-like
+$W = (V-r)/r^2$, and the time derivative $H = \partial_u J$ at fixed
+compactified radius \cite{Moxon:2020gha}. The radial coordinate is
+compactified as
+\begin{equation}
+y = 1 - \frac{2\,r_{\rm wt}}{r}\,,
+\qquad y \in [-1, 1],\qquad
+\frac{dy}{dr} = \frac{(1-y)^2}{2\,r_{\rm wt}}\,,
+\label{eq:ycomp}
+\end{equation}
+so the worldtube sits at $y=-1$ and future null infinity at $y=1$. On
+each null slice the Einstein equations order into the radial
+hypersurface hierarchy
+$\beta \to Q \to U \to W \to H$
+(each equation an ODE in $r$ sourced by the previous members and $J$),
+followed by the evolution equation $\partial_u J = H$
+\cite{Bondi:1962px,Moxon:2020gha,Ma:2023qjn}; we do not reproduce the
+nonlinear system here and work instead with its linearization, which the
+program verifies term by term.
+
+\subsection{Linear $\ell=2$ scalarization}
+\label{sec:scalarization}
+
+\begin{nfblock}
+At linear order about Minkowski, the axisymmetric $(\ell,m)=(2,0)$
+sector reduces to one real scalar per field [machine-derived and
+verified, ledger node N14]: with $s\equiv\sin\theta$,
+$c\equiv\cos\theta$, $P\equiv 3c^2-1$,
+\begin{equation}
+J = J_t\,s^2,\qquad
+Q = Q_t\,sc,\qquad
+U = U_t\,sc,\qquad
+W = W_t\,P,\qquad
+\beta = \beta_t\,P,\qquad
+H = H_t\,s^2,
+\label{eq:tscalars}
+\end{equation}
+and the $\ell=2$ spin-weighted derivatives close on the same shapes,
+\begin{equation}
+\eth\beta = -6\,\beta_t\,sc,\qquad
+\bar\eth\eth\beta = -6\,\beta_t\,P,\qquad
+\eth^2\beta = 6\,\beta_t\,s^2,\qquad
+\eth Q = -Q_t\,s^2,\qquad
+\eth U = -U_t\,s^2 .
+\label{eq:ethclosure}
+\end{equation}
+The spin-weighted spherical-harmonic modal coefficients used for code
+interoperation follow from
+\begin{equation}
+s^2 = 4\sqrt{\tfrac{2\pi}{15}}\;{}_{2}Y_{20},\qquad
+sc = -\sqrt{\tfrac{8\pi}{15}}\;{}_{1}Y_{20},\qquad
+P = \sqrt{\tfrac{16\pi}{5}}\;Y_{20}.
+\label{eq:modalfactors}
+\end{equation}
+In the Bondi gauge ($\beta = 0$) the verified linear hierarchy is
+\begin{align}
+\partial_r\big(r^2 Q_t\big) &= -4\,r^2\,\partial_r J_t,
+&
+\partial_r U_t &= \frac{Q_t}{r^2},
+\nonumber\\
+\partial_r\big(r^2 W_t\big) &= 2J_t + 2rU_t + \frac{r^2}{2}\partial_r U_t,
+&
+\partial_r\big(r H_t\big) &= -\frac{U_t}{2}
+ + \frac{r}{4}\,\partial_r^2 J_t - \frac{3J_t}{2r},
+\label{eq:plainhierarchy}
+\end{align}
+where the $H$ row is the plain-family pinned combination; the joint
+exact-rational refit on the enlarged (gauge-shifted) solution family
+fixes the equivalent covariant form \eqref{eq:beta-hierarchy} below
+[derivation artifact \texttt{derive\_beta\_hierarchy.jl}].
+\end{nfblock}
+
+\subsection{The $\beta$-corrected hierarchy for live (anchored-gauge) data}
+\label{sec:betahierarchy}
+
+\begin{nfblock}
+Worldtube data constructed from a live Cauchy state arrive in the
+worldtube-anchored gauge of Sec.~\ref{sec:matching}, which carries
+$\beta \neq 0$ ($r$-independent at this order) and non-decaying gauge
+tails. The hierarchy sources required by such data were machine-derived
+as exact-rational fits on the anchored and plain solution families
+jointly:
 \begin{align}
 \partial_r(r^2 Q) &= -\,r^2\,\partial_r(\bar\eth J) - 4r\,\eth\beta,
 &
@@ -29,68 +108,153 @@ and plain solution families jointly:
  + \tfrac{r^2}{2}\partial_r(\bar\eth U) - \tfrac43\,\bar\eth\eth\beta,
 &
 \partial_r(rH) &= \tfrac12 r\,\partial_r^2 J + \partial_r J
- + \frac{\eth^2\beta}{r} - \frac{\eth Q}{2r} - \eth U,
+ + \frac{\eth^2\beta}{r} - \frac{\eth Q}{2r} - \eth U .
 \label{eq:beta-hierarchy}
 \end{align}
-with $H=\partial_u J$ and $\beta$ $r$-independent at this order. The
-ringed variables ($rJ$, $r^2U$, \dots) diverge at scri on anchored-gauge
-data ($k=0,1$ tails); the unringed system \eqref{eq:beta-hierarchy} is
-regular on $y\in[-1,1]$ in both gauges, and
-$\psi_0^t = -\partial_r J_t/(2r) - \partial_r^2 J_t/4$ is gauge-invariant
-(the anchored tails are exactly $\psi_0$-silent). Worldtube data are
-sampled live from the Cauchy ADM state on three geodesic spheres
-($\ell{=}2$ projections; $\partial_t h = -2K$ at linear order) and mapped
-by a six-row local contract to the anchored boundary scalars
-$(J,Q,U,W,H,\beta)_{\rm wt}$. Cone labeling is retarded, $u = t - r$:
-the boundary datum at Cauchy time $t$ is the $\psi_0$ probe at $r_B$ on
-the earlier cone $u = t - r_B$ (causality lag, served from a per-substep
-history).
-
-\emph{Verification.} (i) Standalone: anchored end-to-end $\psi_0$ probe
-within $8.8\times10^{-5}$ of the exact datum
-($7.1\times10^{-6}$ at halved step; truncation-dominated). (ii) Live
-analytic-stub battery: mode-(solver) vs.\ mode-(self-datum) waveforms
-agree to $4.1\times10^{-9}$ of peak. (iii) For the purely outgoing test
-the live datum is conditioning-limited \emph{by physics}
-($\psi_0/J\sim10^{-8}$ peeling: fidelity would need
-$10^{-11}$-relative tube data); the fidelity demonstration instead uses
-the characteristic-pulse-injection test of Ref.~\cite{Ma:2023qjn}
-Sec.~V.C (ingoing $\ell{=}2$ pulse on the initial null slice, quiescent
-Cauchy data, $\psi_0/J = 7\times10^{-3}$): the live datum matches the
-verified solver to $7\times10^{-8}$ of peak in the causally clean
-window; the transmitted burst exits the Cauchy domain at
-$t_2 = t_1 + 2R$ within $0.12$; a no-datum control shows the entire
-response is datum-attributable ($2.9\times10^{-10}$ of peak)
-[Fig.~\ref{fig:liveccm}(a,b)]. (iv) Cross-oracle: SpECTRE
-\texttt{CharacteristicExtract} (the CCE of Ref.~\cite{Ma:2023qjn}), run
-on a Bondi--Sachs worldtube file generated from the exact solution,
-reproduces $\Psi_4 = -\sqrt{6\pi/5}\,F^{(6)}$ to $6\times10^{-6}$
-relative and the datum normalization
-$\Psi_0 = -\tfrac98 F^{(2)}$ ($s^2$ shape) to $0.1\%$
-[Fig.~\ref{fig:liveccm}(c)]. (v) Constraint rows: a frozen-coefficient
-LF/GKS analysis of the $(\Theta, Z_s)$ boundary realizations shows every
-matched-falloff advection closure is stable and already absorbs the
-constraint pair at $1-O\big((\sigma/2\omega r)^2\big)$; falloff-mismatched
-sink rows self-generate $O(10\%)$ pair reflection — the production
-default remains the matched (stock) realization of the
-\eqref{eq:bc-cpbc} rows.
+Scalarized with \eqref{eq:tscalars}--\eqref{eq:ethclosure} and recast on
+the compactified coordinate \eqref{eq:ycomp}, the system becomes four
+ODEs with coefficients regular on the whole interval $y\in[-1,1]$ in
+\emph{both} gauges (the $y=1$ rows are automatic regularity conditions):
+\begin{align}
+2Q_t + (1{-}y)\,Q_t' &= -4(1{-}y)\,J_t' + 24\,\beta_t,
+&
+U_t' &= \frac{Q_t}{2 r_{\rm wt}},
+\nonumber\\
+2W_t + (1{-}y)\,W_t' &= \frac{(1{-}y)J_t}{r_{\rm wt}} + 2U_t
+ + \frac{(1{-}y)U_t'}{2} + \frac{4\beta_t(1{-}y)}{r_{\rm wt}},
+&&
+\label{eq:unringed}
+\\
+H_t + (1{-}y)\,H_t' &=
+ \frac{(1{-}y)}{4r_{\rm wt}}\Big[(1{-}y)^2J_t'' - 2(1{-}y)J_t'\Big]
+ + \frac{(1{-}y)^2}{2r_{\rm wt}}J_t'
+ + \frac{3\beta_t(1{-}y)}{r_{\rm wt}}
+ + \frac{Q_t(1{-}y)}{4r_{\rm wt}} + U_t,
+&&
+\nonumber
+\end{align}
+with $' = d/dy$. The \emph{ringed} variables $rJ_t$, $r^2U_t$, \dots{}
+diverge at $y=1$ on anchored-gauge data (the $k=0,1$ tail monomials);
+the unringed form \eqref{eq:unringed} is the representation in which the
+anchored solution is finite everywhere [measured failure of the ringed
+scheme on anchored data: $\psi_0$ off by $O(10^{3\text{--}4})$; pinned
+as a regression test].
 \end{nfblock}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{zccm_live_ccm.pdf}
-\caption{Live-CCM results (Sec.~\ref{sec:liveccm}). (a) The
-characteristic-pulse fidelity test: live $\psi_0$ datum at the Cauchy
-boundary vs.\ the quiescent-worldtube (mirror/CCE) reference — the
-early-window agreement is $7\times10^{-8}$ of peak; the later $O(1)$
-separation \emph{is} the matching physics (the live run transmits and
-later re-receives the pulse). (b) The transmitted burst at the
-extraction radius exits at $t_2 = t_1 + 2R$; the no-datum control is
-consistent with zero. (c) SpECTRE \texttt{CharacteristicExtract} on the
-exact worldtube data vs.\ the closed forms (shaded wide: oracle output;
-dashed: $-\sqrt{6\pi/5}F^{(6)}$ and $-\tfrac98 c_2 F^{(2)}$). Generator:
-\texttt{scripts/plot\_paper\_figures\_v2.py}; data:
-\texttt{results/numerical/n14\_native/}, \texttt{n14\_pulse\_ref.csv},
-\texttt{spectre\_oracle/} (ledger nodes N13--N14).}
-\label{fig:liveccm}
-\end{figure}
+\subsection{Spectral solver, $\psi_0$ extraction, and pulse data}
+\label{sec:solver}
+
+\begin{nfblock}
+The radial direction is discretized on Chebyshev--Gauss--Lobatto nodes
+with the standard differentiation matrix; the linear solves of
+\eqref{eq:unringed} use LU factorizations built once, each operator's
+boundary row imposing the worldtube value. Time advance is RK4 on
+$\partial_u J_t = H_t$ with a penalty (SAT) imposition of the worldtube
+Dirichlet value,
+\begin{equation}
+H_t\big|_{y=-1} \mathrel{+}= \tau\,\big(J_t^{\rm wt} - J_t|_{y=-1}\big),
+\qquad
+\tau = \frac{\sigma N^2}{2\,r_{\rm wt}},\quad \sigma = 1 .
+\label{eq:sat}
+\end{equation}
+The incoming Weyl datum is extracted from $J_t$ alone,
+\begin{equation}
+\psi_0^t(r) = -\frac{\partial_r J_t}{2r} - \frac{\partial_r^2 J_t}{4},
+\qquad
+\psi_0 = \psi_0^t\,s^2,
+\label{eq:psi0formula}
+\end{equation}
+an expression \emph{gauge-invariant on the anchored family}: the
+anchored tails $a(u) + b(u)/r$ satisfy $\psi_0^t[a + b/r] = 0$
+identically, and the machine check
+$\psi_0[J_{\rm anchored}] = \psi_0[J_{\rm Bondi}]$ holds as an exact
+rational identity [N14]. Evaluation at an interior radius
+$r_*\ge r_{\rm wt}$ (required by the matching geometry of
+Sec.~\ref{sec:matching}) uses barycentric interpolation at
+$y_* = 1 - 2r_{\rm wt}/r_*$ together with
+\begin{equation}
+\partial_r J_t = \frac{(1{-}y)^2}{2r_{\rm wt}}\,J_t',
+\qquad
+\partial_r^2 J_t = \frac{(1{-}y)^2}{4r_{\rm wt}^2}
+ \Big[(1{-}y)^2 J_t'' - 2(1{-}y)J_t'\Big];
+\label{eq:proberules}
+\end{equation}
+the interior point is \emph{better} conditioned than the worldtube node
+(measured: evolved-probe relative error $8.8\times10^{-5}$ vs the
+$\sim\!6\times10^{-2}$ worldtube floor at the same resolution and step).
+For the pulse-injection test of Sec.~\ref{sec:tests} the initial null
+slice carries the compactly supported $\ell=2$ free datum specified in
+the test design of Ref.~\cite{Ma:2023qjn} (polynomial envelope times
+Gaussian in $y$, amplitude $Z$, support $[y_{\min},y_{\max}]$, center
+$y_c$, width $\tau_y$), converted to the $t$-scalar convention by
+\begin{equation}
+J_t(y)\big|_{u_0} = \frac14\sqrt{\frac{15}{2\pi}}\;\mathcal J(y),
+\qquad
+\mathcal J(y) = \frac{4Z\,(y_{\max}-y)(y-y_{\min})}
+{(y_{\max}-y_{\min})^2}\,e^{-(y-y_c)^2/\tau_y^2}
+\;\;\text{on } [y_{\min},y_{\max}],
+\label{eq:pulseid}
+\end{equation}
+and zero outside the support.
+\end{nfblock}
+
+\subsection{Exact Teukolsky reference in Bondi variables}
+\label{sec:teukbondi}
+
+\begin{nfblock}
+The solver verifier is the exact linear Teukolsky solution
+(Sec.~\ref{sec:teuktest}, Eqs.~\eqref{eq:teuk-F}--\eqref{eq:teuk-metric})
+transformed to the Bondi gauge; the machine-derived closed forms are
+\begin{align}
+J &= \tfrac34\,s^2\Big[\frac{F^{(4)}}{r} + \frac{F^{(2)}}{r^3}\Big],
+\qquad
+\beta = 0,
+\qquad
+H = \partial_u J,
+\nonumber\\
+Q &= sc\Big[\frac{3F^{(4)}}{r} - \frac{9F^{(3)}}{r^2}
+ - \frac{9F^{(2)}}{r^3}\Big],
+\qquad
+U = sc\Big[-\frac{3F^{(4)}}{2r^2} + \frac{3F^{(3)}}{r^3}
+ + \frac{9F^{(2)}}{4r^4}\Big],
+\nonumber\\
+W &= P\Big[-\frac{3F^{(4)}}{2r^2} - \frac{3F^{(3)}}{2r^3}
+ - \frac{3F^{(2)}}{4r^4}\Big],
+\label{eq:teukbondi}
+\end{align}
+all arguments retarded, $F^{(n)} = F^{(n)}(u)$ with $u = t - r$. The
+hierarchy \eqref{eq:plainhierarchy} closes on \eqref{eq:teukbondi} as a
+rational identity; the incoming datum is
+\begin{equation}
+\psi_0 = -\tfrac98\,s^2\,\frac{F^{(2)}(u)}{r^5}
+\qquad\text{(exactly; no subleading retarded terms)},
+\label{eq:teukpsi0}
+\end{equation}
+consistent with \eqref{eq:teuk-psi0}, and the outgoing waveform is the
+finite-radius expression \eqref{eq:teuk-exact-psi4} with the convention
+map stated there. An independent production characteristic code run on
+worldtube data built from \eqref{eq:teukbondi} reproduces
+$\Psi_4 = -\sqrt{6\pi/5}\,F^{(6)}$ at future null infinity to
+$6\times10^{-6}$ relative and \eqref{eq:teukpsi0} to $0.1\%$
+(Sec.~\ref{sec:tests}).
+\end{nfblock}
+
+\begin{nfblock}
+\subsection{Solver verification summary}
+\label{sec:liveccm}
+
+(i) Exact-slice sweeps of \eqref{eq:unringed} are machine-exact
+($\sim\!10^{-22}$) on both the Bondi and anchored families. (ii) The
+SAT evolution reproduces the worldtube $\psi_0$ at the documented
+double-precision conditioning floor and the interior probe
+\eqref{eq:proberules} at $8.8\times10^{-5}$ relative
+($7.1\times10^{-6}$ at halved step; truncation-dominated), identically
+for plain and anchored boundary data. (iii) The native C++ production
+port is gated against the verification-harness numbers (standalone
+test; relative agreement $\sim\!10^{-7}$). (iv) The pulse problem
+\eqref{eq:pulseid} is radially converged at $n=65$ collocation points
+to $2.1\times10^{-7}$ of peak (resolution ladder), with time-stepping
+error $4\times10^{-12}$. (v) The constraint-row boundary analysis and
+the live two-way coupling are treated in Secs.~\ref{sec:cauchy} and
+\ref{sec:matching}--\ref{sec:tests} respectively.
+\end{nfblock}
