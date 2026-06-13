@@ -8,8 +8,9 @@ mkdir -p "$OUT" && cd "$OUT"
 cp /data/haiyangw/nr/spectre/SolveXctsTeukolskyX2.yaml .
 echo "$(date -u +%FT%TZ) XCTS solve START (ncore=$NCORE)"
 # Vacuum XCTS executable (no hydro observation; registers TeukolskyWave).
-"$SPECTRE_BUILD/bin/SolveXctsVacuum" --input-file SolveXctsTeukolskyX2.yaml +p"$NCORE" \
-  > xcts_solve.log 2>&1
+# mpi-linux-x86_64 Charm++: +pN must go via charmrun (-> setarch -R mpirun -np N).
+"$SPECTRE_BUILD/bin/charmrun" +p"$NCORE" "$SPECTRE_BUILD/bin/SolveXctsVacuum" \
+  --input-file SolveXctsTeukolskyX2.yaml > xcts_solve.log 2>&1
 echo "XCTS_EXIT=$? $(date -u +%FT%TZ)"
 ls -la XctsTeukolskyX2Volume*.h5 XctsTeukolskyX2Reductions.h5 2>/dev/null
 tail -5 xcts_solve.log

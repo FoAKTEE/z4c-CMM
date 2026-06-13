@@ -52,6 +52,20 @@ STATE="$REPO_ROOT/.claude/ralph-loop.local.md"
 ACTIVE=$(awk '/^---$/{n++; next} n==1 && /^active:/ {print $2}' "$STATE" | head -1)
 [ "$ACTIVE" = "true" ] || exit 0
 
+# Wait-gate: while the agent is purely blocked on a tracked shell/agent it has
+# recorded in .claude/loop_wait.json, stay SILENT (emit no continuation block)
+# so the session stops and idles until that task's own completion notification
+# wakes it — instead of re-prompting (and re-reading the mission brief) on every
+# Stop. The harness blocks a literal foreground `sleep`; this is the sanctioned
+# equivalent for "nothing to do but wait". The gate self-clears when the awaited
+# pid/sentinel clears or the wait ages out, so it can never wedge the loop shut.
+WAITGATE="$REPO_ROOT/phys-agentic-loop/_common/loop/wait_gate.py"
+if [ -f "$WAITGATE" ] && command -v python3 >/dev/null 2>&1; then
+    if python3 "$WAITGATE" check --repo-root "$REPO_ROOT" >/dev/null 2>&1; then
+        exit 0
+    fi
+fi
+
 emit_block() {
     # $1 = reason text; JSON-encode via python3 when available.
     local reason="$1" encoded
