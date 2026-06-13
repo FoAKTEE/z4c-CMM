@@ -109,3 +109,27 @@ LapseTimesConformalFactor guesses = 1 (flat). Derivatives (deriv
 conformal metric, Christoffels, Ricci) via the mesh path.
 NEXT: confirm the LongitudinalShift...DtConformalMetric sign convention,
 write TeukolskyWave.{hpp,cpp} + factory/CMake edits, rebuild SpECTRE.
+
+## S1 free-data verified (2026-06-13) — design complete, C++ next
+Python reimpl of the verified TeukolskyMetric (scripts/teuk_xcts_freedata_
+check.py; transcript s1_freedata_check.txt) confirms at X=2, t=0:
+- tr(h) = 0 to machine zero -> K=0 consistent; conformal metric
+  trace-free at linear order.
+- det(delta+h) - 1 = O(h^2): -2.5e-3 at the pulse peak (|h|~0.05); this is
+  the genuine NONLINEAR signature the XCTS solve absorbs. => the conformal
+  metric is non-unimodular at X=2; TeukolskyWave supplies gammabar=delta+h
+  as a GENERAL conformal metric (psi absorbs det), the WrappedGr/KerrSchild
+  pattern (not the unimodular-rescaled form).
+- 4th-order FD of h vs 2nd-order spread ~1e-9 (smooth field) -> the
+  self-contained high-order FD is a robust deriv_conformal_metric (no
+  sympy frame-vector singularities, no SpECTRE mesh plumbing).
+FINAL S1 design (fully resolved): standalone Xcts::AnalyticData::
+TeukolskyWave providing analytically ConformalMetric=delta+h (verified
+TeukolskyMetric), InverseConformalMetric (3x3 inverse), deriv_conformal_
+metric (4th-order FD of h, eps~1e-3), TraceK=0/dtK=0/derivK=0,
+LongitudinalShiftBackgroundMinusDtConformalMetric from the extrinsic
+curvature K_ij=-1/2 hdot (per WrappedGr.cpp line 248 pattern; the wave
+momentum), ShiftBackground=0, ConformalFactor/Lapse(+TimesCF) guesses=1,
+ShiftExcess=0, matter=0. NEXT: write TeukolskyWave.{hpp,cpp} + factory
+(SolveXcts.hpp typelist) + CMake; rebuild SolveXcts (~30min); pointwise
+gate vs this Python eval to 1e-12.
