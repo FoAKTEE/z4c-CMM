@@ -89,3 +89,23 @@ Foundations laid this iteration:
 - NEXT: (a) symbolic d_k h_ij + the XCTS Atilde convention; (b) write
   TeukolskyWave.{hpp,cpp} + factory/CMake edits; (c) rebuild SpECTRE
   (make -j64 SolveXcts; ~30 min); (d) pre-solve pointwise gate vs Python.
+
+## S1 ARCHITECTURE RESOLVED (2026-06-13) — numerical-derivative path
+DECISIVE finding (SpECTRE Background.hpp line 39): the XCTS background's
+mesh+inv_jacobian variables() overload "may use the mesh and inv_jacobian
+to compute NUMERICAL derivatives." Therefore TeukolskyWave does NOT need
+hand-derived analytic d_k h_ij (which carried frame-vector axis
+singularities = the R2 risk). It supplies the conformal metric
+analytically and lets the mesh path differentiate spectrally (smooth
+Teukolsky field -> spectral accuracy). NumericData->XCTS has no in-repo
+example yaml, and the analytic-class path (Option A) is cleaner, so:
+DECISION = analytic TeukolskyWave class with NUMERICAL derivatives.
+S1 class supplies analytically: ConformalMetric = delta + h (verified
+TeukolskyMetric); TraceExtrinsicCurvature K = 0 and dt K = 0 (TT);
+ShiftBackground = 0; LongitudinalShiftBackgroundMinusDtConformalMetric =
+-dt(gammabar) = -hdot (the wave's momentum/CTS term; exact sign/form to
+confirm against FirstOrderSystem.hpp lines 154-225); ConformalFactor and
+LapseTimesConformalFactor guesses = 1 (flat). Derivatives (deriv
+conformal metric, Christoffels, Ricci) via the mesh path.
+NEXT: confirm the LongitudinalShift...DtConformalMetric sign convention,
+write TeukolskyWave.{hpp,cpp} + factory/CMake edits, rebuild SpECTRE.
