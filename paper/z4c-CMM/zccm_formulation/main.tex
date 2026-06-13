@@ -90,6 +90,28 @@ standard literature, or an explicitly open obligation.
 \input{sections/matching.tex}
 \input{sections/tests.tex}
 \input{sections/conclusions.tex}
+
+\begin{acknowledgments}
+This formulation and its verification were produced as a verified-research
+program in which every accepted equation and number is recorded in a
+machine-checked knowledge ledger with an explicit evidence type, and no
+result is promoted without a verifier output.
+\end{acknowledgments}
+
+\paragraph*{Data and code availability.}
+Every equation, figure, and number in this paper is traceable to an
+artifact in the project repository: the verification harness and the
+machine derivations (the \texttt{ZccmJl} package and the
+\texttt{packages/}, \texttt{scripts/} trees), the production
+implementation (the AthenaK source under \texttt{athenak/src/z4c/ccm/}),
+the verifier transcripts and batteries (\texttt{results/numerical/}), the
+figure generators (\texttt{scripts/}), and the knowledge and error
+ledgers (\texttt{knowledge-database/}, \texttt{error-database/}). The
+reproduction of Sec.~\ref{sec:repro} uses the published simulation data
+and figure scripts of Ref.~\cite{Ma:2023qjn} and the standalone
+characteristic-extraction executable of the SpECTRE collaboration
+\cite{Moxon:2020gha}.
+
 \input{sections/appendix.tex}
 
 \bibliographystyle{apsrev4-2}

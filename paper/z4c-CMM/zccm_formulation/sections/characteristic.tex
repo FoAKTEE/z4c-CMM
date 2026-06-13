@@ -146,11 +146,11 @@ as a regression test].
 
 \begin{nfblock}
 The radial direction is discretized on Chebyshev--Gauss--Lobatto nodes
-with the standard differentiation matrix; the linear solves of
+with the standard differentiation matrix \cite{Trefethen:2000}; the linear solves of
 \eqref{eq:unringed} use LU factorizations built once, each operator's
 boundary row imposing the worldtube value. Time advance is RK4 on
-$\partial_u J_t = H_t$ with a penalty (SAT) imposition of the worldtube
-Dirichlet value,
+$\partial_u J_t = H_t$ with a simultaneous-approximation-term (SAT) penalty imposition of the
+worldtube Dirichlet value \cite{Carpenter:1994},
 \begin{equation}
 H_t\big|_{y=-1} \mathrel{+}= \tau\,\big(J_t^{\rm wt} - J_t|_{y=-1}\big),
 \qquad
