@@ -49,3 +49,16 @@ structure; the domain must reach r >= 100.
   as the documented SUPERSEDED baseline; its background wait (bum8bu1jz)
   still pending; the fig:x2 figure shows that baseline until S4 replaces
   it with the XCTS-ID two-pulse result.
+
+## S0 DONE (2026-06-13) — SolveXcts runtime repaired [M6-S0 solid]
+Scout workflow wnys0a9l5 delivered the S0-S5 plan (SCOUT_SYNTHESIS.md).
+Two S1 blockers found: (1) no XCTS Teukolsky class; (2) SolveXcts binary
+dead on an MKL symbol-lookup error. S0 fixes (2): the consistent MKL set
+is the shim /data/jiaxiwu/spectre_mkl_shim; LD_LIBRARY_PATH=shim +
+LD_PRELOAD the layered set (gf_lp64,gnu_thread,core,def) -> SolveXcts
+--help exits 0 (273-line help). Recipe: scripts/spectre_xcts_env.sh.
+KEY plan discovery: the SpECTRE->AthenaK import already exists
+(spectre::Exporter + athenak z4c_spectre_bbh.cpp LoadSpectreInitialData),
+so S3 reuses it. NEXT S1: write Xcts::AnalyticData::TeukolskyWave (model
+DuckTovStar; conformal metric delta+h, K=0, Atilde from -1/2 dt h),
+rebuild SpECTRE, pre-solve pointwise gate vs an independent Python eval.

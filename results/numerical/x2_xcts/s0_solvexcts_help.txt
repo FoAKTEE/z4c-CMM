@@ -1,0 +1,273 @@
+Authorization required, but no authorization protocol specified
+
+Authorization required, but no authorization protocol specified
+
+Authorization required, but no authorization protocol specified
+
+Authorization required, but no authorization protocol specified
+
+Authorization required, but no authorization protocol specified
+
+Authorization required, but no authorization protocol specified
+
+Charm++> Running on MPI library: Open MPI v5.0.7, package: Open MPI emost@perseus Distribution, ident: 5.0.7, repo rev: v5.0.7, Feb 14, 2025 (MPI standard: 3.1)
+Charm++> Level of thread support used: MPI_THREAD_SINGLE (desired: MPI_THREAD_SINGLE)
+Charm++> Running in non-SMP mode: 1 processes (PEs)
+Converse Machine Command-line Parameters:
+              Option: Parameter: Description:
+             ++quiet            Omit non-error runtime messages
+                +ppn    integer 
+               ++ppn    integer 
+                  +p    integer 
+     +auto-provision            fully utilize available resources
+      +autoProvision            fully utilize available resources
+      +oneWthPerHost            assign one worker thread per host
+    +oneWthPerSocket            assign one worker thread per socket
+      +oneWthPerCore            assign one worker thread per core
+        +oneWthPerPU            assign one worker thread per PU
++networkProgressPeriod    integer 
++comm_thread_only_recv            
+             ++debug            
+          +truecrash            Do not install signal handlers
+    ++debug-no-pause            
+       +idleblocking            
++no_outstanding_sends            
+         +requestmax    integer 
+           +checksum            
+         +partitions    integer number of partitions
+           +replicas    integer number of partitions
+   +master_partition            assign a process as master partition
+    +partition_sizes     string size of partitions
+ +partition_topology            topology aware partitions
++partition_topology_scheme    integer topology aware partitioning scheme
++use_custom_partition            custom partitioning scheme
+             +stdout     string base filename to redirect partition stdout to
+     +cma_enable_all            Ignore default thresholds & Enable use of CMA for all intranode SHM transport
+  +cma_min_threshold    integer CMA Message size (Bytes) lower bound
+  +cma_max_threshold    integer CMA Message size (Bytes) upper bound
+        +cma_disable            Disable use of CMA for SHM transport
+                +cpd            Used *only* in conjunction with parallel debugger
+          +stacksize     string Default user-level thread stack size
+      +io_flush_user            User Controls IO Flush
+Converse/Charm++ Commit ID: v8.0.0
+    +useAbsoluteTime            Use system's absolute time as wallclock time.
+       +idle-timeout    integer Abort if idle for this many seconds
+               +nice    integer Set the process priority level
+               +nice    integer Set the process priority level
+         +noCMAForZC            When Cross Memory Attach (CMA) is supported, the program does not use CMA when using the Zerocopy API
+        +csdLocalMax    integer Set the max number of local messages to process before forcing a check for remote messages.
+            ++server            Create a CCS server port
+       ++server-port    integer Listen on this TCP/IP port number
+       ++server-auth     string Use this CCS authentication file
+            +cldb_cs            Converse> Print seed load balancing statistics.
+        +noisomalloc            disable isomalloc
+    +isomalloc_probe            call mmap to probe the largest available isomalloc region
+     +isomalloc_test            mmap test common areas for the largest available isomalloc region
+  +no_isomalloc_sync            disable global synchronization of isomalloc region
+                 +qd    integer QD time in seconds
+
+Load Balancer Command-line Parameters:
+         +TreeLBFile     string TreeLB config file
+             +MetaLB            Turn on MetaBalancer
+     +MetaLBModelDir     string Use this directory to read model for MetaLB
+           +balancer     string Use this load balancer
+  +DistLBTargetRatio     number The max/avg load ratio that DistributedLB will attempt to achieve
+    +DistLBMaxPhases    integer The maximum number of phases that DistributedLB will attempt
+           +LBPeriod     number the minimum time period in seconds allowed for two consecutive automatic load balancing
+             +LBLoop            Use multiple load balancing strategies in loop
+             +LBTopo     string define load balancing topology
+        +LBPredictor            Turn on LB future predictor
+   +LBPredictorDelay    integer Number of balance steps before learning a model
+  +LBPredictorWindow    integer Number of steps to use to learn a model
+          +LBVersion    integer LB database file version number
+           +LBCentPE    integer CentralLB processor
+             +LBDump    integer Dump the LB state from this step
+        +LBDumpSteps    integer Dump the LB state for this amount of steps
+         +LBDumpFile     string Set the LB state file name
+              +LBSim    integer Read LB state from LBDumpFile since this step
+         +LBSimSteps    integer Read LB state for this number of steps
+         +LBSimProcs    integer Number of target processors.
+    +LBShowDecisions            Write to File: Load Balancing Object to Processor Map decisions during LB Simulation
+       +LBSyncResume            LB performs a barrier after migration is finished
+            +LBDebug    integer Turn on LB debugging printouts
+            +LBDebug            Turn on LB debugging printouts
+     +LBPrintSummary            Print load balancing result summary
+     +LBNoBackground            Load balancer ignores the background load.
+          +LBObjOnly            Only load balancing migratable objects, ignoring all others.
+      +LBTestPESpeed            Load balancer test all CPUs speed.
+         +LBSameCpus            Load balancer assumes all CPUs are of same speed.
+       +LBUseCpuTime            Load balancer uses CPU time instead of wallclock time.
+              +LBOff            Turn load balancer instrumentation off
+           +LBCommOn            Turn load balancer instrumentation of communication on
+          +LBCommOff            (No-op) Turn load balancer instrumentation of communication off
+            +LBAlpha     number per message send overhead
+             +LBBeta     number per byte send overhead
+CharmLB> Load balancer assumes all CPUs are same.
+   +MetaLBNoObjTimer     number Time in seconds before triggering reduction for no objs
+
+Record/Replay Command-line Parameters:
+        +recplay-crc            Enable CRC32 checksum for message record-replay
+        +recplay-xor            Enable simple XOR checksum for message record-replay
+    +recplay-logsize    integer Specify the size of the buffer used by the message recorder
+      +record-detail     string Record full message content for the specified processors
+             +record            Record message processing order
+      +replay-detail     string Replay the specified processors from recorded message content
+             +replay            Replay recorded message stream
+
+Charm++ Command-line Parameters:
+                 +cs            Print extensive statistics at shutdown
+                 +ss            Print summary statistics at shutdown
+               +fifo            Default to FIFO queuing
+               +lifo            Default to LIFO queuing
+              +ififo            Default to integer-prioritized FIFO queuing
+              +ilifo            Default to integer-prioritized LIFO queuing
+              +bfifo            Default to bitvector-prioritized FIFO queuing
+              +blifo            Default to bitvector-prioritized LIFO queuing
+               +objq            Default to use object queue for every obejct
+            +restart     string 
+           +ringexit    integer Program exits in a ring fashion
++messageBufferingThreshold    integer Message size above which the runtime will buffer messages directed at unlocated array elements
+ +noAnytimeMigration            The program does not require support for anytime migration
++noNotifyChildInReduction            The program has at least one element per processor for each charm array created
+    +staticInsertion            DEPRECATED
+  +useNodeBlkMapping            Array elements are block-mapped in SMP-node level
+     +CPSamplePeriod            
+   +CPSamplePeriodMs            
+     +CPSchemeRandom            
+ +CPExhaustiveSearch            
++CPAlwaysUseDefaults            
+      +CPSimulAnneal            
+ +CPCriticalPathPrio            
+        +CPBestKnown            
+         +CPSteering            
+      +CPMemoryAware            
+          +CPSimplex            
+    +CPDivideConquer            
+        +CPLDBPeriod            
+  +CPLDBPeriodLinear            
++CPLDBPeriodQuadratic            
+ +CPLDBPeriodOptimal            
+    +CPDefaultValues            
+        +CPGatherAll            
++CPGatherMemoryUsage            
++CPGatherUtilization            
+         +CPSaveData            
+     +CPNoFilterData            
+         +CPLoadData            
+     +CPDataFilename            
+     +setcpuaffinity            set cpu affinity
+        +excludecore    integer avoid core when setting cpuaffinity
+          +pemapfile     string define pe to core mapping file
+              +pemap     string define pe to core mapping
+             +commap     string define comm threads to core mapping
+    +showcpuaffinity            print cpu affinity
+          +maffinity            memory affinity
+         +memnodemap     string define memory node mapping
+             +mempol     string define memory policy {bind, preferred or interleave} 
++obtain_cpu_topology            obtain cpu topology info
+  +skip_cpu_topology            skip the processof getting cpu topology info
+  +show_cpu_topology            Show cpu topology info
+Charm++> Running on 1 hosts (2 sockets x 64 cores x 2 PUs = 256-way SMP)
+Charm++> cpu topology info is gathered in 0.001 seconds.
+          +printTopo     string topo file name
+
+Executing 'SolveXcts' using 1 processors.
+Launch command line: ./build/bin/SolveXcts --help
+Charm++ startup time in seconds: 0.123333
+Date and time at startup: Sat Jun 13 03:19:13 2026
+
+SpECTRE Build Information:
+Version:                      2025.08.19
+Compiled on host:             perseus
+Compiled in directory:        /data/haiyangw/nr/spectre/build
+Source directory is:          /data/haiyangw/nr/spectre
+Compiled on git branch:       develop
+Compiled on git revision:     9f98d9fdd
+Linked on:                    2026-04-01T03:57:17+00:00
+Build type:                   Release
+
+  -h [ --help ]             Describe program options
+  --check-options           Check input file options
+  --dump-source-tree-as arg If specified, then a gzip archive of the source 
+                            tree is dumped with the specified name. The archive
+                            can be expanded using 'tar -xzf ARCHIVE.tar.gz'
+  --dump-paths              Dump the PATH, CPATH, LD_LIBRARY_PATH, 
+                            LIBRARY_PATH, and CMAKE_PREFIX_PATH at compile 
+                            time.
+  --dump-environment        Dump the result of printenv at compile time.
+  --dump-build-info         Dump the contents of SpECTRE's BuildInfo.txt
+  --dump-only               Exit after dumping requested information.
+  --copyright-and-licenses  Returns all of the copyright and license info for 
+                            SpECTRE and its dependencies.
+  --input-file arg          Input file name
+
+
+==== Description of expected options:
+Find the solution to an XCTS problem.
+
+Options:
+  ResourceInfo:
+    type=ResourceInfo
+    Options for allocating resources. This information will be used when
+    placing Array and Singleton parallel components on the requested
+    resources.
+
+  RadiallyCompressedCoordinates:
+    type=Auto
+    Define radially compressed coordinates for visualizing large outer radii.
+
+  DomainCreator:
+    type=DomainCreator
+    The domain to create initially
+
+  Parallelization:
+    Options related to parallelization aspects of the simulation.
+
+  NonlinearSolver:
+    The iterative nonlinear solver
+
+  LinearSolver:
+    The iterative Krylov-subspace linear solver
+
+  Amr:
+    Options for adaptive mesh refinement (AMR)
+
+  Observers:
+    Options for recording data
+
+  Discretization:
+    Options for the discretization of the elliptic equations
+
+  InitialGuess:
+    type=InitialGuess
+    The initial guess for the elliptic solve. The solve converges faster if
+    the initial guess is close to the solution and may not converge at all if
+    the initial guess is too far away.
+
+  RandomizeInitialGuess:
+    type=Auto
+    Add uniform random noise to variables.
+
+  Background:
+    type=Background
+    The variable-independent part of the equations that define the problem to
+    solve (along with the boundary conditions).
+
+  EventsAndTriggersAtIterations:
+    type=EventsAndTriggers
+    Events to run at triggers
+
+  PhaseChangeAndTriggers:
+    type=[TriggerAndPhaseChanges, ...]
+    A collection of pairs of triggers and collections of phase change objects
+    to determine runtime phase control-flow decisions. The order of the phase
+    change objects determines the order of the requests processed by the Main
+    chare during phase change arbitration.
+
+  BuildMatrix:
+    Options for building the explicit matrix representation of the linear
+    operator. This is done by applying the linear operator to unit vectors
+    and is useful for debugging and analysis only, not to actually solve the
+    elliptic problem (that should happen iteratively).
+
+[Partition 0][Node 0] End of program
