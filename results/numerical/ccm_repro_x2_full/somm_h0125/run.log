@@ -25,19 +25,10 @@ AssembleZ4cTasks
 
 Setup complete, executing task list(s)...
 
-elapsed=1.081344e+00 cycle=0 time=0.000000e+00 dt=1.250000e-01
-elapsed=6.272108e+00 cycle=100 time=1.250000e+01 dt=1.250000e-01
-elapsed=1.126438e+01 cycle=200 time=2.500000e+01 dt=1.250000e-01
-elapsed=1.620427e+01 cycle=300 time=3.750000e+01 dt=1.250000e-01
-elapsed=2.119623e+01 cycle=400 time=5.000000e+01 dt=1.250000e-01
-elapsed=2.592454e+01 cycle=500 time=6.250000e+01 dt=1.250000e-01
-elapsed=3.111259e+01 cycle=600 time=7.500000e+01 dt=1.250000e-01
-
-Terminating on time limit
-time=8.000000e+01 cycle=640
-tlim=8.000000e+01 nlim=-1
-
-MeshBlock-cycles = 5120
-cpu time used  = 3.192181e+01
-zone-cycles/cpu_second = 8.843498e+07
-particle-updates/cpu_second = 0.000000e+00
+elapsed=2.065779e+00 cycle=0 time=0.000000e+00 dt=3.125000e-02
+elapsed=2.011169e+02 cycle=100 time=3.125000e+00 dt=3.125000e-02
+elapsed=4.006499e+02 cycle=200 time=6.250000e+00 dt=3.125000e-02
+elapsed=5.974041e+02 cycle=300 time=9.375000e+00 dt=3.125000e-02
+elapsed=7.928423e+02 cycle=400 time=1.250000e+01 dt=3.125000e-02
+elapsed=9.881178e+02 cycle=500 time=1.562500e+01 dt=3.125000e-02
+elapsed=1.184201e+03 cycle=600 time=1.875000e+01 dt=3.125000e-02

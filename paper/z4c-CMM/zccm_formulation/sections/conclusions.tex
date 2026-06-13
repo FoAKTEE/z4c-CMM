@@ -1,5 +1,46 @@
 \section{Conclusions}
 \label{sec:conclusions}
 
-% iter-4 target: results summary; limits (X=2 ID, BH resources,
-% O(dt) coupling target); outlook.
+We have formulated Cauchy--characteristic matching for the Z4c system
+and verified it as a single closed chain
+(Fig.~\ref{fig:dag}): the ten incoming boundary modes and their data
+sources (Sec.~\ref{sec:cauchy}); the exact incoming-Weyl dictionary and
+the Type-II boost carrying the characteristic datum onto the physical
+rows (Secs.~\ref{sec:n2}--\ref{sec:bcrows}); the $\beta$-corrected,
+unringed linear hierarchy that admits live worldtube data in the
+anchored gauge (Sec.~\ref{sec:characteristic}); the local six-row
+worldtube map and the retarded matching geometry
+(Sec.~\ref{sec:matching}); and a verification ladder
+(Sec.~\ref{sec:tests}) running from a native in-process solver, through
+the verification harness and the exact analytic solution, to an
+independent production characteristic code and the published reference
+data. Each link is machine-checked at the precision stated at the
+corresponding equation.
+
+The principal results are: an exact finite-radius Teukolsky waveform
+that replaces an auxiliary reference run and converges with measured
+sixth order \eqref{eq:teuk-E}; a gauge-invariant $\psi_0$ extraction
+\eqref{eq:psi0formula} whose anchored-gauge tails are exactly silent,
+resolving the representability obstruction of the ringed scheme; and a
+live, in-process matching loop whose datum fidelity is demonstrated on
+the characteristic-pulse test and cross-checked, on identical worldtube
+data, against an independent code to $6\times10^{-6}$ in the waveform
+and $0.1\%$ in the datum normalization.
+
+The open items are stated where they arise and are collected here. The
+two-way coupling holds the boundary data fixed across the intra-step
+substages, an $O(\Delta t)$ approximation whose effect was localized
+against published data at $O(30\%)$ in the pulse-arrival window
+[O-M5-1]; linear-in-time boundary interpolation is the corresponding
+refinement. The strongly nonlinear $X=2$ test is reproduced here with a
+shared linear-initial-data protocol, internally consistent but distinct
+from the constraint-solved initial data of the published runs; a
+constraint solver is required for amplitude-level $X=2$ agreement. The
+black-hole perturbation test of the reference work, with horizon
+excision and multi-thousand-$M$ evolutions, lies beyond the present
+resource envelope; its characteristic half is nonetheless exercised by
+the cross-code verification. Finally, the formulation is developed for
+the axisymmetric $\ell=2$ sector at linear order; the higher-multipole
+and nonlinear hierarchy, the gauge sector of the matching, and the
+finite-radius--to--scri normalization residual are the natural
+continuations.

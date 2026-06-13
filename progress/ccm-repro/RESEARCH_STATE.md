@@ -107,3 +107,7 @@ the att2-stable X=2 config (diss=0.1, kappa1=0.1, nghost=4). Goal: the
 paper-protocol X=2 error hierarchy (E[run] vs reference << E_h) with
 shared linear ID (internally consistent; the XCTS difference documented).
 STATUS: results/numerical/ccm_repro_x2_full/STATUS.log; hourly checks.
+m5-iter 4 DONE: Sec V repro subsection (sec:repro + 3 overlay figs),
+intro final, conclusions, appendices A/B/C; 15 pages, 0 unresolved.
+X=2 campaign healthy (5/7 done; preliminary boundary error 1.1e-2 =
+Somm=CCM, truncation 0.6; h=0.125 pair running).

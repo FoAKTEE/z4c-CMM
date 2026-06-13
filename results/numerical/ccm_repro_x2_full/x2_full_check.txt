@@ -1,0 +1,39 @@
+X=2 FULL CAMPAIGN (user-authorized 8 GPUs / 2 days) — PRELIMINARY
+(check #1, 2026-06-13; h=0.125 pair still running).
+
+Config (all runs): X=2, diss=0.1, kappa1=0.1, nghost=4, CFL 0.25,
+tlim=80, extraction r=36, linear Teukolsky ID (shared across reference
+and boundary runs => internally consistent protocol; the XCTS-ID
+difference vs the published runs of Ref.~[Ma:2023qjn] stays documented).
+Runs (STATUS.log): reference_768 = box +-192, 768^3, far boundary
+(causally disconnected: boundary influence reaches r=36 only at
+t ~ 192-36 = 156 > 80); boundary-41 Sommerfeld/CCM(mode-3) pairs at
+h = 0.5 (164^3), 0.25 (328^3), 0.125 (656^3). All completed runs stable
+(nan=0, rc=0, reached t=80).
+
+THE PAPER HIERARCHY (reproduced; eq:teuk-E protocol):
+[CLEAN] boundary error at fixed h=0.5 (run_bdry41 - reference_farbdry,
+        same resolution so truncation cancels in the difference):
+          E[Sommerfeld] = 1.112e-2
+          E[CCM]        = 1.112e-2
+        |CCM - Sommerfeld| (h=0.5) = 8.30e-10,  (h=0.25) = 9.94e-10
+        => Sommerfeld and CCM are indistinguishable at X=2, the paper's
+        result: the incoming psi0 ~ r^-5 (peeling) is negligible at the
+        worldtube r=41, so the matching term cannot move the waveform.
+[CLEAN] truncation error E_h (boundary-41, h=0.5 vs h=0.25) = 6.17e-1.
+        Hence boundary error (1.1e-2) << truncation error (6.2e-1):
+        the paper's "boundary error << truncation error" hierarchy at
+        X=2, with our internally-consistent linear-ID protocol.
+ref peak |r psi4^(2,0)| = 4.38e-1 at t=62.75.
+
+[PENDING] the h=0.125 pair completes the convergence ladder
+        (E_h(0.25,0.125) -> measured order); full gate + figure
+        (x2_full.pdf) + ledger row M5-X2FULL at the next check.
+
+NOTE (caveat, honest): comparing a finer boundary run to the single
+h=0.5 reference (e.g. "E[somm_h025] vs ref768" = 0.62) is a CROSS-
+RESOLUTION number dominated by the reference's own h=0.5 truncation, NOT
+a boundary error -- it is not reported as such. The clean boundary error
+needs matched-h reference/boundary pairs (have it at h=0.5); the
+convergence of the boundary-41 system is measured by the self-ladder
+E_h (have h=0.5/0.25; h=0.125 pending).

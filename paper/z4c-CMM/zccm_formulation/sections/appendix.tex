@@ -1,0 +1,66 @@
+\appendix
+
+\section{Conventions}
+\label{app:conventions}
+
+Angular operators act in the $q^A\bar q_A = 2$ dyad convention; for a
+spin-weight-$s$ field $f$,
+$\eth f = q^A\partial_A f - s\,(q^A\partial_A\ln\rho)\,f$ with the
+round-sphere connection, and $\bar\eth$ its conjugate, so that on the
+axisymmetric $\ell=2$ shapes the closures \eqref{eq:ethclosure} hold.
+The real shape algebra used throughout is
+$s\equiv\sin\theta$, $c\equiv\cos\theta$, $P\equiv 3c^2-1$, with
+$\int s^2\cdot s^2\,d\Omega$, $\int P^2\,d\Omega$, $\int (sc)^2\,d\Omega$
+the projection norms of \eqref{eq:contract}; the spin-weighted
+spherical-harmonic coefficients follow from the conversions
+\eqref{eq:modalfactors}. The extraction convention for the outgoing
+waveform is that of the AthenaK Weyl pipeline \cite{Zhu:2024utz}, which
+equals $-1$ times the scri member of \eqref{eq:teuk-psi0} continued to
+finite radius; this sign is carried explicitly in
+\eqref{eq:teuk-exact-psi4} and is the convention in which the
+cross-oracle of Sec.~\ref{sec:repro} returns
+$\Psi_4 = -\sqrt{6\pi/5}\,F^{(6)}$.
+
+\section{Exact Teukolsky verification chain}
+\label{app:teuk}
+
+The finite-radius reference \eqref{eq:teuk-exact-psi4} and the datum
+\eqref{eq:teuk-psi0} are certified by seven independent symbolic gates
+(ledger node N12): tracelessness of the metric perturbation
+\eqref{eq:teuk-metric}; the coefficient-exact linearized vacuum equation;
+the $\sin^2\theta$ factorization of the $(\ell,m)=(2,0)$ projection;
+peeling ($k+j=6$ in the retarded expansion); the scri limit reproducing
+$-\sqrt{6\pi/5}\,F^{(6)}$; an independent thirty-digit finite-difference
+cross-check of the Weyl scalar agreeing to $10^{-40}$; and the
+orientation of the magnetic-parity term fixed by the concrete
+right-handed frame. The Bondi-variable closed forms \eqref{eq:teukbondi}
+close the linear hierarchy \eqref{eq:plainhierarchy} as a rational
+identity, and the same forms drive the cross-oracle worldtube file. Two
+production defects were isolated only by this exact reference: a
+frame-orientation error in the initial data (the $\hat e_\theta$ leg),
+which violated the linearized vacuum at the $5\%$ level while remaining
+invisible to constraint monitors, and a one-step offset in the waveform
+time labels; both are corrected in all data shown.
+
+\section{Constraint-row stability model}
+\label{app:gks}
+
+The admissibility of the constraint rows 3--6 of Table~\ref{tab:modes}
+is settled on the linearized constraint subsystem at normal incidence
+(ledger node N13). With $w_\pm = \Theta \pm Z_s$ the characteristic
+combinations, a frozen-coefficient semidiscrete analysis with the
+production boundary stencils gives, for every candidate closure (matched
+advection, the damped sink, a one-sided advected variant, and the
+characteristic $w_-$ replacement), a maximal real part of the spectrum
+below $10^{-10}$ at two resolutions: all are Gustafsson--Kreiss--Sundstr\"om
+stable; the documented nonlinear failure of one realization is
+attributable to the metric-sector face recomputation, not to the
+constraint-row concept. A traveling constraint packet is absorbed by the
+matched-advection realization (which the stock scheme induces) at
+$1 - 8\times10^{-6}$ energy, and by the $w_-$ replacement at
+$1 - 3\times10^{-6}$; the falloff-mismatched sink instead reflects
+$\sim\!10\%$ of the packet. The matched (stock) realization is therefore
+the admissible optimum, and the continuum reflection of the matched rows
+is $|R| = \sigma/(2\omega r)$ with no scheme ambiguity. This is the
+basis for the production default ($\psi_0'$-driven physical rows over the
+stock constraint/gauge rows) quoted in Sec.~\ref{sec:modes}.

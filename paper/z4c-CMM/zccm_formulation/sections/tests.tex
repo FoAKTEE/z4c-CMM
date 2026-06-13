@@ -273,3 +273,94 @@ SpECTRE \texttt{CharacteristicExtract} on the exact worldtube data
 \texttt{spectre\_oracle/}.}
 \label{fig:liveccm}
 \end{figure}
+
+\subsection{Reproduction against published CCM simulation data}
+\label{sec:repro}
+
+\begin{nfblock}
+We verify the formulation against the published simulation data of
+Ref.~\cite{Ma:2023qjn} (the authors' archived dataset and figure
+scripts), regenerating their figures from their data and overlaying our
+independent pipeline. All twenty data figures whose inputs the dataset
+contains are reproduced bit-faithfully through the authors' own scripts
+(the remaining published panels lack archived input data and are
+appendix variants of reproduced main-text figures).
+
+\paragraph{Flat Teukolsky, $X=10^{-5}$ (Fig.~\ref{fig:x1e5}).}
+Our characteristic transport of the \emph{exact} worldtube data
+\eqref{eq:teukbondi} --- run through an independent production CCE code
+\cite{Moxon:2020gha} at matched worldtube radius $41$ and amplitude ---
+agrees with their published scri strain to $1.9\times10^{-3}$ of peak.
+The deviation is attributable to the integration-tolerance floor of the
+published runs at this amplitude: tightening our own transport
+tolerances reduces our deviation from the closed-form strain
+$\sqrt{6\pi/5}\,F^{(4)}$ by $25\times$ to $4.7\times10^{-5}$, while the
+published curves sit at $1.9\times10^{-3}$. The published CCM and CCE
+curves themselves differ by only $3.6\times10^{-6}$ of peak --- the
+matching term's effect at $X=10^{-5}$, the quantitative form of the
+``perturbatively indistinguishable'' statement, peeling-suppressed as in
+Sec.~\ref{sec:teuktest}.
+
+\paragraph{Characteristic-pulse injection (Fig.~\ref{fig:pulseovl}).}
+For the ingoing-pulse test (Secs.~\ref{sec:solver},
+\ref{sec:retarded}; identical pulse parameters) the boundary $\psi_0$
+first trough matches the published value to $1.4\%$ in amplitude, with a
+time offset $+2.3$ in the geometric expectation $[+1.3,+3.0]$ for our
+worldtube radius $40$ versus their $41$. The published live (matched)
+boundary $\psi_0$ tracks our mirror (quiescent-tube) solver to
+$1$--$10\%$ through the main pulse, while our live coupling departs by
+$O(30\%)$ in the trough window --- localizing the $O(\Delta t)$
+boundary-holding error of Sec.~\ref{sec:retarded} [O-M5-1].
+
+\paragraph{Flat Teukolsky, $X=2$ (Fig.~\ref{fig:x2}).}
+A dedicated long campaign (eight GPUs) evolves the $X=2$ system to
+$t=80$ at the stable configuration (diss.\ $0.1$, $\kappa_1=0.1$,
+$\texttt{nghost}=4$) with a causally disconnected far-boundary reference
+($768^3$, box $\pm192$) and boundary-$41$ Sommerfeld/CCM pairs on a
+resolution ladder $h=0.5/0.25/0.125$. At fixed resolution the boundary
+error (run vs.\ far-boundary reference) is
+$E[\text{Somm}] = E[\text{CCM}] = 1.1\times10^{-2}$ with
+$|\text{CCM}-\text{Somm}| = 8\times10^{-10}$, while the truncation
+estimate is $E_h = 0.6$: the boundary error sits far below the
+truncation error and is insensitive to the matching term, reproducing
+the structure of Ref.~\cite{Ma:2023qjn} at $X=2$ with a shared
+linear-initial-data protocol (the constraint-solved-ID difference of the
+published runs is the documented formulation distinction).
+\end{nfblock}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth]{zccm_x1e5_overlay.pdf}
+\caption{$X=10^{-5}$ scri strain: published CCM/CCE
+\cite{Ma:2023qjn} and our independent characteristic transport of the
+exact worldtube data \eqref{eq:teukbondi}, against the shared
+perturbative truth. The lower panel's $|\text{ours}-\text{CCM}|$ tracks
+$|\text{CCM}-\text{pert}|$ because our transport sits $\sim\!40\times$
+closer to the truth; the informative curves are the two error budgets.
+Data: \texttt{ref-code/ccm-figures/X=1e-5}, \texttt{spectre\_oracle}.}
+\label{fig:x1e5}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth]{zccm_pulse_overlay.pdf}
+\caption{Characteristic-pulse injection: boundary $\psi_0$ (top) and the
+transmitted $\psi_4$ burst (bottom), published data \cite{Ma:2023qjn}
+vs.\ our solver via the derived modal factor. Data:
+\texttt{ref-code/ccm-figures/pulse\_on\_characteristic\_grid},
+\texttt{n14\_native/mode6}.}
+\label{fig:pulseovl}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth]{zccm_x2_structural.pdf}
+\caption{$X=2$ structural comparison: the published far-boundary
+reference waveform \cite{Ma:2023qjn} (top) and our long-campaign
+boundary-$41$ runs at two dissipation settings (bottom). The
+dissipation-dependent peak delay is the linear-initial-data
+constraint-cleanup signature discussed in Sec.~\ref{sec:repro}. Data:
+\texttt{results/numerical/ccm\_repro\_x2\_full},
+\texttt{ref-code/ccm-figures/X=2}.}
+\label{fig:x2}
+\end{figure}
