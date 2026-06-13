@@ -1,9 +1,13 @@
 \section{The matching algorithm}
 \label{sec:matching}
 
-% iter-3 target: worldtube sampling + data contract; six-row
-% anchored map (+beta); gauge tails; retarded cone labeling +
-% causality lag; datum injection; cadence; the derivation DAG.
+The matching loop closes two data paths each Cauchy step: the worldtube
+path (Cauchy state $\to$ characteristic boundary data,
+Secs.~\ref{sec:n1}--\ref{sec:wtmap}) and the datum path (characteristic
+$\psi_0$ $\to$ the physical boundary rows of Sec.~\ref{sec:bcrows},
+Secs.~\ref{sec:retarded}--\ref{sec:cadence}). The full derivation chain
+is summarized in Fig.~\ref{fig:dag}.
+
 \subsection{Worldtube data map (node N1)}
 \label{sec:n1}
 
@@ -49,3 +53,216 @@ residual }+1\cdot\gamma_{ij}\beta^k\partial_k\ln\chi\text{]}.
 \end{equation}
 \end{nfblock}
 
+\subsection{Live sampling and the $\ell=2$ data contract}
+\label{sec:contract}
+
+\begin{nfblock}
+The Cauchy ADM state is interpolated to three geodesic spheres at
+$r_{\rm wt}$ and $r_{\rm wt}\pm\delta r$ each step. With orthonormal
+frame components $h_{\hat a\hat b} = (\gamma - \delta)_{\hat a\hat b}$
+and $\partial_t h_{\hat a\hat b} = -2K_{\hat a\hat b}$ (linear order;
+$\alpha = 1 + O(h)$, the correction entering beyond linear), the
+$(\ell,m)=(2,0)$ contract scalars are the shape projections
+\begin{equation}
+h_{\rm TT} = \Big\langle \tfrac12(h_{\hat\theta\hat\theta}
+ - h_{\hat\phi\hat\phi})\Big\rangle_{s^2},
+\quad
+h_{rr} = \big\langle h_{\hat r\hat r}\big\rangle_{P},
+\quad
+\varh = \big\langle h_{\hat\theta\hat\theta}
+ + h_{\hat\phi\hat\phi}\big\rangle_{P},
+\quad
+h_{r\theta} = \big\langle r\,h_{\hat r\hat\theta}\big\rangle_{sc},
+\label{eq:contract}
+\end{equation}
+with $\langle f\rangle_X = \int f X\,d\Omega / \int X^2\,d\Omega$ for
+$X \in \{s^2, P, sc\}$, the time derivatives obtained from the same
+projections of $-2K$, and $\partial_r\varh$ by the centered difference
+across the sphere triplet. At $\ell=2$ the angular derivatives close
+analytically on the same scalars,
+\begin{equation}
+\big\langle\partial_\theta \varh\big\rangle_{sc} = -6\,\varh,
+\qquad
+\big\langle\partial_\theta \partial_r\varh\big\rangle_{sc}
+ = -6\,\partial_r\varh,
+\qquad
+\big\langle(\partial_\theta + \cot\theta)\,h_{r\theta}\big\rangle_{P}
+ = h_{r\theta},
+\label{eq:dthclosures}
+\end{equation}
+so the contract is seven numbers per step:
+$(h_{\rm TT}, \partial_t h_{\rm TT}, h_{rr}, \varh, \partial_r\varh,
+ h_{r\theta}, \partial_t h_{r\theta})$.
+\end{nfblock}
+
+\subsection{The anchored worldtube map (six rows $+\,\beta$)}
+\label{sec:wtmap}
+
+\begin{nfblock}
+The Cauchy coordinates near the worldtube do not satisfy the Bondi gauge
+conditions; the radial gauge generator is fixed by areal-radius
+consistency only up to functions of $(u,\theta)$. Anchoring the
+generator to vanish \emph{at the worldtube}, with the angular generator
+corrected so that the $g_{r\theta}$ gauge condition holds consistently
+($\xi_a = \xi_{\rm old} + \partial_\theta(\zeta_u^{\rm wt})/r -
+\text{const}$), makes the map from the contract
+\eqref{eq:contract}--\eqref{eq:dthclosures} to the characteristic
+boundary scalars \emph{local}:
+\begin{align}
+J_t^{\rm wt} &= h_{\rm TT},
+&
+H_t^{\rm wt} &= \partial_t h_{\rm TT},
+&
+U_t^{\rm wt} &= \frac{6\,\varh}{4\,r_{\rm wt}},
+\nonumber\\
+Q_t^{\rm wt} &= \frac{6\,\varh}{4} + \frac{6\,r_{\rm wt}\,
+\partial_r\varh}{4}
+ - \frac{3\,h_{r\theta}}{r_{\rm wt}} + \partial_t h_{r\theta},
+&
+W_t^{\rm wt} &= \frac{3\,h_{rr}}{4\,r_{\rm wt}}
+ - \frac{\partial_r\varh}{4},
+&
+\beta_t^{\rm wt} &= \frac{h_{rr}}{4} - \frac{\varh}{8}
+ - \frac{r_{\rm wt}\,\partial_r\varh}{8}
+ + \frac{h_{r\theta}}{4\,r_{\rm wt}},
+\label{eq:sixrowmap}
+\end{align}
+verified as an exact identity against the anchored-gauge solution
+series (BigFloat-192 residual $<10^{-35}$; derivation artifact
+\texttt{derive\_wtmap\_v2.jl}). The anchored gauge necessarily carries
+$\beta_t \neq 0$ and non-decaying tails $a(u) + b(u)/r$ in $J$, $U$,
+$W$; these are exactly the structures supported by the
+$\beta$-corrected, unringed system \eqref{eq:unringed}, and they are
+$\psi_0$-silent by \eqref{eq:psi0formula}. Independent anchoring of the
+radial and angular generators violates the $g_{r\theta}$ condition and
+is excluded [pinned: the uncorrected map fails the $\beta$ channel with
+a characteristic $(4-n)$-ratio pattern].
+\end{nfblock}
+
+\subsection{Retarded matching geometry}
+\label{sec:retarded}
+
+\begin{nfblock}
+The characteristic time is the retarded cone label, $u = t - r$ on the
+flat background: the cone $u$ meets the worldtube worldline at Cauchy
+time $t = u + r_{\rm wt}$ and the Cauchy outer boundary $r_B$ at
+$t = u + r_B$. Hence
+\begin{equation}
+\text{tube sample at } t \;\longrightarrow\; \text{cone } u = t -
+r_{\rm wt},
+\qquad
+\text{boundary datum at } t \;\longleftarrow\;
+\psi_0^t\big(r_B\big)\Big|_{\,u = t - r_B},
+\label{eq:conelabels}
+\end{equation}
+a causality lag of $r_B - r_{\rm wt}$ in $u$ that is always available
+in lockstep evolution. The solver records the interior probe
+\eqref{eq:proberules} at $r_B$ each substep and serves the lagged value
+by linear interpolation in the recorded history, with the analytic
+initial-data value as the pre-cone fallback (the run starts on the
+quiescent cone $u_0 = -r_{\rm wt}$). Boundary data are held fixed
+across the substeps between Cauchy samples --- an $O(\Delta t)$
+coupling approximation. Measured against the published reference data
+of Ref.~\cite{Ma:2023qjn} (Sec.~\ref{sec:tests}), this approximation,
+together with the tube-inside-datum geometry, produces $O(30\%)$
+deviations of the live boundary $\psi_0$ from the clean characteristic
+solution in the pulse-arrival window; linear-in-time boundary-data
+interpolation is the corresponding open refinement [O-M5-1, class (c)].
+\end{nfblock}
+
+\subsection{Injection path, cadence, and initialization}
+\label{sec:cadence}
+
+\begin{nfblock}
+The served datum enters the Cauchy evolution through the Type-II boost
+and the physical rows of Sec.~\ref{sec:bcrows}:
+$\psi_0' = A^2\,\psi_0$ with
+$A = (\alpha - \gamma_{ij}\beta^is^j)\,e^{-2\hat\beta}$
+\eqref{eq:boost}, injected as \eqref{eq:teuk-inject}. Per Cauchy RK
+stage at the boundary: (1) sample the contract \eqref{eq:contract}
+(collective over ranks; off-rank sphere points are excluded by
+ownership, the shape norms being global); (2) map by
+\eqref{eq:sixrowmap}; (3) advance the characteristic state to
+$u = t - r_{\rm wt}$ (root rank); (4) serve the lagged probe
+\eqref{eq:conelabels} and broadcast; (5) apply the boundary rows. The
+characteristic initial slice is the analytic datum (quiescent for the
+matched tests; \eqref{eq:pulseid} for the pulse-injection test);
+initialization order and the $\hat\beta$ circularity at $t=0$ remain
+documented obligations [O-N6-3]. Setting the served datum to zero
+reduces the entire loop to the absorbing scheme of
+Ref.~\cite{Ruiz:2010qj} exactly [V6].
+\end{nfblock}
+
+\subsection{Derivation chain}
+\label{sec:dag}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  node distance = 3.5mm and 4.5mm,
+  box/.style  = {draw, rounded corners=1pt, align=center,
+                 font=\scriptsize, inner sep=2.2pt},
+  newbox/.style = {box, draw=blue!60!black, text=blue!60!black, thick},
+  arr/.style  = {-{Latex[length=1.6mm]}, line width=0.5pt, gray!70},
+]
+% layer 1: foundations
+\node[box] (z4c)  {Z4c system\\ \eqref{eq:dtchi}--\eqref{eq:constraints}};
+\node[box, right=of z4c] (frame) {boundary frame\\ \eqref{eq:adm}--\eqref{eq:nullvecs}};
+\node[box, right=of frame] (bs) {Bondi--Sachs\\ \eqref{eq:bsmetric}--\eqref{eq:ycomp}};
+\node[box, right=of bs] (teuk) {exact Teukolsky\\ \eqref{eq:teuk-F}--\eqref{eq:teuk-psi0}, N12};
+% layer 2
+\node[newbox, below=of z4c] (modes) {ten modes\\ Tab.~\ref{tab:modes}, N4--N6};
+\node[newbox, below=of frame] (boost) {boost $A$\\ \eqref{eq:boost}, N2};
+\node[newbox, right=of boost] (dict) {dictionary\\ \eqref{eq:exact-dictionary}, N3};
+\node[newbox, below=of bs, xshift=18mm] (scal) {$\ell{=}2$ scalars\\ \eqref{eq:tscalars}--\eqref{eq:modalfactors}};
+\node[newbox, right=of scal] (teukbondi) {Bondi forms\\ \eqref{eq:teukbondi}--\eqref{eq:teukpsi0}};
+% layer 3
+\node[newbox, below=of modes] (rows) {CPBC/gauge rows + N13\\ \eqref{eq:bc-cpbc}--\eqref{eq:bc-gauge}};
+\node[newbox, below=of boost] (phys) {physical rows\\ \eqref{eq:bc-phys}, \eqref{eq:teuk-inject}};
+\node[newbox, below=of scal] (plain) {plain hierarchy\\ \eqref{eq:plainhierarchy}};
+% layer 4
+\node[newbox, below=of phys, xshift=-12mm] (contract) {$\ell{=}2$ contract\\ \eqref{eq:contract}--\eqref{eq:dthclosures}};
+\node[newbox, right=of contract] (map) {anchored map\\ \eqref{eq:sixrowmap}};
+\node[newbox, right=of map] (beta) {$\beta$-hierarchy\\ \eqref{eq:beta-hierarchy}, \eqref{eq:unringed}};
+\node[newbox, right=of beta] (psi0) {$\psi_0$ probe\\ \eqref{eq:psi0formula}--\eqref{eq:proberules}};
+% layer 5
+\node[newbox, below=of map, xshift=10mm] (retard) {retarded matching\\ \eqref{eq:conelabels}};
+% layer 6
+\node[box, below=of retard, xshift=-16mm] (tests) {batteries: modes 3--6\\ Sec.~\ref{sec:tests}};
+\node[box, right=of tests] (oracle) {SpECTRE oracle\\ Sec.~\ref{sec:tests}};
+\node[box, right=of oracle] (repro) {paper-data overlays\\ Sec.~\ref{sec:tests}};
+% edges
+\draw[arr] (z4c) -- (modes);
+\draw[arr] (frame) -- (modes);
+\draw[arr] (frame) -- (boost);
+\draw[arr] (frame) -- (dict);
+\draw[arr] (bs) -- (scal);
+\draw[arr] (teuk) -- (teukbondi);
+\draw[arr] (scal) -- (teukbondi);
+\draw[arr] (modes) -- (rows);
+\draw[arr] (modes) -- (phys);
+\draw[arr] (boost) -- (phys);
+\draw[arr] (dict) -- (phys);
+\draw[arr] (scal) -- (plain);
+\draw[arr] (z4c) to[out=200,in=170] (contract);
+\draw[arr] (contract) -- (map);
+\draw[arr] (plain) -- (beta);
+\draw[arr] (map) -- (beta);
+\draw[arr] (beta) -- (psi0);
+\draw[arr] (teukbondi) -- (psi0);
+\draw[arr] (map) -- (retard);
+\draw[arr] (psi0) -- (retard);
+\draw[arr] (phys) to[out=270,in=160] (retard);
+\draw[arr] (retard) -- (tests);
+\draw[arr] (teukbondi) to[out=300,in=30] (oracle);
+\draw[arr] (retard) -- (oracle);
+\draw[arr] (retard) -- (repro);
+\draw[arr] (rows) to[out=270,in=180] (tests);
+\end{tikzpicture}
+\caption{Derivation chain of the Z4c-CCM formulation. Black nodes:
+foundations (literature content and the exact reference chain); blue
+nodes: machine-verified new content (ledger nodes named in the section
+titles); bottom row: the verification instruments of
+Sec.~\ref{sec:tests}.}
+\label{fig:dag}
+\end{figure}

@@ -95,3 +95,6 @@ Loop state .claude/ralph-loop.local.md; plan: iter 1 skeleton + Sec II
 pages, 0 unresolved refs); iter 2 Sec III characteristic; iter 3 Sec IV
 matching + DAG figure; iter 4 Sec V consolidation + I/VI + appendices;
 iter 5 consistency pass + exit.
+m5-iter 3 DONE: Sec IV matching complete (contract, six-row map,
+retarded geometry + O-M5-1, cadence) + the TikZ derivation DAG fig:dag.
+12 pages clean.
