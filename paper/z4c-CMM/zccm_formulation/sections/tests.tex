@@ -1,12 +1,24 @@
 \section{Numerical verification}
 \label{sec:tests}
 
-\subsection{Numerical evidence}
+The verification proceeds in four layers, increasing in physical scope:
+the algebraic identities and the boundary model problem of the
+formulation (Sec.~\ref{sec:numerics}); the full $3+1$ flat-background
+Teukolsky test against an exact reference (Sec.~\ref{sec:teuktest}); the
+live in-process matching loop (Fig.~\ref{fig:liveccm}); and the
+reproduction against published CCM simulation data
+(Sec.~\ref{sec:repro}). The first layer is computed in a standalone
+\texttt{JAX} implementation; the remaining three run in the production
+AthenaK code \cite{Zhu:2024utz} and the independent characteristic
+extractor.
+
+\subsection{Formulation identities and the boundary model problem}
 \label{sec:numerics}
 
-All runs: JAX float64, $4\times$ NVIDIA A100-80GB
-(\texttt{CUDA\_VISIBLE\_DEVICES=0,1,2,3}), wall clock $\le 23$\,s each
-(budget 600\,s); outputs under \texttt{results/numerical/}.
+The algebraic-identity and model-problem checks (Table~\ref{tab:static}
+static, Table~\ref{tab:dynamic} dynamical) are computed in a standalone
+\texttt{JAX} float64 implementation, $4\times$ NVIDIA A100-80GB, wall
+clock $\le 23$\,s each; outputs under \texttt{results/numerical/}.
 
 \begin{table}[htbp]
 \centering
