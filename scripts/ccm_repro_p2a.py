@@ -87,11 +87,15 @@ ax[0].set_ylabel(r"$|h_{2,0}|$")
 ax[0].set_title(r"Teukolsky wave $X=10^{-5}$, worldtube 41: scri strain, theirs vs ours")
 ax[0].legend(fontsize=8)
 ax[1].semilogy(tgrid, np.abs(ccm_i - model), "r", lw=1.2,
-               label=f"|their CCM - pert| (max {res_t/pk:.1e} of peak)")
+               label=f"|their CCM - pert| (max {res_t/pk:.2e} of peak)")
 ax[1].semilogy(tgrid, np.abs(ho_shift - model), "g--", lw=1.2,
-               label=f"|ours - pert| (max {res_o/pk:.1e})")
+               label=f"|ours - pert| (max {res_o/pk:.2e})")
 ax[1].semilogy(tgrid, np.abs(ho_shift - ccm_i), "k", lw=1.2,
-               label=f"|ours - their CCM| (max {d_ccm/pk:.1e})")
+               label=(f"|ours - their CCM| (max {d_ccm/pk:.2e})\n"
+                      "NOTE: ours = CCE transport of EXACT worldtube data,"
+                      "\nso this curve is dominated by THEIR deviation"
+                      "\n(triangle bound: differs from |their CCM - pert|"
+                      f"\nby at most |ours - pert| = {res_o/pk:.1e} pointwise)"))
 ax[1].set_ylim(1e-13, 3e-7)
 ax[1].set_xlabel("Time (their axis)")
 ax[1].set_ylabel("Differences")

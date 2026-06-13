@@ -55,3 +55,21 @@ VERDICT: scri-to-scri agreement between fully independent worldtube-data
 provenances at 1.9e-3 of peak, attributed quantitatively to the authors'
 own integration-tolerance floor at this amplitude; our side verified to
 1.2e-4 against the closed-form truth. P2a admitted.
+
+ADDENDUM (user review, 2026-06-13): the lower-panel near-overlap of
+|ours - their CCM| with |their CCM - pert| was flagged as a possible
+implementation error. Verified NOT a bug, with the structure made
+explicit: (1) the arrays are distinct (no double-plot/aliasing); (2) the
+maxima are 1.918e-3 vs 1.923e-3 - the legend's 2-significant-digit
+rounding manufactured the 'exact' appearance; (3) pointwise,
+| |ours-theirs| - |theirs-pert| | <= |ours-pert| = 4.69e-5 of peak
+everywhere (triangle identity; correlation 0.99991): because our curve
+is the CCE transport of EXACT analytic worldtube data, it sits 41x
+closer to the perturbative truth (4.69e-5 vs 1.923e-3), so the
+difference-to-theirs is necessarily dominated by THEIR deviation.
+PRESENTATION FIX: the figure now states this on the panel; the
+informative curves are |theirs - pert| (their full-pipeline error
+budget) and |ours - pert| (our CCE-transport error); |ours - theirs| is
+derived from them in this construction. The apples-to-apples content of
+P2a is unchanged: identical characteristic code, matched worldtube
+radius/amplitude, conventions measured, error budgets attributed.
