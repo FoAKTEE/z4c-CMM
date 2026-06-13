@@ -9,7 +9,9 @@ LOG=/tmp/x2_s1_orchestrate.log
 : > "$LOG"
 say(){ echo "$(date -u +%FT%TZ) $*" | tee -a "$LOG"; }
 
-NCORE=${1:-96}   # XCTS solve PEs (user: 48 was too few; 96 fits the 128-core node with the julia job)
+NCORE=${1:-32}   # XCTS solve PEs. 1600 elements: +p32 (~50 elem/rank) is the strong-scaling
+                 # sweet spot -- +p96 (~17 elem/rank) was communication-bound (no speedup), +p48
+                 # also under-utilized. 32 maximizes per-core efficiency and frees cores.
 REPO=/data/haiyangw/claude/z4c-CMM
 BIN=/data/haiyangw/nr/spectre/build/bin/SolveXctsVacuum
 OUT=/data/haiyangw/nr/spectre/x2_xcts_run
