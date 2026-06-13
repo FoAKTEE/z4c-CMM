@@ -152,3 +152,15 @@ gate = pointwise gammabar vs the Python free-data reference to 1e-12
 yaml, gate Newton converged + constraint norms <= 1e-8 (R3 fallback:
 amplitude continuation X=0.5->1->1.5->2 if the flat-guess single-shot
 stalls).
+
+## S3-import path confirmed (2026-06-13)
+athenak/src/pgen/z4c_spectre_bbh.cpp EXISTS and is data-agnostic:
+LoadSpectreInitialData() uses spectre::Exporter::interpolate_to_points<3>
+reading SpatialMetric_xx..zz + ExtrinsicCurvature_xx..zz by name from a
+SpECTRE volume H5, then ADMToZ4c + ADMConstraints. My S2 yaml exports
+exactly SpatialMetric + ExtrinsicCurvature, so the AthenaK import stage
+reuses this pgen with a new athinput pointing at XctsTeukolskyX2Volume*.h5
+(+ a large r>=100 domain). Full pipeline staged: S0 binary OK, S1 class
+compiling, S2 yaml ready, S3 import path reusable. Blocking on the
+SpECTRE rebuild (bnfu6m6yi, final SolveXcts.cpp.o TU); on completion ->
+S1 pointwise gate + S2 XCTS solve.
