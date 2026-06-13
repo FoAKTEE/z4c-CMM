@@ -1,0 +1,158 @@
+# X=2 Teukolsky-wave XCTS initial data (z4c-CCM mission 6).
+# Solves the XCTS equations for the constraint-satisfying ID of the
+# even-parity (l=2,m=0) Teukolsky wave (arXiv:2308.10361 Sec V.A.2),
+# free data gammabar = delta + h (X=2, rc=20, tau=2), K=0, dt gammabar = hdot.
+Executable: SolveXcts
+
+---
+
+Parallelization:
+  ElementDistribution: NumGridPoints
+
+ResourceInfo:
+  AvoidGlobalProc0: false
+  Singletons: Auto
+
+Background: &background
+  TeukolskyWave:
+    Amplitude: 2.0
+    RadialCoordinate: 20.0
+    Timescale: 2.0
+
+InitialGuess: *background
+
+RandomizeInitialGuess: None
+
+DomainCreator:
+  Sphere:
+    InnerRadius: 0.5
+    OuterRadius: &outer_radius 1.e9
+    Interior:
+      FillWithSphericity: 0.
+    InitialRefinement: 2
+    InitialGridPoints: [8, 8, 8]
+    RadialPartitioning: [12., 40., 120.]
+    RadialDistribution: [Linear, Linear, Linear, Inverse]
+    UseEquiangularMap: True
+    EquatorialCompression: None
+    WhichWedges: All
+    TimeDependentMaps: None
+    OuterBoundaryCondition: Robin
+
+Discretization:
+  DiscontinuousGalerkin:
+    PenaltyParameter: 1.
+    Massive: True
+    Quadrature: GaussLobatto
+    Formulation: WeakInertial
+
+Observers:
+  VolumeFileName: "XctsTeukolskyX2Volume"
+  ReductionFileName: "XctsTeukolskyX2Reductions"
+
+NonlinearSolver:
+  NewtonRaphson:
+    ConvergenceCriteria:
+      MaxIterations: 30
+      RelativeResidual: 1.e-9
+      AbsoluteResidual: 1.e-10
+    SufficientDecrease: 1.e-4
+    MaxGlobalizationSteps: 40
+    DampingFactor: 1.
+    Verbosity: Verbose
+
+LinearSolver:
+  Gmres:
+    ConvergenceCriteria:
+      MaxIterations: 100
+      RelativeResidual: 1.e-3
+      AbsoluteResidual: 1.e-10
+    Verbosity: Quiet
+  Multigrid:
+    Iterations: 1
+    InitialCoarseLevels: Auto
+    PreSmoothing: True
+    UseBottomSolver: False
+    PostSmoothingAtBottom: True
+    Verbosity: Silent
+    OutputVolumeData: False
+  SchwarzSmoother:
+    MaxOverlap: 2
+    Iterations: 3
+    Verbosity: Silent
+    SubdomainSolver:
+      Gmres:
+        ConvergenceCriteria:
+          MaxIterations: 3
+          RelativeResidual: 1.e-4
+          AbsoluteResidual: 1.e-10
+        Verbosity: Silent
+        Restart: None
+        Preconditioner:
+          MinusLaplacian:
+            Solver:
+              ExplicitInverse:
+                WriteMatrixToFile: None
+            BoundaryConditions: Auto
+    SkipResets: True
+    ObservePerCoreReductions: False
+    OutputVolumeData: False
+
+RadiallyCompressedCoordinates:
+  InnerRadius: 120.
+  OuterRadius: *outer_radius
+  Compression: Inverse
+
+EventsAndTriggersAtIterations:
+  - Trigger: Always
+    Events:
+      - ObserveNorms:
+          SubfileName: Norms
+          TensorsToObserve:
+            - Name: ConformalFactor
+              NormType: Max
+              Components: Individual
+            - Name: HamiltonianConstraint
+              NormType: L2Norm
+              Components: Individual
+            - Name: MomentumConstraint
+              NormType: L2Norm
+              Components: Individual
+  - Trigger: HasConverged
+    Events:
+      - ObserveFields:
+          SubfileName: VolumeData
+          VariablesToObserve:
+            - ConformalFactor
+            - Lapse
+            - Shift
+            - SpatialMetric
+            - ExtrinsicCurvature
+            - HamiltonianConstraint
+            - MomentumConstraint
+          InterpolateToMesh: None
+          CoordinatesFloatingPointType: Double
+          FloatingPointTypes: [Double]
+          BlocksToObserve: All
+
+Amr:
+  Verbosity: Quiet
+  Criteria: []
+  Policies:
+    EnforceTwoToOneBalanceInNormalDirection: true
+    Isotropy: Anisotropic
+    Limits:
+      NumGridPoints: Auto
+      RefinementLevel: Auto
+      ErrorBeyondLimits: False
+    AllowCoarsening: True
+  MaxCoarseLevels: Auto
+  Iterations: 1
+
+PhaseChangeAndTriggers: []
+
+BuildMatrix:
+  MatrixSubfileName: None
+  Verbosity: Verbose
+  EnableDirectSolve: True
+  SkipResets: True

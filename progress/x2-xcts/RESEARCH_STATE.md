@@ -133,3 +133,22 @@ momentum), ShiftBackground=0, ConformalFactor/Lapse(+TimesCF) guesses=1,
 ShiftExcess=0, matter=0. NEXT: write TeukolskyWave.{hpp,cpp} + factory
 (SolveXcts.hpp typelist) + CMake; rebuild SolveXcts (~30min); pointwise
 gate vs this Python eval to 1e-12.
+
+## S1 build + S2 prep (2026-06-13)
+TeukolskyWave.{hpp,cpp} written (agent, against the full verified spec;
+provenance progress/x2-xcts/spectre_src/). SpECTRE rebuild (bnfu6m6yi):
+the XctsAnalyticData library (containing TeukolskyWave.cpp) BUILT to 100%
+-> the class compiles cleanly incl. the cross-namespace CommonVariables
+instantiation; SolveXcts final link in progress. S2 XCTS-solve input
+written: progress/x2-xcts/SolveXctsTeukolskyX2.yaml (and at the spectre
+root): Background/InitialGuess=TeukolskyWave(2.0,20.0,2.0); Sphere domain
+InnerRadius 0.5, OuterRadius 1e9 (Robin asymptotic flatness),
+InitialRefinement 2, [8,8,8] grid points, RadialPartitioning
+[12,40,120] to resolve the pulse at r=20; NewtonRaphson RelResidual 1e-9;
+ObserveFields exports SpatialMetric/ExtrinsicCurvature/Lapse/Shift +
+Hamiltonian/Momentum L2 norms (the S2 gate). On build success: (a) S1
+gate = pointwise gammabar vs the Python free-data reference to 1e-12
+(small standalone run or a unit eval); (b) S2 = run SolveXcts on the
+yaml, gate Newton converged + constraint norms <= 1e-8 (R3 fallback:
+amplitude continuation X=0.5->1->1.5->2 if the flat-guess single-shot
+stalls).
