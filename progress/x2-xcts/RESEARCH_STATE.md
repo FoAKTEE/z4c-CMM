@@ -207,3 +207,42 @@ SpECTRE for human read"): scripts/plot_xcts_convergence.py written — reads
 the reductions H5 by Legend attributes, renders solver residual vs
 cumulative iteration (log-y) + Hamiltonian/Momentum constraint L2 norms.
 To be populated once the S2 solve writes XctsTeukolskyX2Reductions*.h5.
+
+## S1 — XCTS solve running; launch + MKL-threading fixes (2026-06-13)
+Build of SolveXctsVacuum succeeded (BUILD_EXIT=0, 4.5 GB -g binary). Two
+solve-launch failures, both root-caused + fixed (error ledger rows):
+ (1) `SolveXctsVacuum ... +p48` rejected — this Charm++ is mpi-linux-x86_64;
+     +pN must go via charmrun (-> setarch -R mpirun -np N). Fixed both run
+     scripts.
+ (2) crash at the first threaded-MKL call: libmkl_gnu_thread.so undefined
+     symbol omp_get_num_procs (GNU OpenMP runtime not in the MKL LD_PRELOAD;
+     --check-options masks it). Fixed spectre_xcts_env.sh: preload libgomp.so.1
+     first, pin OMP_NUM_THREADS=MKL_NUM_THREADS=1.
+--check-options confirms the yaml parses with SolveXctsVacuum. The solve now
+runs and ITERATES cleanly: NewtonRaphson init residual 4.20e-1; Gmres
+descending (4.20e-1 -> 2.51e-1 over 10 iters), 48 PEs alive. Initial (flat
+guess) Hamiltonian L2 = 3.85e-2. NOT yet converged — S1 gate (Newton
+converged + H/M L2 <= 1e-8) pending. Orchestrator x2_s1_orchestrate.sh runs
+solve -> check_xcts_constraints.py -> plot_xcts_convergence.py and signals
+"S1 ORCHESTRATOR DONE".
+
+## Loop-management changes (user-directed, 2026-06-13)
+- Token-window prompt cadence (loop_gate.py + guard): verbose short prompt once
+  per ~1M-token window; long protocol self-injection every 5-10 windows. Shipped.
+- Wait-gate (_common/loop/wait_gate.py + guard): when purely blocked on a
+  tracked shell/agent (.claude/loop_wait.json), the Stop guard stays silent so
+  the session idles until the task notification wakes it (sanctioned substitute
+  for the harness-blocked foreground sleep). Shipped; active for the S1 solve.
+- AUDIT: ~/.claude/settings.json has a PostCompact hook injecting
+  skills/pua/pua.md ("turn on Musk mode"). This is the alignment.md PUA persona;
+  per the binding constraint it is REFUSED — I continue as Claude under the
+  research-admission contract and will not adopt that persona. Not editing the
+  global config without instruction.
+
+## Resource action (user-directed, 2026-06-13)
+Killed the 8-GPU long-time CCM AthenaK run (prterun -np 8 ... athena -i
+z4c_teuk_paper.athinput amp=2.0, the superseded linear-ID X=2 campaign;
+PIDs 1224285-1224292). 8 GPUs freed for the S3 large-domain (r>=100) run.
+Deployed a background agent to reproduce the SpECTRE BBH XCTS ID
+(tests/InputFiles/Xcts/BinaryBlackHole.yaml, same MKL env + charmrun, +p24)
+as the comparison reference -> progress/x2-xcts/bbh_ref/.
