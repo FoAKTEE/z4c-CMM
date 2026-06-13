@@ -367,13 +367,23 @@ vs.\ our solver via the derived modal factor. Data:
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.62\textwidth]{zccm_x2_structural.pdf}
-\caption{$X=2$ structural comparison: the published far-boundary
-reference waveform \cite{Ma:2023qjn} (top) and our long-campaign
-boundary-$41$ runs at two dissipation settings (bottom). The
-dissipation-dependent peak delay is the linear-initial-data
-constraint-cleanup signature discussed in Sec.~\ref{sec:repro}. Data:
-\texttt{results/numerical/ccm\_repro\_x2\_full},
-\texttt{ref-code/ccm-figures/X=2}.}
+\includegraphics[width=0.74\textwidth]{zccm_x2_structural.pdf}
+\caption{$X=2$ error hierarchy from the dedicated eight-GPU campaign,
+all runs at the stable configuration (diss.\ $0.1$, $\kappa_1=0.1$,
+$\texttt{nghost}=4$, $t=80$). Top: $r\psi_4^{(2,0)}$ at $r=36$ for the
+causally disconnected far-boundary reference ($768^3$, box $\pm192$) and
+the boundary-$41$ Sommerfeld and Z4c-CCM runs at $h=0.5$ (which track
+the reference) together with the $h=0.25$ Sommerfeld run (whose late-time
+departure is the truncation effect). Bottom: at fixed resolution the
+boundary error $|{\rm run}-{\rm ref}|$ is
+$E=1.1\times10^{-2}$, identical for Sommerfeld and CCM; the
+matching-term difference $|{\rm CCM}-{\rm Somm}|$ sits at
+$8\times10^{-10}$ (peeling); and the truncation estimate
+$E_h=|h_{0.5}-h_{0.25}|$ reaches $0.6$ --- the boundary error lies far
+below the truncation error and is insensitive to the matching term, the
+$X=2$ result of Ref.~\cite{Ma:2023qjn} reproduced with a shared
+linear-initial-data protocol. Generator:
+\texttt{scripts/plot\_x2\_structural.py}; data:
+\texttt{results/numerical/ccm\_repro\_x2\_full}.}
 \label{fig:x2}
 \end{figure}
