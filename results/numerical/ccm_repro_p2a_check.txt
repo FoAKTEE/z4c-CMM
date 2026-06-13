@@ -1,0 +1,57 @@
+Mission 4 P2a (iter 3): apples-to-apples X=1e-5 Teukolsky strain at scri
+— OUR pipeline vs the authors' PUBLISHED curves (299ccm/299cce
+Strain.dat), same worldtube radius 41, same pulse (rc=20, tau=2).
+
+Our instrument: SpECTRE CharacteristicExtract (the authors' own CCE
+release binary) run on the EXACT analytic Bondi-gauge worldtube data
+(ZccmJl-generated, X=1e-5 matched; results/numerical/spectre_oracle_x1e5;
+the X=1e-3 iter-46 file retained for provenance).
+
+Conventions resolved (measured, not assumed):
+[MEAS] time axes: their pulse center c = 21.0003, ours c = 19.9998 —
+       shift = +1.000, exactly r'_out - r'_c = 41 - 20 = 21 vs our
+       direct tube phase u (their ID carries the physical retarded
+       delay; pure convention).
+[MEAS] amplitude convention identical (h_{2,0} modal; peaks 1.454e-5 vs
+       1.456e-5 — 1.4e-3 relative, within the floors below).
+
+Error-budget attribution (the iteration's analytic core):
+[FIND] at X=1e-5 the CCE default ODE tolerances (AbsoluteTolerance 1e-9
+       on fields of scale ~3.6e-7) are a ~3e-3 RELATIVE floor. Evidence:
+       (1) our default-tolerance X=1e-5 run fits the linear scri form
+       sqrt(6pi/5) F'''' at 1.18e-3 of peak, while our X=1e-3 run (100x
+       better conditioned) fits at 1.36e-4 (iter 46);
+       (2) re-running OUR side with AbsoluteTolerance 1e-13 drops the
+       residual 25x to 4.7e-5 of peak (free-A; 1.16e-4 pinned-A);
+       (3) THEIR published curves fit the same form at 1.68e-3 (free-A)
+       — their runs used the default tolerance class at X=1e-5.
+Final numbers (tight-tolerance our side):
+  our oracle vs linear scri form:   1.16e-4 of peak (pinned amplitude)
+  their CCM  vs linear scri form:   1.92e-3 of peak
+  their CCE  vs linear scri form:   1.92e-3 of peak
+  OURS vs their CCM (direct):       1.92e-3 of peak  <- limited entirely
+  OURS vs their CCE (direct):       1.92e-3 of peak     by THEIR floor
+  their CCM vs their CCE:           3.6e-6 of peak (the matching-term
+       effect at X=1e-5 — the paper's 'perturbatively indistinguishable'
+       claim, quantified from their own published data)
+
+Formulation-difference table (documented, apples-to-apples through the
+shared analytic truth + the same CCE transport code):
+  Cauchy side    : theirs GH/SpECTRE XCTS-solved ID, spherical domain;
+                   ours = EXACT analytic linear worldtube data (the
+                   Cauchy-evolution step bypassed by construction) —
+                   our AthenaK Z4c finite-radius ladder is gated
+                   separately against the same analytic truth
+                   (N12: E(h) = 4.99e-2/5.36e-3/2.02e-3 at r=36).
+  Characteristic : IDENTICAL code (spectre release v2026.06.09.01
+                   CharacteristicExtract), LMax 20, 15 radial points.
+  Worldtube      : 41 = 41 (matched). Extraction: both at scri.
+  Amplitude      : X = 1e-5 matched (linear regime).
+Artifacts: results/figures/ccm_paper_repro_p2/x1e-5/strain_overlay.pdf
+(top: |h_20| their CCM/CCE + ours + perturbative; bottom: deviation
+panel); generator scripts/ccm_repro_p2a.py.
+
+VERDICT: scri-to-scri agreement between fully independent worldtube-data
+provenances at 1.9e-3 of peak, attributed quantitatively to the authors'
+own integration-tolerance floor at this amplitude; our side verified to
+1.2e-4 against the closed-form truth. P2a admitted.

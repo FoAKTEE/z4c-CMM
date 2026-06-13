@@ -1,0 +1,64 @@
+Charm++: standalone mode (not using charmrun)
+Charm++> Running in Multicore mode: 1 threads (PEs)
+The following options differ from their suggested values:
+H5LookaheadTimes, line 151:
+  Specified: 10000
+  Suggested: 200
+UseBetaIntegralEstimate, line 129:
+  Specified: false
+  Suggested: true
+OptimizeL0Mode, line 128:
+  Specified: true
+  Suggested: false
+RequireConvergence, line 127:
+  Specified: false
+  Suggested: true
+MaxIterations, line 126:
+  Specified: 1000
+  Suggested: 300
+Converse/Charm++ Commit ID: c5f1dcd
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 1 hosts (2 sockets x 64 cores x 2 PUs = 256-way SMP)
+Charm++> cpu topology info is gathered in 0.001 seconds.
+
+Executing 'CharacteristicExtract' using 1 processors.
+Launch command line: /data/haiyangw/claude/z4c-CMM/ref-code/spectre-cce/CceExecutables/CharacteristicExtract --input-file TeukolskyOracle.yaml
+Charm++ startup time in seconds: 0.003508
+Date and time at startup: Fri Jun 12 23:58:53 2026
+
+SpECTRE Build Information:
+Version:                      2026.06.09.01
+Compiled on host:             buildkitsandbox
+Compiled in directory:        /work/spectre/build
+Source directory is:          /work/spectre
+Compiled on git branch:       HEAD
+Compiled on git revision:     8590383
+Linked on:                    2026-06-09T21:05:51+00:00
+Build type:                   Release
+
+
+Option parsing completed.
+
+Allocating Singletons:
+H5WorldtubeBoundary on node 0, global proc 0, exclusive = false
+CharacteristicEvolution on node 0, global proc 0, exclusive = false
+
+Entering phase: InitializeTimeStepperHistory at time 00:00:00
+Entering phase: Evolve at time 00:00:02
+Simulation time: 0.000000
+  Wall time: 00:00:02
+Simulation time: 10.000000
+  Wall time: 00:00:29
+Simulation time: 20.000000
+  Wall time: 00:00:56
+Simulation time: 30.000000
+  Wall time: 00:01:24
+Simulation time: 40.000000
+  Wall time: 00:01:51
+Entering phase: Exit at time 00:02:04
+
+Done!
+Wall time: 00:02:04
+Date and time at completion: Sat Jun 13 00:00:58 2026
+
+[Partition 0][Node 0] End of program

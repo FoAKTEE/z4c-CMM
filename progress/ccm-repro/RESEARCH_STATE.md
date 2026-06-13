@@ -32,6 +32,15 @@ Not reproducible from the repo (data absent, documented): 12 appendix
 panels (low_amp_{Psi0-4,News}, kerr_{Psi0-3,News,Strain}); 2 setup
 illustrations out of scope.
 
+## Iteration 3 (P2a X=1e-5 overlays): DONE — M4-P2a [SOLID]
+Direct scri-to-scri overlay: ours (authors' CCE binary on exact analytic
+worldtube data, X/radius matched) vs their published 299ccm/299cce —
+1.92e-3 of peak, attributed by measurement to THEIR runs' default-
+tolerance floor at X=1e-5 (tightening OUR tolerances: 25x improvement to
+1.16e-4 vs the closed form). Time shift +1.000 = pure convention
+(measured). Their CCM-vs-CCE = 3.6e-6 of peak (the matching-term effect,
+quantified from their own data). Transcript ccm_repro_p2a_check.txt.
+
 ## Queue
 - iter 3+: P2a X=1e-5 overlays (our mode3-5 batteries vs their ccm/cce
   Psi4 data; matched cadence; deltas + formulation differences).
