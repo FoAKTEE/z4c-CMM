@@ -9,7 +9,7 @@ LOG=/tmp/x2_s1_orchestrate.log
 : > "$LOG"
 say(){ echo "$(date -u +%FT%TZ) $*" | tee -a "$LOG"; }
 
-NCORE=${1:-48}
+NCORE=${1:-96}   # XCTS solve PEs (user: 48 was too few; 96 fits the 128-core node with the julia job)
 REPO=/data/haiyangw/claude/z4c-CMM
 BIN=/data/haiyangw/nr/spectre/build/bin/SolveXctsVacuum
 OUT=/data/haiyangw/nr/spectre/x2_xcts_run

@@ -2,7 +2,7 @@
 # S2: run the X=2 Teukolsky XCTS solve. Usage: bash run_xcts_teukolsky_x2.sh [ncores]
 set -u
 source /data/haiyangw/claude/z4c-CMM/scripts/spectre_xcts_env.sh
-NCORE=${1:-32}
+NCORE=${1:-96}
 OUT=/data/haiyangw/nr/spectre/x2_xcts_run
 mkdir -p "$OUT" && cd "$OUT"
 cp /data/haiyangw/nr/spectre/SolveXctsTeukolskyX2.yaml .
