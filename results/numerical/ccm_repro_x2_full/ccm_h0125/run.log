@@ -27,3 +27,4 @@ Setup complete, executing task list(s)...
 
 elapsed=1.925959e+00 cycle=0 time=0.000000e+00 dt=3.125000e-02
 elapsed=2.025601e+02 cycle=100 time=3.125000e+00 dt=3.125000e-02
+elapsed=3.997944e+02 cycle=200 time=6.250000e+00 dt=3.125000e-02
