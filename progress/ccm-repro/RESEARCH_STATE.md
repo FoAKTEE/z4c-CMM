@@ -111,3 +111,22 @@ m5-iter 4 DONE: Sec V repro subsection (sec:repro + 3 overlay figs),
 intro final, conclusions, appendices A/B/C; 15 pages, 0 unresolved.
 X=2 campaign healthy (5/7 done; preliminary boundary error 1.1e-2 =
 Somm=CCM, truncation 0.6; h=0.125 pair running).
+
+## MISSION 5 STATUS (consolidated, check #1+ 2026-06-13)
+Production paper paper/z4c-CMM/zccm_formulation/ COMPLETE except the X=2
+final convergence-order gate (compute-blocked). State: 15 pages, 0
+overfull boxes, 0 unresolved refs, 0 undefined cites; abstract;
+Sections I (intro) -- VI (conclusions) + appendices A/B/C; derivation
+DAG fig:dag (18 nodes); equation-coverage audit confirms every
+formulation node N1-N14/N16/M4 is represented (N15 = Julia harness,
+infrastructure). Ledger: M5-SKEL, M5-SEC3, M5-SEC4, M5-SEC5, M5-CONSIST,
+M5-COVERAGE.
+Exit conditions: [DONE] sections I-VI + appendices; [DONE] every
+equation sourced (a)/(b)/(c); [DONE] DAG figure; [DONE] build clean 0
+unresolved; [DONE] ledger + RESEARCH_STATE consistent + pushed;
+[PENDING] the X=2-full gate folded into Sec V (M5-X2FULL) -- the one
+item awaiting the h=0.125 campaign runs.
+X=2 campaign: somm_h0125 progressing (t=25/80, no NaN); both h=0.125
+runs expected ~05:30Z. On completion: E_h ladder + convergence order +
+x2_full.pdf + Sec V update + M5-X2FULL [solid] -> all exit conditions
+hold -> archive loop + completion promise.
