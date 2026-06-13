@@ -1,0 +1,33 @@
+Mission 5 equation-coverage audit (production-paper completeness):
+every admitted formulation node maps to paper equations/tables.
+
+N1  Z4c<->ADM<->4-metric maps   -> eq:fourmetric, eq:dtg-step1/2, eq:divbeta
+N2  boost / l-hat proportionality-> eq:uroot, eq:lhat, eq:boost-identity, eq:boost
+N3  exact incoming-Weyl dictionary-> eq:ebdef, eq:exact-dictionary, eq:uminus,
+                                     eq:gausscodazzi
+N4  TT-channel orthogonality      -> eq:orthogonality
+N5  gauge/constraint blindness    -> eq:orthogonality, eq:reflection
+N6  10-incoming-mode BC set       -> tab:modes, eq:bc-phys/cpbc/gauge, eq:bjorhus
+N7  well-posedness (Kreiss sketch)-> eq:kreiss
+N8  dynamical model problem       -> tab:dynamic (Sec V)
+N9  damping kappa1/kappa2 interplay-> eq:dtKhat, eq:dtTheta, eq:dtGam (terms) +
+                                     production values stated after eq:gauge
+N10 AthenaK implementation        -> Sec V (teuktest, sec:liveccm)
+N11 exact-parameter reproduction  -> sec:teuktest, eq:teuk-E
+N12 reference = analytic          -> eq:teuk-F/QR/ABC/metric/id/psi0/exact-psi4,
+                                     app:teuk (seven gates)
+N13 constraint-row LF/GKS         -> app:gks + the N13 note in sec:modes
+N14 live CCM + cross-oracle       -> Sec III (eq:beta-hierarchy..eq:teukpsi0),
+                                     Sec IV (eq:contract..eq:conelabels), sec:repro
+N16 corrected-data figures        -> fig:teuk, fig:liveccm
+M4  published-data reproduction   -> sec:repro, fig:x1e5/pulseovl/x2
+
+N15 (Julia verification harness)  -> infrastructure; intentionally not a
+                                     paper equation (it is the derivation/
+                                     verification tool, cited in transcripts).
+
+Source classes realized: blue nfblocks = machine-verified program content
+(a); black cited equations = literature (b); O-N6-*/O-M5-1 = open (c).
+DAG: fig:dag (18 nodes). Build: 15 pages, 0 overfull, 0 unresolved refs,
+0 undefined cites. CONCLUSION: equation coverage COMPLETE; only the X=2
+final convergence-order gate (h=0.125 campaign data, computing) remains.
